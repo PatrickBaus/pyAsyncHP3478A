@@ -28,7 +28,7 @@ sys.path.append('..') # Adds main directory to python modules path.
 
 # Devices
 from pyAsyncHP3478A.HP_3478A import HP_3478A
-from pyAsyncHP3478A.HP_3478A_helper import format_cal_string, decode_cal_data, encode_cal_data
+from pyAsyncHP3478A.HP_3478A_helper import format_cal_string, decode_cal_data
 
 from pyAsyncPrologixGpib.pyAsyncPrologixGpib.pyAsyncPrologixGpib import AsyncPrologixGpibEthernetController, EosMode
 from pyAsyncPrologixGpib.pyAsyncPrologixGpib.ip_connection import NotConnectedError, ConnectionLostError, NetworkError
@@ -51,7 +51,7 @@ async def main():
             hp3478a.get_cal_ram(),
             aiofiles.open('calram.bin', mode='x')
         )
-        is_cal_enabled, data = decode_cal_data(result)   # decode to dict
+        is_cal_enabled, data = decode_cal_data(result)   # decode to a list of dicts
         logging.getLogger(__name__).info('Calibration switch is enabled: %(enabled)s', {'enabled': is_cal_enabled})
         logging.getLogger(__name__).info('Calibration data: %(data)s', {'data': data})
         await filehandle.write(format_cal_string(result))

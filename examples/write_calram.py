@@ -28,7 +28,7 @@ sys.path.append('..') # Adds main directory to python modules path.
 
 # Devices
 from pyAsyncHP3478A.HP_3478A import HP_3478A
-from pyAsyncHP3478A.HP_3478A_helper import format_cal_string, decode_cal_data, encode_cal_data
+from pyAsyncHP3478A.HP_3478A_helper import decode_cal_data, encode_cal_data
 
 from pyAsyncPrologixGpib.pyAsyncPrologixGpib.pyAsyncPrologixGpib import AsyncPrologixGpibEthernetController, EosMode
 from pyAsyncPrologixGpib.pyAsyncPrologixGpib.ip_connection import NotConnectedError, ConnectionLostError, NetworkError

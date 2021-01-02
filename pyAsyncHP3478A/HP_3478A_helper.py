@@ -114,7 +114,7 @@ def _encode_gain_data(value):
     return result
 
 def _calculate_cal_checksum(data):
-    # The checksum is (0xFF minus the sum over the 11 data bytes)
+    # The checksum is 0xFF minus the sum over the 11 data bytes
     calculated_checksum = 0xFF - (sum(data[:11]) & 0xFF)   # We need to truncate to uin8_t
     
     return calculated_checksum

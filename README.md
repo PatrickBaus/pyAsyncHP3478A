@@ -1,5 +1,5 @@
 # pyAsyncHP3478A
-Python3 AsyncIO HP3478A driver. This library requires Python [asyncio](https://docs.python.org/3/library/asyncio.html) and AsyncIO library for the GPIB adapter.
+Python3 AsyncIO HP3478A driver. This library requires Python [asyncio](https://docs.python.org/3/library/asyncio.html) and AsyncIO library for the GPIB adapter. It also supports several undocuments functions for reading status registers and reading, modifying and writing the calibration memory.
 
 ## Supported GPIB Hardware
 |Device|Supported|Tested|Comments|
@@ -329,9 +329,50 @@ class ErrorFlags(Flag):
     AD_LINK_FAILURE      = 0b100000
 ```
 
+## Calibration Memory
+Using the `get_cal_ram()` function returns a bytestring, which can be converted using the helper functions provided
+```python
+from pyAsyncHP3478A.HP_3478A_helper import decode_cal_data
+
+result = await hp3478a.get_cal_ram()
+is_cal_enabled, data = decode_cal_data(result)
+```
+This helper will return a list of dictionaries, one for each calibration range.
+|Index|Function|
+|--|--|
+|0|30 mV DC|
+|1|300 mV DC|
+|3|3 V DC|
+|4|30 V DC|
+|5|300 V DC|
+|6|Not used|
+|7|V AC|
+|8|30 Ω 2W/4W|
+|9|300 Ω 2W/4W|
+|10|3 kΩ 2W/4W|
+|11|30 kΩ 2W/4W|
+|12|300 kΩ 2W/4W|
+|13|3 MΩ 2W/4W|
+|14|30 MΩ 2W/4W|
+|15|300 mA DC|
+|16|3 A DC|
+|17|Not used|
+|18|300 mA/3 A AC|
+|19|Not used|
+
+Each dictionary contains the following entries: `offset`, `gain`, `checksum` and `is_valid`. The checksum is `0xFF` minus the sum over the 11 data bytes. And the `is_valid` flag is boolean which is true, if the checksum matches.
+
+The `encode_cal_data(data_blocks, cal_enable)` function takes a list with 19 dicts like above. In this case the dict may only contain the `offset` and `gain` all other values will be ignored. The checksum will be calculated by the function. The `cal_enable` boolean must be set to enable writing to the calibration memory.
+
+The unused indices may not contain valid data. The device will not complain. Typically these are set to `offset=0` and `gain=1.0`.
+
+## Thanks
+
+Special thanks goes to [fenugrec](https://github.com/fenugrec/hp3478a_utils) and [Steve Matos](https://github.com/steve1515/hp3478a-calibration) for their work on deciphering the calram function.
+
 ## Versioning
 
-I use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/PatrickBaus/pyAsyncPrologix/tags). 
+I use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/PatrickBaus/pyAsyncHP3478A/tags). 
 
 ## Authors
 
