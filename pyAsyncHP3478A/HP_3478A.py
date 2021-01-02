@@ -165,7 +165,7 @@ class HP_3478A(object):
             await self.write("D{value:d}".format(value=value.value).encode('ascii'))
         else:
             # The text must be terminated by a control character like \r or \n
-            await self.write("D{value:d}{text}\n".format(value=value.value, text=text).encode('ascii'))
+            await self.write("D{value:d}{text}\n".format(value=value.value, text=text.rstrip()).encode('ascii'))
 
     async def set_trigger(self, value):
         assert isinstance(value, TriggerType)
@@ -183,9 +183,16 @@ class HP_3478A(object):
         return FrontRearSwitchPosition(int(await self.__query(b"S")))
 
     async def clear(self):
+        """
+        Clear serial poll register
+        """
         await self.write(b"K")
 
     async def reset(self):
+        """
+        Place the device in DCV, autorange, autozero, single trigger, 4.5 digits mode and erase any output stored in
+        the buffers.
+        """
         await self.write(b"H0")
 
     async def remote(self):
@@ -206,7 +213,7 @@ class HP_3478A(object):
         assert (4 <= value <= 6)
         await self.write("N{value:d}".format(value=value-1).encode('ascii'))
 
-    async def _get_error_register(self):
+    async def get_error_register(self):
         result = int(await self.__query(b"E"), base=8)    # Convert the octal result to int
         return ErrorFlags(result)
 
