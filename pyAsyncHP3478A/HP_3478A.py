@@ -100,7 +100,7 @@ class SerialPollFlags(Flag):
 # Used to test for numerical return values of the read() command
 numerical_test_pattern = re.compile(b"^[+-][0-9]+\.[0-9]+[E][+-][0-9]")
 
-class HP_3478A(object):
+class HP_3478A:
     @property
     def connection(self):
         return self.__gpib
