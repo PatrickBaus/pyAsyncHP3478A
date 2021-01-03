@@ -134,11 +134,9 @@ def _decode_data_block(data_block):
     }
 
 def decode_cal_data(encoded_data):
-    try:
-        # If we receive a Unicode string, we will try to encode it to bytes
-        encoded_data = encoded_data.encode('ASCII')
-    except (UnicodeEncodeError):
-        pass
+    if isinstance(value, str):
+        # If we receive a unicode string, we will try to encode it to bytes
+        encoded_data = encoded_data.encode("ascii")
     # The first nibble (4 bit, half-byte) contains the position of the front panel "CAL ENABLE" switch
     # data[0] = 0x0 if(CAL ENABLE) else 0xF
     # This byte does not contribute to the checksum and needs to removed
