@@ -36,7 +36,7 @@ ip_address = '127.0.0.1'
 
 # Create the gpib device. We need a timeout of > 10 PLC (20 ms), because the DMM might reply to a conversion request
 # and unable to reply to a status request during conversion (maximum time 10 PLC)
-hp3478a = HP_3478A(gpib=AsyncPrologixGpibEthernetController(ip_address, pad=27, timeout=1000, eos_mode=EosMode.APPEND_NONE))
+hp3478a = HP_3478A(connection=AsyncPrologixGpibEthernetController(ip_address, pad=27, timeout=1000, eos_mode=EosMode.APPEND_NONE))
 
 # This example will log resistance data to the console
 async def main():

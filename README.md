@@ -35,7 +35,7 @@ from pyAsyncPrologixGpib.pyAsyncPrologixGpib.ip_connection import NotConnectedEr
 
 # The default GPIB address is 27. The ip address of the prologix controller needs to changed.
 ip_address = '127.0.0.1'
-hp3478a = HP_3478A(gpib=AsyncPrologixGpibEthernetController(ip_address, pad=27, timeout=1000, eos_mode=EosMode.APPEND_NONE))
+hp3478a = HP_3478A(connection=AsyncPrologixGpibEthernetController(ip_address, pad=27, timeout=1000, eos_mode=EosMode.APPEND_NONE))
 
 
 # This example will print voltage data to the console

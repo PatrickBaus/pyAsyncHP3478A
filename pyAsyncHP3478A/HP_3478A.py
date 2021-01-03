@@ -103,10 +103,10 @@ numerical_test_pattern = re.compile(b"^[+-][0-9]+\.[0-9]+[E][+-][0-9]")
 class HP_3478A:
     @property
     def connection(self):
-        return self.__gpib
+        return self.__conn
 
-    def __init__(self, gpib):
-        self.__gpib = gpib
+    def __init__(self, connection):
+        self.__conn = connection
 
     async def get_id(self):
         """
@@ -116,10 +116,10 @@ class HP_3478A:
         return "HP3478A"
 
     async def connect(self):
-        await self.__gpib.connect()
-        if hasattr(self.__gpib, "set_eot"):
+        await self.__conn.connect()
+        if hasattr(self.__conn, "set_eot"):
             # Used by the Prologix adapters
-            await self.__gpib.set_eot(False)
+            await self.__conn.set_eot(False)
 
         await asyncio.gather(
             # Default display mode
@@ -137,13 +137,13 @@ class HP_3478A:
         except ConnectionError:
             pass
         finally:
-            await self.__gpib.disconnect()
+            await self.__conn.disconnect()
 
     async def read(self, length=None):
         if length is None:
-            result = (await self.__gpib.read())[:-2]    # strip the EOT characters (\r\n)
+            result = (await self.__conn.read())[:-2]    # strip the EOT characters (\r\n)
         else:
-          result = await self.__gpib.read(len=length)
+          result = await self.__conn.read(len=length)
 
         match = numerical_test_pattern.match(result)
         if match is not None:
@@ -156,7 +156,7 @@ class HP_3478A:
 
     async def __query(self, command, length=None):
         await self.write(command)
-        return await self.__gpib.read(len=length)
+        return await self.__conn.read(len=length)
 
     async def set_display(self, value, text=""):
         assert isinstance(value, DisplayType)
@@ -173,7 +173,7 @@ class HP_3478A:
 
     async def write(self, msg):
         # The message must not be terminated by a new line or any other character
-        await self.__gpib.write(msg)
+        await self.__conn.write(msg)
 
     async def set_srq_mask(self, value):
         assert isinstance(value, SrqMask)
@@ -196,10 +196,10 @@ class HP_3478A:
         await self.write(b"H0")
 
     async def remote(self):
-        await self.__gpib.remote_enable(True)
+        await self.__conn.remote_enable(True)
 
     async def local(self):
-        await self.__gpib.ibloc()
+        await self.__conn.ibloc()
 
     async def set_function(self, value):
         assert isinstance(value, FunctionType)
@@ -267,5 +267,5 @@ class HP_3478A:
         }
 
     async def serial_poll(self):
-        return SerialPollFlags(int(await self.__gpib.serial_poll()))
+        return SerialPollFlags(int(await self.__conn.serial_poll()))
 
