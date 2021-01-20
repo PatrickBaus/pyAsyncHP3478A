@@ -195,9 +195,6 @@ class HP_3478A:
         """
         await self.write(b"H0")
 
-    async def remote(self):
-        await self.__conn.remote_enable(True)
-
     async def local(self):
         await self.__conn.ibloc()
 
@@ -267,5 +264,5 @@ class HP_3478A:
         }
 
     async def serial_poll(self):
-        return SerialPollFlags(int(await self.__conn.serial_poll()))
+        return SerialPollFlags(await self.__conn.serial_poll())
 
