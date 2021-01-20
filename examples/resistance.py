@@ -29,10 +29,10 @@ sys.path.append("..") # Adds main directory to python modules path.
 from pyAsyncHP3478A.HP_3478A import HP_3478A, FunctionType, TriggerType, Range, SrqMask
 
 from pyAsyncPrologixGpib.pyAsyncPrologixGpib.pyAsyncPrologixGpib import AsyncPrologixGpibEthernetController, EosMode
-from pyAsyncPrologixGpib.pyAsyncPrologixGpib.ip_connection import NotConnectedError, ConnectionLostError, NetworkError
+from pyAsyncPrologixGpib.pyAsyncPrologixGpib.ip_connection import NotConnectedError, NetworkError
 
 ip_address = '127.0.0.1'
-#ip_address = '192.168.1.104'
+ip_address = '192.168.1.104'
 
 # Create the gpib device. We need a timeout of > 10 PLC (20 ms), because the DMM might reply to a conversion request
 # and unable to reply to a status request during conversion (maximum time 10 PLC)
@@ -41,7 +41,7 @@ hp3478a = HP_3478A(connection=AsyncPrologixGpibEthernetController(ip_address, pa
 # This example will log resistance data to the console
 async def main():
     try: 
-        # No need to explicitely bring up the GPIB connection. This will be done by the HP 3478A
+        # No need to explicitly bring up the GPIB connection. This will be done by the instrument.
         await hp3478a.connect()
         await hp3478a.clear()   # flush all buffers
         await asyncio.gather(
@@ -67,7 +67,7 @@ async def main():
     except NotConnectedError:
         logging.getLogger(__name__).error('Not connected. Did you call .connect()?')
     finally:
-        # Disconnect from the HP 3478A. We may safely call diconnect() on a non-connected device, even
+        # Disconnect from the instrument. We may safely call disconnect() on a non-connected device, even
         # in case of a connection error
         await hp3478a.disconnect()
 

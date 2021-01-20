@@ -4,31 +4,32 @@ Python3 AsyncIO HP3478A driver. This library requires Python [asyncio](https://d
 ## Supported GPIB Hardware
 |Device|Supported|Tested|Comments|
 |--|--|--|--|
-|[AsyncIO Prologix GPIB library](hhttps://github.com/PatrickBaus/pyAsyncPrologixGpib)|:heavy_check_mark:|:heavy_check_mark:|  |
-|AsyncIO linux-gpib wrapper|:heavy_check_mark:|:x:|To be released
+|[AsyncIO Prologix GPIB library](https://github.com/PatrickBaus/pyAsyncPrologixGpib)|:heavy_check_mark:|:heavy_check_mark:|  |
+|[AsyncIO linux-gpib wrapper](https://github.com/PatrickBaus/pyAsyncGpib)|:heavy_check_mark:|:x:|  |
 
 Tested using Linux, should work for Mac OSX, Windows and any OS with Python support.
 
 ## Setup
-
 There are currently no packages available. To install the library, clone the repository into your project folder and install the required packages
 
 ```bash
-virtualenv env  # virtual environment, optional
+python3 -m venv env  # virtual environment, optional
 source env/bin/activate
 pip install -r requirements.txt
+# pip install -e ~/linux-gpib-code/linux-gpib-user/language/python/
 ```
 
 ## Usage
 All examples assume, that the GPIB library is copied to the same root folder as the library. Either run
 ```bash
-git clone https://github.com/PatrickBaus/pyAsyncPrologixGpib
+git clone https://github.com/PatrickBaus/pyAsyncPrologixGpib    # or alternativeliy
+# git clone https://github.com/PatrickBaus/pyAsyncGpib
 ```
 or download the source code from the git repository and copy it yourself.
 
 A simple example for reading voltages.
 ```python
-from pyAsyncHP3478A.HP_3478A import HP_3478A, FunctionType, TriggerType, Range, SrqMask
+from pyAsyncHP3478A.HP_3478A import HP_3478A, FunctionType, TriggerType, Range
 
 from pyAsyncPrologixGpib.pyAsyncPrologixGpib.pyAsyncPrologixGpib import AsyncPrologixGpibEthernetController, EosMode
 from pyAsyncPrologixGpib.pyAsyncPrologixGpib.ip_connection import NotConnectedError, ConnectionLostError, NetworkError
@@ -41,7 +42,7 @@ hp3478a = HP_3478A(connection=AsyncPrologixGpibEthernetController(ip_address, pa
 # This example will print voltage data to the console
 async def main():
     try: 
-        # No need to explicitely bring up the GPIB connection. This will be done by the HP 3478A
+        # No need to explicitely bring up the GPIB connection. This will be done by the instrument.
         await hp3478a.connect()
         await asyncio.gather(
             hp3478a.set_function(FunctionType.DCV),      # Set to 4-wire ohm
@@ -61,7 +62,7 @@ async def main():
     except NotConnectedError:
         logging.getLogger(__name__).error('Not connected. Did you call .connect()?')
     finally:
-        # Disconnect from the HP 3478A. We may safely call diconnect() on a non-connected device, even
+        # Disconnect from the instrument. We may safely call diconnect() on a non-connected device, even
         # in case of a connection error
         await hp3478a.disconnect()
 
@@ -83,17 +84,17 @@ This function returns the label `HP3478A`
 ```python
    async def connect()
 ```
-Connect to the GPIB device. This function must be called from the loop and does all the setup of the GPIB adapter and the DMM.
+Connect to the GPIB device. This function must be called from the loop and does all the setup of the GPIB adapter and the instrument.
 
 ```python
    async def disconnect()
 ```
-Disconnect from the device and clean up. This call will also automatically remove the local lockout if set.
+Disconnect from the instrument and clean up. This call will also automatically remove the local lockout if set.
 
 ```python
    async def read(length=None)
 ```
-Read the device buffer.
+Read the instrument buffer.
 
 ___Arguments___
 * `length` [int] : optional. The number of bytes to be read. If no length is given, read until the line terminator `\n`.
@@ -102,15 +103,15 @@ ___Returns___
 * [Decimal or Bytes] : If the return value is a number, it will be returned as a Decimal, otherwise as a bytestring
 
 ___Raises___
-* Raises an `OverflowError` if the DMM input is overloaded, i.e. returns `+9.99999E+9`.
+* Raises an `OverflowError` if the instrument input is overloaded, i.e. returns `+9.99999E+9`.
 
 ```python
    async def write(msg)
 ```
-Write a bytestring to the device. This string will be written unaltered. Use with caution.
+Write a bytestring to the instrument. This string will be written unaltered. Use with caution.
 
 ___Arguments___
-* `value` [Bytes] : The raw bytestring to be written to the device.
+* `value` [Bytes] : The raw bytestring to be written to the instrument.
 
 ```python
    async def set_trigger(value)
@@ -132,7 +133,7 @@ ___Arguments___
 ```python
    async def set_srq_mask(value)
 ```
-Set the interrupt mask. This will determine, when the GPIB SRQ is triggered by the device. The `SrqMask.DATA_READY` flag is useful, when reading with long conversion times. See [examples/](examples/) for more details.
+Set the interrupt mask. This will determine, when the GPIB SRQ is triggered by the instrument. The `SrqMask.DATA_READY` flag is useful, when reading with long conversion times. See [examples/](examples/) for more details.
 
 ___Arguments___
 * `value` [[SrqMask](#srqmask)] : See the manual for details on the supported options. Accepts one or more of the [SrqMask](#srqmask) flags detailed below.
@@ -140,7 +141,7 @@ ___Arguments___
 ```python
    async def serial_poll()
 ```
-Serial poll the device. Use this in combination with the SRQ mask to determine, if the device triggered the SRQ and requests service.
+Serial poll the instrument. Use this in combination with the SRQ mask to determine, if the instrument triggered the SRQ and requests service.
 
 ___Returns___
 * [[SerialPollFlags](#serialpollflags)] : See the manual for details on each flag.
@@ -148,7 +149,7 @@ ___Returns___
 ```python
    async def get_front_rear_switch_position()
 ```
-Get the selected inpunt. The DMM has front and rear inputs.
+Get the selected inpunt. The instrument has front and rear inputs.
 
 ___Returns___
 * [[FrontRearSwitchPosition](#frontrearswitchposition)] : The position of the the Front/Rear switch on the front panel.
@@ -156,7 +157,7 @@ ___Returns___
 ```python
    async def set_function(value)
 ```
-Set the DMM measurment mode.
+Set the instrument measurment mode.
 
 ___Arguments___
 * `value` [[FunctionType](#functiontype)] : See the manual for details on the supported options. Accepts the [FunctionType](#functiontype) enum detailed below.
@@ -164,7 +165,7 @@ ___Arguments___
 ```python
    async def set_range(value)
 ```
-Set the DMM measurement range.
+Set the instrument measurement range.
 
 ___Arguments___
 * `value` [[Range](#range)] : See the manual for details on the supported options. These depend on the selected mode. Accepts the [Range](#range) enum detailed below.
@@ -193,17 +194,12 @@ Clear the serial poll register.
 ```python
    async def reset()
 ```
-Place the device in DCV, autorange, autozero, single trigger, 4.5 digits mode and erase any output stored in the buffers.
-
-```python
-   async def remote()
-```
-Lock out the front panel buttons.
+Place the instrument in DCV, autorange, autozero, single trigger, 4.5 digits mode and erase any output stored in the buffers.
 
 ```python
    async def local()
 ```
-Enable the front panel buttons, if they were disabled by calling `remote()`.
+Enable the front panel buttons, if they the instrument is in local lock out.
 
 ```python
    async def get_error_register()
@@ -216,7 +212,7 @@ ___Returns___
 ```python
    async def get_status()
 ```
-An undocumented function. This function returns the status of the device. It contains the current measurement mode, range, number of digits, status flags, SRQ flags, error register and a dac value.
+An undocumented function. This function returns the status of the instrument. It contains the current measurement mode, range, number of digits, status flags, SRQ flags, error register and a dac value.
 
 ___Returns___
 * [dict] : A dictionary containing: current measurement mode, range, number of digits, status flags, SRQ flags, error register and a dac value.
@@ -364,7 +360,7 @@ Each dictionary contains the following entries: `offset`, `gain`, `checksum` and
 
 The `encode_cal_data(data_blocks, cal_enable)` function takes a list with 19 dicts like above. In this case the dict may only contain the `offset` and `gain` all other values will be ignored. The checksum will be calculated by the function. The `cal_enable` boolean must be set to enable writing to the calibration memory.
 
-The unused indices may not contain valid data. The device will not complain. Typically these are set to `offset=0` and `gain=1.0`.
+The unused indices may not contain valid data. The instrument will not complain. Typically these are set to `offset=0` and `gain=1.0`.
 
 ## Thanks
 
@@ -372,7 +368,7 @@ Special thanks goes to [fenugrec](https://github.com/fenugrec/hp3478a_utils) and
 
 ## Versioning
 
-I use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/PatrickBaus/pyAsyncHP3478A/tags). 
+I use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/PatrickBaus/pyAsyncHP3478A/tags).
 
 ## Authors
 

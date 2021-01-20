@@ -31,7 +31,7 @@ from pyAsyncHP3478A.HP_3478A import HP_3478A
 from pyAsyncHP3478A.HP_3478A_helper import format_cal_string, decode_cal_data
 
 from pyAsyncPrologixGpib.pyAsyncPrologixGpib.pyAsyncPrologixGpib import AsyncPrologixGpibEthernetController, EosMode
-from pyAsyncPrologixGpib.pyAsyncPrologixGpib.ip_connection import NotConnectedError, ConnectionLostError, NetworkError
+from pyAsyncPrologixGpib.pyAsyncPrologixGpib.ip_connection import NotConnectedError, NetworkError
 
 ip_address = '127.0.0.1'
 #ip_address = '192.168.1.104'
@@ -43,7 +43,7 @@ hp3478a = HP_3478A(connection=AsyncPrologixGpibEthernetController(ip_address, pa
 # This example will log resistance data to the console
 async def main():
     try: 
-        # No need to explicitely bring up the GPIB connection. This will be done by the HP 3478A
+        # No need to explicitely bring up the GPIB connection. This will be done by the instrument.
         await hp3478a.connect()
         await hp3478a.clear()   # flush all buffers
         logging.getLogger(__name__).info('Reading calibration memory. This will take about 10 seconds.')
@@ -63,7 +63,7 @@ async def main():
     except NotConnectedError:
         logging.getLogger(__name__).error('Not connected. Did you call .connect()?')
     finally:
-        # Disconnect from the HP 3478A. We may safely call diconnect() on a non-connected device, even
+        # Disconnect from the instrument. We may safely call diconnect() on a non-connected device, even
         # in case of a connection error
         await hp3478a.disconnect()
 
