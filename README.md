@@ -5,7 +5,7 @@ Python3 AsyncIO HP3478A driver. This library requires Python [asyncio](https://d
 |Device|Supported|Tested|Comments|
 |--|--|--|--|
 |[AsyncIO Prologix GPIB library](https://github.com/PatrickBaus/pyAsyncPrologixGpib)|:heavy_check_mark:|:heavy_check_mark:|  |
-|[AsyncIO linux-gpib wrapper](https://github.com/PatrickBaus/pyAsyncGpib)|:heavy_check_mark:|:x:|  |
+|[AsyncIO linux-gpib wrapper](https://github.com/PatrickBaus/pyAsyncGpib)|:heavy_check_mark:|:heavy_check_mark:|  |
 
 Tested using Linux, should work for Mac OSX, Windows and any OS with Python support.
 
