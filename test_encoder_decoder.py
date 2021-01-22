@@ -19,7 +19,7 @@
 
 import pytest
 
-from pyHP3478A.HP3478A_helper import _encode_gain_data, _decode_gain_data
+from pyAsyncHP3478A.HP_3478A_helper import _encode_gain_data, _decode_gain_data
 
 encoder_data = [
     (1.055555, [0x5, 0x5, 0x5, 0x5, 0x5]),    # Maximum
