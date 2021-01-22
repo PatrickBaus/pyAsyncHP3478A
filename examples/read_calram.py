@@ -30,19 +30,27 @@ sys.path.append('..') # Adds main directory to python modules path.
 from pyAsyncHP3478A.HP_3478A import HP_3478A
 from pyAsyncHP3478A.HP_3478A_helper import format_cal_string, decode_cal_data
 
-from pyAsyncPrologixGpib.pyAsyncPrologixGpib.pyAsyncPrologixGpib import AsyncPrologixGpibEthernetController, EosMode
-from pyAsyncPrologixGpib.pyAsyncPrologixGpib.ip_connection import NotConnectedError, NetworkError
-
-ip_address = '127.0.0.1'
-#ip_address = '192.168.1.104'
-
 # Create the gpib device. We need a timeout of > 10 PLC (20 ms), because the DMM might reply to a conversion request
 # and unable to reply to a status request during conversion (maximum time 10 PLC)
-hp3478a = HP_3478A(connection=AsyncPrologixGpibEthernetController(ip_address, pad=27, timeout=1000, eos_mode=EosMode.APPEND_NONE))
 
-# This example will log resistance data to the console
+# Uncomment if using a Prologix GPIB Ethernet adapter
+#from pyAsyncPrologixGpib.pyAsyncPrologixGpib.pyAsyncPrologixGpib import AsyncPrologixGpibEthernetController, EosMode
+#from pyAsyncPrologixGpib.pyAsyncPrologixGpib.ip_connection import NotConnectedError, NetworkError
+if 'pyAsyncPrologixGpib.pyAsyncPrologixGpib.pyAsyncPrologixGpib' in sys.modules:
+    ip_address = '127.0.0.1'
+    gpib_device = AsyncPrologixGpibEthernetController(ip_address, pad=27, timeout=1000, eos_mode=EosMode.APPEND_NONE)
+
+# Uncomment if using linux-gpib
+from pyAsyncGpib.pyAsyncGpib.AsyncGpib import AsyncGpib
+if 'pyAsyncGpib.pyAsyncGpib.AsyncGpib' in sys.modules:
+    # Set the timeout to 1 second (T1s=11)
+    gpib_device = AsyncGpib(name=0, pad=27, timeout=11)    # NI GPIB adapter
+
+hp3478a = HP_3478A(connection=gpib_device)
+
+# This example will read the calibration memory and write it to a file named 'calram.bin'
 async def main():
-    try: 
+    try:
         # No need to explicitely bring up the GPIB connection. This will be done by the instrument.
         await hp3478a.connect()
         await hp3478a.clear()   # flush all buffers
@@ -58,10 +66,11 @@ async def main():
         await filehandle.close()
         logging.getLogger(__name__).info('Calibration data written to calram.bin')
 
-    except (ConnectionError, ConnectionRefusedError, NetworkError):
-        logging.getLogger(__name__).error('Could not connect to remote target. Connection refused. Is the device connected?')
-    except NotConnectedError:
-        logging.getLogger(__name__).error('Not connected. Did you call .connect()?')
+    # Catch errors from the Prologix IP connection
+    #except (ConnectionError, ConnectionRefusedError, NetworkError):
+    #    logging.getLogger(__name__).error('Could not connect to remote target. Connection refused. Is the device connected?')
+    #except NotConnectedError:
+    #    logging.getLogger(__name__).error('Not connected. Did you call .connect()?')
     finally:
         # Disconnect from the instrument. We may safely call diconnect() on a non-connected device, even
         # in case of a connection error

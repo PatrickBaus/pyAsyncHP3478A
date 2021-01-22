@@ -68,7 +68,7 @@ def _encode_digit(n):
   if result[1] > 5:
       result [0] += 1
       result[1] = result[1] - 10
-  return result 
+  return result
 
 def _encode_gain_data(value):
     # Encoding the gain is a little more tricky than decoding. The data that needs to be encoded is
@@ -108,7 +108,7 @@ def _encode_gain_data(value):
       result[idx-1] += carry
 
     result = [num if num>=0 else num+16 for num in result]
-    
+
     if value < 0:
       result = [(~item + 1) & 0xF for item in result]
     return result
@@ -116,7 +116,7 @@ def _encode_gain_data(value):
 def _calculate_cal_checksum(data):
     # The checksum is 0xFF minus the sum over the 11 data bytes
     calculated_checksum = 0xFF - (sum(data[:11]) & 0xFF)   # We need to truncate to uin8_t
-    
+
     return calculated_checksum
 
 def _decode_data_block(data_block):
@@ -134,7 +134,7 @@ def _decode_data_block(data_block):
     }
 
 def decode_cal_data(encoded_data):
-    if isinstance(value, str):
+    if isinstance(encoded_data, str):
         # If we receive a unicode string, we will try to encode it to bytes
         encoded_data = encoded_data.encode("ascii")
     # The first nibble (4 bit, half-byte) contains the position of the front panel "CAL ENABLE" switch
