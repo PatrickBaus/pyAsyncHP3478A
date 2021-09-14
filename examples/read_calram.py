@@ -46,13 +46,9 @@ if 'pyAsyncGpib.pyAsyncGpib.AsyncGpib' in sys.modules:
     # Set the timeout to 1 second (T1s=11)
     gpib_device = AsyncGpib(name=0, pad=27, timeout=11)    # NI GPIB adapter
 
-hp3478a = HP_3478A(connection=gpib_device)
-
 # This example will read the calibration memory and write it to a file named 'calram.bin'
 async def main():
-    try:
-        # No need to explicitely bring up the GPIB connection. This will be done by the instrument.
-        await hp3478a.connect()
+    async with HP_3478A(connection=gpib_device) as hp3478a:
         await hp3478a.clear()   # flush all buffers
         logging.getLogger(__name__).info('Reading calibration memory. This will take about 10 seconds.')
         result, filehandle = await asyncio.gather(
@@ -65,16 +61,6 @@ async def main():
         await filehandle.write(format_cal_string(result))
         await filehandle.close()
         logging.getLogger(__name__).info('Calibration data written to calram.bin')
-
-    # Catch errors from the Prologix IP connection
-    #except (ConnectionError, ConnectionRefusedError, NetworkError):
-    #    logging.getLogger(__name__).error('Could not connect to remote target. Connection refused. Is the device connected?')
-    #except NotConnectedError:
-    #    logging.getLogger(__name__).error('Not connected. Did you call .connect()?')
-    finally:
-        # Disconnect from the instrument. We may safely call diconnect() on a non-connected device, even
-        # in case of a connection error
-        await hp3478a.disconnect()
 
 # Report all mistakes managing asynchronous resources.
 warnings.simplefilter('always', ResourceWarning)

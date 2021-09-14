@@ -27,44 +27,53 @@ git clone https://github.com/PatrickBaus/pyAsyncPrologixGpib    # or alternative
 ```
 or download the source code from the git repository and copy it yourself.
 
-A simple example for reading voltages.
+The library used a an asynchronous context manager to make cleanup easier. You can use either the
+contect manager syntax or invoke the calls manually:
+
+```python
+async with HP_3478A(connection=gpib_device) as hp3478a:
+    # your code
+```
+
+```python
+try:
+    hp3478a = HP_3478A(connection=gpib_device)
+    await hp3478a.connect()
+    # your code
+finally:
+    await hp3478a.disconnect()
+```
+
+A more complete example for reading voltages:
 ```python
 from pyAsyncHP3478A.HP_3478A import HP_3478A, FunctionType, TriggerType, Range
 
 from pyAsyncPrologixGpib.pyAsyncPrologixGpib.pyAsyncPrologixGpib import AsyncPrologixGpibEthernetController, EosMode
-from pyAsyncPrologixGpib.pyAsyncPrologixGpib.ip_connection import NotConnectedError, ConnectionLostError, NetworkError
+from pyAsyncPrologixGpib.pyAsyncPrologixGpib.ip_connection import ConnectionLostError, NetworkError
 
 # The default GPIB address is 27. The ip address of the prologix controller needs to changed.
 ip_address = '127.0.0.1'
-hp3478a = HP_3478A(connection=AsyncPrologixGpibEthernetController(ip_address, pad=27, timeout=1000, eos_mode=EosMode.APPEND_NONE))
-
+gpib_device = AsyncPrologixGpibEthernetController(ip_address, pad=27, timeout=1000, eos_mode=EosMode.APPEND_NONE)
 
 # This example will print voltage data to the console
 async def main():
     try: 
         # No need to explicitely bring up the GPIB connection. This will be done by the instrument.
-        await hp3478a.connect()
-        await asyncio.gather(
-            hp3478a.set_function(FunctionType.DCV),      # Set to 4-wire ohm
-            hp3478a.set_range(Range.RANGE_30),           # Set to 30 kOhm range
-            hp3478a.set_trigger(TriggerType.INTERNAL),   # Enable free running trigger
-            hp3478a.set_autozero(True),                  # Enable Autozero
-            hp3478a.set_number_of_digits(6),             # Set the resolution to 5.5 digits
-            hp3478a.connection.timeout(700),             # The maximum reading rate @ 50 Hz line freq. is 1.9 rds/s
-        )
+        async with HP_3478A(connection=gpib_device) as hp3478a:
+            await asyncio.gather(
+                hp3478a.set_function(FunctionType.DCV),      # Set to 4-wire ohm
+                hp3478a.set_range(Range.RANGE_30),           # Set to 30 kOhm range
+                hp3478a.set_trigger(TriggerType.INTERNAL),   # Enable free running trigger
+                hp3478a.set_autozero(True),                  # Enable Autozero
+                hp3478a.set_number_of_digits(6),             # Set the resolution to 5.5 digits
+                hp3478a.connection.timeout(700),             # The maximum reading rate @ 50 Hz line freq. is 1.9 rds/s
+            )
 
-        # Take the measurements until Ctrl+C is pressed
-        while 'loop not canceled':
-            print(await hp3478a.read())
-
+            # Take the measurements until Ctrl+C is pressed
+            async for result in hp3478a.read_all():
+                print(result)
     except (ConnectionError, ConnectionRefusedError, NetworkError):
         logging.getLogger(__name__).error('Could not connect to remote target. Connection refused. Is the device connected?')
-    except NotConnectedError:
-        logging.getLogger(__name__).error('Not connected. Did you call .connect()?')
-    finally:
-        # Disconnect from the instrument. We may safely call diconnect() on a non-connected device, even
-        # in case of a connection error
-        await hp3478a.disconnect()
 
 try:
     asyncio.run(main(), debug=False)
@@ -101,6 +110,20 @@ ___Arguments___
 
 ___Returns___
 * [Decimal or Bytes] : If the return value is a number, it will be returned as a Decimal, otherwise as a bytestring
+
+___Raises___
+* Raises an `OverflowError` if the instrument input is overloaded, i.e. returns `+9.99999E+9`.
+
+```python
+   async def read__all(length=None)
+```
+A generator to keep reading values from the instrument.
+
+___Arguments___
+* `length` [int] : optional. The number of bytes to be read per reading. If no length is given, read until the line terminator `\n`.
+
+___Returns___
+* [Iterator[Decimal] or Iterator[Bytes]] : If the return value is a number, it will be returned as a Decimal, otherwise as a bytestring
 
 ___Raises___
 * Raises an `OverflowError` if the instrument input is overloaded, i.e. returns `+9.99999E+9`.

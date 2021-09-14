@@ -108,6 +108,13 @@ class HP_3478A:
     def __init__(self, connection):
         self.__conn = connection
 
+    async def __aenter__(self):
+        await self.connect()
+        return self
+
+    async def __aexit__(self, exc_type, exc, traceback):
+        await self.disconnect()
+
     async def get_id(self):
         """
         The HP 3478A does not support an ID request, so we will report a constant for compatibility
@@ -153,6 +160,17 @@ class HP_3478A:
                 return Decimal(match[0].decode('ascii'))
         else:
             return result
+
+    async def read_all(self, length=None):
+        await self.set_srq_mask(SrqMask.DATA_READY),     # Enable a GPIB interrupt when the conversion is done
+        while 'loop not cancelled':
+            try:
+                await self.connection.wait((1 << 11) | (1<<14))
+                result = await self.read(length)
+                yield result
+            except asyncio.TimeoutError:
+                pass
+
 
     async def __query(self, command, length=None):
         await self.write(command)
