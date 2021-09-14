@@ -16,8 +16,25 @@
 # along with this file.  If not, see <http://www.gnu.org/licenses/>.
 #
 # ##### END GPL LICENSE BLOCK #####
+"""
+Helper functions to encode and decode data formats used by the HP 3478A
+"""
+
 
 def format_cal_string(data):
+    """
+    Convert the calibration memory to an ASCII string.
+
+    Parameters
+    ----------
+    data: bytes
+        The calram contents
+
+    Returns
+    -------
+    str
+        A human readable ASCII string.
+    """
     return "\n".join([(data[i:i+16]).decode() for i in range(0, len(data), 16)])
 
 def _decode_bcd_8421(data):
@@ -41,7 +58,7 @@ def _decode_offset_data(data):
     return result
 
 def _encode_offset_data(value):
-    assert (-100000 <= value <= 899999)
+    assert -100000 <= value <= 899999
 
     value = value if value >= 0 else value + 1000000
     # The offset is BCD 8421 encoded, so only 4 bits are required per number
@@ -62,13 +79,13 @@ def _decode_gain_data(data):
     # finally convert it to the gain
     return 1. + (result_raw / 10**6)
 
-def _encode_digit(n):
-  result = [int(x) for x in str(n)]
-  result = [0] * (2 - len(result)) + result
-  if result[1] > 5:
-      result [0] += 1
-      result[1] = result[1] - 10
-  return result
+def _encode_digit(number):
+    result = [int(x) for x in str(number)]
+    result = [0] * (2 - len(result)) + result
+    if result[1] > 5:
+        result [0] += 1
+        result[1] = result[1] - 10
+    return result
 
 def _encode_gain_data(value):
     # Encoding the gain is a little more tricky than decoding. The data that needs to be encoded is
@@ -90,7 +107,7 @@ def _encode_gain_data(value):
     # less than -5. (In byte notation: 0x6, 0x7, 0x8 (-8), 0x9 (-7), 0xA (-6), 0xB (-5))
     # This reduces the set of available numbers to to {-4,...,5}.
 
-    if not (0.955556 <= value <= 1.055555):
+    if not 0.955556 <= value <= 1.055555:
         raise OverflowError()
 
     value = int(round((value - 1.) * 10**6))
@@ -101,16 +118,16 @@ def _encode_gain_data(value):
     result = [0] * 5
 
     for idx in reversed(range(len(digits))):
-      carry, digit = _encode_digit(result[idx]+digits[idx])
-      result[idx] = digit
-      if idx==0 and carry != 0:
-          raise OverflowError()
-      result[idx-1] += carry
+        carry, digit = _encode_digit(result[idx]+digits[idx])
+        result[idx] = digit
+        if idx==0 and carry != 0:
+            raise OverflowError()
+        result[idx-1] += carry
 
     result = [num if num>=0 else num+16 for num in result]
 
     if value < 0:
-      result = [(~item + 1) & 0xF for item in result]
+        result = [(~item + 1) & 0xF for item in result]
     return result
 
 def _calculate_cal_checksum(data):
@@ -134,6 +151,15 @@ def _decode_data_block(data_block):
     }
 
 def decode_cal_data(encoded_data):
+    """
+    The calibration data is stored as nibbles (4 bit, half-bytes). This function decodes the contents
+    of the calibration ram and returns the status of the calibration switch.
+
+    Returns
+    ----------
+    tuple[bool, dict]
+        `True` if the calibration switch is enabled and the calibration constants as a dict
+    """
     if isinstance(encoded_data, str):
         # If we receive a unicode string, we will try to encode it to bytes
         encoded_data = encoded_data.encode("ascii")
@@ -143,7 +169,7 @@ def decode_cal_data(encoded_data):
     # The last 8 bytes are unused as well
     # The actual data is 19 blocks (one for calibration entry) of 11 bytes data + 2 bytes checksum = 247 bytes
     # Three blocks are not used for data, so their checksums do not matter: Blocks 6, 17 and 19
-    BLOCK_SIZE = 13
+    block_size = 13
     # All data but the checksum is BCD 8421 (https://en.wikipedia.org/wiki/Binary-coded_decimal) encoded. This requires
     # 4 bits per decimal digit. After BCD encoding All bytes are encoded to printable characters adding 0x40.
     # So we need to subtract 0x40 first, before decoding the characters.
@@ -153,8 +179,8 @@ def decode_cal_data(encoded_data):
 
     # Strip off non-data bytes
     data = data[1:248]
-    # Split the the string into substrings of length BLOCK_SIZE
-    data_blocks = [(data[i:i+BLOCK_SIZE]) for i in range(0, len(data), BLOCK_SIZE)]
+    # Split the the string into substrings of length block_size
+    data_blocks = [(data[i:i+block_size]) for i in range(0, len(data), block_size)]
 
     # Now decode the data block
     # 1. calculate and test the checksum of the data block
@@ -169,6 +195,17 @@ def _encode_data_block(data_block):
     return [value+0x40 for value in result]
 
 def encode_cal_data(data_blocks, cal_enable):
+    """
+    The calibration data is stored as nibbles (4 bit, half-bytes). This function encodes a
+    dictionary with the calibration constants to bytes.
+
+    Parameters
+    ----------
+    data_blocks: dict[str, bool or int or float]
+        The calibration data
+    cal_enable:
+        Set to `True`, to write the calibration data to the NVRAM.
+    """
     encoded_data_blocks = [_encode_data_block(data_block) for data_block in data_blocks]
 
     # Put the range check here, because this enables the use of iterators as input
@@ -182,4 +219,3 @@ def encode_cal_data(data_blocks, cal_enable):
     # Finally pad with the cal_enable byte at the beginning and 8 0 bytes at the end
     result = [0xF*bool(not cal_enable) + 0x40] + result + [0 + 0x40] * 8
     return bytes(result)
-

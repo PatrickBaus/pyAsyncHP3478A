@@ -17,6 +17,9 @@
 # along with this file.  If not, see <http://www.gnu.org/licenses/>.
 #
 # ##### END GPL LICENSE BLOCK #####
+"""
+This is a asyncIO driver for the HP 3478A DMM to abstract away the GPIB interface.
+"""
 
 import asyncio
 from decimal import Decimal
@@ -24,6 +27,9 @@ from enum import Enum, Flag
 import re   # Used to test for numerical return values
 
 class TriggerType(Enum):
+    """
+    The triggers supported by the DMM. See page 53 of the manual for details.
+    """
     INTERNAL = 1
     EXTERNAL = 2
     SINGLE   = 3
@@ -31,11 +37,17 @@ class TriggerType(Enum):
     FAST     = 5
 
 class DisplayType(Enum):
+    """
+    The front panel display settings. See page 12 of the manual for details.
+    """
     NORMAL               = 1
     SHOW_TEXT            = 2
     SHOW_TEXT_AND_FREEZE = 3
 
 class FunctionType(Enum):
+    """
+    The measurement functions. See page 55 of the extented ohms setting.
+    """
     DCV     = 1
     ACV     = 2
     OHM     = 3
@@ -45,23 +57,32 @@ class FunctionType(Enum):
     OHM_EXT = 7
 
 class Range(Enum):
+    """
+    The measurement range of the device. See page 20 of the manual for details.
+    """
     RANGE_30M   = -2
     RANGE_300M  = -1
     RANGE_3     = 0
     RANGE_30    = 1
     RANGE_300   = 2
-    RANGE_3k    = 3
-    RANGE_30k   = 4
-    RANGE_300k  = 5
+    RANGE_3k    = 3     # small k due to SI pylint: disable=invalid-name
+    RANGE_30k   = 4     # small k due to SI pylint: disable=invalid-name
+    RANGE_300k  = 5     # small k due to SI pylint: disable=invalid-name
     RANGE_3MEG  = 6
     RANGE_30MEG = 7
     RANGE_AUTO  = "A"
 
 class FrontRearSwitchPosition(Enum):
+    """
+    The position of the front/rear binding posts switch on the front panel.
+    """
     REAR  = 0
     FRONT = 1
 
 class SrqMask(Flag):
+    """
+    The service interrupt register flags. See page 46 of the manual for details.
+    """
     NONE                = 0b0
     DATA_READY          = 0b1
     SYNTAX_ERROR        = 0b100
@@ -70,6 +91,9 @@ class SrqMask(Flag):
     CALIBRATION_FAILURE = 0b100000
 
 class ErrorFlags(Flag):
+    """
+    The error register flags. See page 62 of the manual for details.
+    """
     NONE                 = 0b0
     CAL_RAM_CHECKSUM     = 0b1
     RAM_FAILURE          = 0b10
@@ -79,6 +103,9 @@ class ErrorFlags(Flag):
     AD_LINK_FAILURE      = 0b100000
 
 class StatusFlags(Flag):
+    """
+    The device status register flags. See page 47 of the manual for details.
+    """
     NONE                     = 0b0
     INTERNAL_TRIGGER_ENABLED = 0b1
     AUTO_RANGE_ENABLED       = 0b10
@@ -89,6 +116,9 @@ class StatusFlags(Flag):
     EXTERNAL_TRIGGER_ENABLED = 0b1000000
 
 class SerialPollFlags(Flag):
+    """
+    The serial poll flags as returned by SPOLL. See page 50 of the manual for details.
+    """
     NONE                  = 0b0
     SRQ_ON_READING        = 0b1
     SRQ_ON_SYNTAX_ERROR   = 0b10
@@ -98,11 +128,21 @@ class SerialPollFlags(Flag):
     SRQ_ON_POWER_ON       = 0b1000000
 
 # Used to test for numerical return values of the read() command
-numerical_test_pattern = re.compile(b"^[+-][0-9]+\.[0-9]+[E][+-][0-9]")
+numerical_test_pattern = re.compile(rb"^[+-][0-9]+\.[0-9]+[E][+-][0-9]")
 
-class HP_3478A:
+class HP_3478A:     # pylint: disable=too-many-public-methods
+    """
+    The driver for the HP 3478A 5.5 digit multimeter. It support both linux-gpib and the Prologix
+    GPIB adapters.
+    """
     @property
     def connection(self):
+        """
+        Returns
+        ----------
+        AsyncGpib or AsyncPrologixGpibController
+            The GPIB connection
+        """
         return self.__conn
 
     def __init__(self, connection):
@@ -123,6 +163,9 @@ class HP_3478A:
         return "HP3478A"
 
     async def connect(self):
+        """
+        Connect the GPIB connection and configure the GPIB device for the DMM.
+        """
         await self.__conn.connect()
         if hasattr(self.__conn, "set_eot"):
             # Used by the Prologix adapters
@@ -136,6 +179,9 @@ class HP_3478A:
         )
 
     async def disconnect(self):
+        """
+        Disconnect the GPIB device and release any lock on the front panel of the device if held.
+        """
         try:
             await self.local()
             # Wait 0.5 seconds for the DMM to finish reading and accepting the local() command
@@ -147,22 +193,48 @@ class HP_3478A:
             await self.__conn.disconnect()
 
     async def read(self, length=None):
+        """
+        Read a single value from the device. If `length' is given, read `length` bytes, else
+        read until a line break.
+
+        Parameters
+        ----------
+        length: int, default=None
+            The number of bytes to read. Ommit to read a line.
+
+        Returns
+        -------
+        Decimal or bytes
+            Either a value or a number of bytes as defined by `length`.
+        """
         if length is None:
             result = (await self.__conn.read())[:-2]    # strip the EOT characters (\r\n)
         else:
-          result = await self.__conn.read(len=length)
+            result = await self.__conn.read(len=length)
 
         match = numerical_test_pattern.match(result)
         if match is not None:
             if match[0] == b"+9.99999E+9":
                 raise OverflowError("DMM input overloaded")
-            else:
-                return Decimal(match[0].decode('ascii'))
-        else:
-            return result
+            return Decimal(match[0].decode('ascii'))
+        return result   # else return the bytes
 
     async def read_all(self, length=None):
-        await self.set_srq_mask(SrqMask.DATA_READY),     # Enable a GPIB interrupt when the conversion is done
+        """
+        Read a all values from the device. If `length' is given, read `length` bytes, else
+        read until a line break, then yield the result.
+
+        Parameters
+        ----------
+        length: int, default=None
+            The number of bytes to read. Ommit to read a line.
+
+        Returns
+        -------
+        Iterator[Decimal or bytes]
+            Either a value or a number of bytes as defined by `length`.
+        """
+        await self.set_srq_mask(SrqMask.DATA_READY)     # Enable a GPIB interrupt when the conversion is done
         while 'loop not cancelled':
             try:
                 await self.connection.wait((1 << 11) | (1<<14))
@@ -177,6 +249,16 @@ class HP_3478A:
         return await self.__conn.read(len=length)
 
     async def set_display(self, value, text=""):
+        """
+        Sets a custom display text or display measurands. See page 12 of the manual for details.
+
+        Parameters
+        ----------
+        value: DisplayType
+            The type of text to display on the front panel tft.
+        text: str
+            The text to display if `value` is not set to DisplayType.NORMAL.
+        """
         assert isinstance(value, DisplayType)
         if value == DisplayType.NORMAL:
             # Do not allow text in normal display mode
@@ -186,18 +268,50 @@ class HP_3478A:
             await self.write("D{value:d}{text}\n".format(value=value.value, text=text.rstrip()).encode('ascii'))
 
     async def set_trigger(self, value):
+        """
+        Set the DMM trigger. See page 53 of the manual for details.
+
+        Parameters
+        ----------
+        value: TriggerType
+            The trigger type used when taking measurements.
+        """
         assert isinstance(value, TriggerType)
         await self.write("T{value:d}".format(value=value.value).encode('ascii'))
 
     async def write(self, msg):
-        # The message must not be terminated by a new line or any other character
+        """
+        Write data or commands to the instrument. Do not terminated the command with a new line or
+        carriage return (\r\n).
+
+        Parameters
+        ----------
+        msg: str or bytes
+            The string to be sent to the device.
+        """
         await self.__conn.write(msg)
 
     async def set_srq_mask(self, value):
+        """
+        Set the service interrupt mask. See page 46 of the manual for details.
+
+        Parameters
+        ----------
+        msg: str or bytes
+            The string to be sent to the device.
+        """
         assert isinstance(value, SrqMask)
         await self.write("M{value:02o}".format(value=value.value).encode('ascii'))
 
     async def get_front_rear_switch_position(self):
+        """
+        Check wether the front or rear panel binding posts are active.
+
+        Returns
+        ----------
+        FrontRearSwitchPosition
+            The position of the front/rear swich
+        """
         return FrontRearSwitchPosition(int(await self.__query(b"S")))
 
     async def clear(self):
@@ -214,29 +328,75 @@ class HP_3478A:
         await self.write(b"H0")
 
     async def local(self):
+        """
+        Disable the front panel and allow only GPIB commands.
+        """
         await self.__conn.ibloc()
 
     async def set_function(self, value):
+        """
+        Put the device in a certain measurement mode of either DVC, ACV, Ohms, 4-W Ohms, DCI, ACI or
+        the extented ohms mode. See page 55 of the manual for details on the extended ohms mode.
+
+        Parameters
+        ----------
+        value: FunctionType
+            The function type to be measured.
+        """
         assert isinstance(value, FunctionType)
         await self.write("F{value:d}".format(value=value.value).encode('ascii'))
 
     async def set_autozero(self, enable):
+        """
+        Change the auto-zero mode of the DMM.
+
+        Parameters
+        ----------
+        enable: bool
+            `True` to enable auto-zeroing.
+        """
         assert isinstance(enable, bool)
         await self.write("Z{value:d}".format(value=enable).encode('ascii'))
 
     async def set_number_of_digits(self, value):
-        assert (4 <= value <= 6)
+        """
+        Set the number of digits returned by the DMM. This has an influence on the integration time.
+        See page 15 of the manual for details.
+
+        Parameters
+        ----------
+        value: int
+            A value between 4 and 6.
+        """
+        assert 4 <= value <= 6
         await self.write("N{value:d}".format(value=value-1).encode('ascii'))
 
     async def get_error_register(self):
+        """
+        Get the contents of the error register. See page 62 of the manual for details.
+
+        Returns
+        ----------
+        ErrorFlags
+            The error register flags
+        """
         result = int(await self.__query(b"E"), base=8)    # Convert the octal result to int
         return ErrorFlags(result)
 
     async def set_range(self, value):
+        """
+        Sets the measurement range.
+
+        Parameters
+        ----------
+        value: Range
+            The measurement range.
+        """
         assert isinstance(value, Range)
         await self.write("R{value}".format(value=value.value).encode('ascii'))
 
-    def __calculate_range(self, function, range_value):
+    @staticmethod
+    def __calculate_range(function, range_value):
         # The range Enum is basically the exponent of the range
         # Unfortunately the returned bits depend on the function, so we need to add or subtract according to the
         # DMM function
@@ -250,16 +410,36 @@ class HP_3478A:
             return Range(range_value - 2)
 
     async def get_cal_ram(self):
+        """
+        Read the internal calibration memory from the NVRAM.
+
+        Returns
+        ----------
+        bytes
+            The contents of the calibration ram.
+        """
         result = bytearray()
         for addr in range(256):
             result.append(ord(await self.__query(command=bytes([ord('W'), addr]), length=1)))
         return bytes(result)
 
     async def set_cal_ram(self, data):
+        """
+        Write to the internal NVRAM. Warning: This can brick the device until a valid calibration
+        configuration is written to the NVRAM.
+
+        Parameters
+        ----------
+        data: bytes
+            The data to be written to the calibration memory.
+        """
         for addr, data_block in enumerate(data):
             await self.write(bytes([ord('X'), addr, data_block]))
 
     async def get_status(self):
+        """
+        Read the binary status register of the device. See page 61 of the manual for details.
+        """
         # The "B" command is special. It does not contain a line terminator, the
         # device will output exactly 5 bytes and no more. So we need to read exactly
         # 5 bytes.
@@ -282,5 +462,7 @@ class HP_3478A:
         }
 
     async def serial_poll(self):
+        """
+        Serial poll the device/GPIB controller.
+        """
         return SerialPollFlags(await self.__conn.serial_poll())
-

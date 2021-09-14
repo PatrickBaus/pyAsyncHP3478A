@@ -35,7 +35,7 @@ from pyAsyncHP3478A.HP_3478A import HP_3478A, FunctionType, TriggerType, Range
 from pyAsyncPrologixGpib.pyAsyncPrologixGpib.pyAsyncPrologixGpib import AsyncPrologixGpibEthernetController, EosMode
 from pyAsyncPrologixGpib.pyAsyncPrologixGpib.ip_connection import NetworkError
 if 'pyAsyncPrologixGpib.pyAsyncPrologixGpib.pyAsyncPrologixGpib' in sys.modules:
-    ip_address = '192.168.1.104'
+    ip_address = '127.0.0.1'
     gpib_device = AsyncPrologixGpibEthernetController(ip_address, pad=27, timeout=1000, eos_mode=EosMode.APPEND_NONE)
 
 # Uncomment if using linux-gpib
