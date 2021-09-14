@@ -383,6 +383,13 @@ The `encode_cal_data(data_blocks, cal_enable)` function takes a list with 19 dic
 
 The unused indices may not contain valid data. The instrument will not complain. Typically these are set to `offset=0` and `gain=1.0`.
 
+# Unit Tests
+There are unit tests available for the calram encoder and decoder.
+```bash
+source env/bin/activate  # only if the virtual environment is used
+pytest
+```
+
 ## Thanks
 
 Special thanks goes to [fenugrec](https://github.com/fenugrec/hp3478a_utils) and [Steve Matos](https://github.com/steve1515/hp3478a-calibration) for their work on deciphering the calram function.
