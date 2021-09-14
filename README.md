@@ -115,7 +115,7 @@ ___Raises___
 * Raises an `OverflowError` if the instrument input is overloaded, i.e. returns `+9.99999E+9`.
 
 ```python
-   async def read__all(length=None)
+   async def read_all(length=None)
 ```
 A generator to keep reading values from the instrument.
 
