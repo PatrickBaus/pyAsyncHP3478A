@@ -9,14 +9,12 @@ Python3 AsyncIO HP3478A driver. This library requires Python [asyncio](https://d
 
 Tested using Linux, should work for Mac OSX, Windows and any OS with Python support.
 
-## Setup
-There are currently no packages available. To install the library, clone the repository into your project folder and install the required packages
-
+# Setup
+There are currently no packages available at the PyPi repository. To install the module, clone the repository and run:
 ```bash
 python3 -m venv env  # virtual environment, optional
-source env/bin/activate
-pip install -r requirements.txt
-# pip install -e ~/linux-gpib-code/linux-gpib-user/language/python/
+source env/bin/activate  # only if the virtual environment is used
+python3 setup.py install
 ```
 
 ## Usage
