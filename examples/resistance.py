@@ -26,7 +26,7 @@ import sys
 sys.path.append("..") # Adds main directory to python modules path.
 
 # Devices
-from pyAsyncHP3478A.HP_3478A import HP_3478A, FunctionType, TriggerType, Range
+from hp3478a_async.hp_3478a import HP_3478A, FunctionType, TriggerType, Range
 
 # Create the gpib device. We need a timeout of > 10 PLC (20 ms), because the DMM might reply to a conversion request
 # and unable to reply to a status request during conversion (maximum time 10 PLC)

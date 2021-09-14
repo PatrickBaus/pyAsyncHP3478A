@@ -130,7 +130,7 @@ class SerialPollFlags(Flag):
 # Used to test for numerical return values of the read() command
 numerical_test_pattern = re.compile(rb"^[+-][0-9]+\.[0-9]+[E][+-][0-9]")
 
-class HP_3478A:     # pylint: disable=too-many-public-methods
+class HP_3478A:     # pylint: disable=too-many-public-methods,invalid-name
     """
     The driver for the HP 3478A 5.5 digit multimeter. It support both linux-gpib and the Prologix
     GPIB adapters.
@@ -400,14 +400,17 @@ class HP_3478A:     # pylint: disable=too-many-public-methods
         # The range Enum is basically the exponent of the range
         # Unfortunately the returned bits depend on the function, so we need to add or subtract according to the
         # DMM function
-        if function == FunctionType.DCV:
-            return Range(range_value - 3)
-        elif function == FunctionType.ACV:
-            return Range(range_value - 2)
-        elif function in (FunctionType.OHM, FunctionType.OHMF, FunctionType.OHM_EXT):
-            return Range(range_value + 1)
-        elif function in (FunctionType.DCI, FunctionType.ACI):
-            return Range(range_value - 2)
+        range_value_correction = {
+            FunctionType.DCV: - 3,
+            FunctionType.ACV: -2,
+            FunctionType.OHM: 1,
+            FunctionType.OHMF: 1,
+            FunctionType.OHM_EXT: 1,
+            FunctionType.DCI: -2,
+            FunctionType.ACI: -2
+        }
+
+        return Range(range_value + range_value_correction[function])
 
     async def get_cal_ram(self):
         """
