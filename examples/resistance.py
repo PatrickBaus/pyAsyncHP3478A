@@ -32,10 +32,11 @@ from hp3478a_async.hp_3478a import HP_3478A, FunctionType, TriggerType, Range
 # and unable to reply to a status request during conversion (maximum time 10 PLC)
 
 # Uncomment if using a Prologix GPIB Ethernet adapter
-from pyAsyncPrologixGpib.pyAsyncPrologixGpib.pyAsyncPrologixGpib import AsyncPrologixGpibEthernetController, EosMode
-from pyAsyncPrologixGpib.pyAsyncPrologixGpib.ip_connection import NetworkError
-if 'pyAsyncPrologixGpib.pyAsyncPrologixGpib.pyAsyncPrologixGpib' in sys.modules:
+from prologix_gpib_async.prologix_gpib_async import AsyncPrologixGpibEthernetController, EosMode
+if 'prologix_gpib_async.prologix_gpib_async' in sys.modules:
+    from prologix_gpib_async.ip_connection import NetworkError
     ip_address = '127.0.0.1'
+    ip_address = '192.168.1.104'
     gpib_device = AsyncPrologixGpibEthernetController(ip_address, pad=27, timeout=1000, eos_mode=EosMode.APPEND_NONE)
 
 # Uncomment if using linux-gpib

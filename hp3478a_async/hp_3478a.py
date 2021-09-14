@@ -210,7 +210,7 @@ class HP_3478A:     # pylint: disable=too-many-public-methods,invalid-name
         if length is None:
             result = (await self.__conn.read())[:-2]    # strip the EOT characters (\r\n)
         else:
-            result = await self.__conn.read(len=length)
+            result = await self.__conn.read(length=length)
 
         match = numerical_test_pattern.match(result)
         if match is not None:
@@ -246,7 +246,7 @@ class HP_3478A:     # pylint: disable=too-many-public-methods,invalid-name
 
     async def __query(self, command, length=None):
         await self.write(command)
-        return await self.__conn.read(len=length)
+        return await self.__conn.read(length=length)
 
     async def set_display(self, value, text=""):
         """
