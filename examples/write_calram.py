@@ -27,7 +27,7 @@ import sys
 sys.path.append('..') # Adds main directory to python modules path.
 
 # Devices
-from hp3478a_async.hp_3478a import HP_3478A
+from hp3478a_async import HP_3478A
 from hp3478a_async.hp_3478a_helper import decode_cal_data, encode_cal_data
 
 # Create the gpib device. We need a timeout of > 10 PLC (20 ms), because the DMM might reply to a conversion request
