@@ -26,16 +26,6 @@ from decimal import Decimal
 from enum import Enum, Flag
 import re   # Used to test for numerical return values
 
-class TriggerType(Enum):
-    """
-    The triggers supported by the DMM. See page 53 of the manual for details.
-    """
-    INTERNAL = 1
-    EXTERNAL = 2
-    SINGLE   = 3
-    HOLD     = 4
-    FAST     = 5
-
 class DisplayType(Enum):
     """
     The front panel display settings. See page 12 of the manual for details.
@@ -43,6 +33,13 @@ class DisplayType(Enum):
     NORMAL               = 1
     SHOW_TEXT            = 2
     SHOW_TEXT_AND_FREEZE = 3
+
+class FrontRearSwitchPosition(Enum):
+    """
+    The position of the front/rear binding posts switch on the front panel.
+    """
+    REAR  = 0
+    FRONT = 1
 
 class FunctionType(Enum):
     """
@@ -72,12 +69,15 @@ class Range(Enum):
     RANGE_30MEG = 7
     RANGE_AUTO  = "A"
 
-class FrontRearSwitchPosition(Enum):
+class TriggerType(Enum):
     """
-    The position of the front/rear binding posts switch on the front panel.
+    The triggers supported by the DMM. See page 53 of the manual for details.
     """
-    REAR  = 0
-    FRONT = 1
+    INTERNAL = 1
+    EXTERNAL = 2
+    SINGLE   = 3
+    HOLD     = 4
+    FAST     = 5
 
 class SrqMask(Flag):
     """
