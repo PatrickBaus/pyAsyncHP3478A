@@ -261,7 +261,7 @@ class HP_3478A:     # pylint: disable=too-many-public-methods,invalid-name
         Decimal or float
             The temperature in K
         """
-        return 1 / (a + b * log(value / rt25) + c * log(value / rt25)**2 + d * log(value / rt25)**3) - 273.15
+        return 1 / (a + b * log(value / rt25) + c * log(value / rt25)**2 + d * log(value / rt25)**3)
 
     def __post_process(self, value):
         """
