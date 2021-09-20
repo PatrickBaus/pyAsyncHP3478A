@@ -1,23 +1,12 @@
-import re
 from setuptools import setup
+from hp3478a_async import VERSION
 
 with open('README.md', 'r') as f:
     long_description = f.read()
 
-# Read the version information from the verion file
-VERSION_FILE="hp3478a_async/_version.py"
-VERSION_REGEX = r'^__version__ = [\'"]([^\'"]+)[\'"]$'
-with open(VERSION_FILE, 'r') as f:
-    version = f.read()
-    result = re.search(VERSION_REGEX, version, re.M)
-    if result:
-        version = result.group(1)
-    else:
-        raise RuntimeError('No version string found in file %s.', VERSION_FILE)
-
 setup(
    name='hp3478a_async',
-   version=version,
+   version=VERSION,
    author='Patrick Baus',
    author_email='patrick.baus@physik.tu-darmstadt.de',
    url='https://github.com/PatrickBaus/pyAsyncHP3478A',

@@ -206,7 +206,7 @@ class HP_3478A:     # pylint: disable=too-many-public-methods,invalid-name
         finally:
             await self.__conn.disconnect()
 
-    def set_ntc_parameters(self, a, b, c, d, rt25):
+    def set_ntc_parameters(self, a, b, c, d, rt25):     # pylint: disable=too-many-arguments
         """
         Set the parameters used when in mode `FunctionType.NTC` or
         `FunctionType.NTCF`. The formula for convering resistance values to
@@ -235,7 +235,8 @@ class HP_3478A:     # pylint: disable=too-many-public-methods,invalid-name
             'rt25': rt25
         }
 
-    def __convert_thermistor_to_temperature(self, value, a, b, c, d, rt25):
+    @staticmethod
+    def __convert_thermistor_to_temperature(value, a, b, c, d, rt25):     #pylint: disable=too-many-arguments
         """
         Convert a resistance to temperature using the formula
         1/T=a+b*Log(Rt/R25)+c*Log(Rt/R25)**2+d*Log(Rt/R25)**3
