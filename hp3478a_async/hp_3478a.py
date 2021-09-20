@@ -24,6 +24,7 @@ This is a asyncIO driver for the HP 3478A DMM to abstract away the GPIB interfac
 import asyncio
 from decimal import Decimal
 from enum import Enum, Flag
+from math import log
 import re   # Used to test for numerical return values
 
 class DisplayType(Enum):
@@ -52,6 +53,8 @@ class FunctionType(Enum):
     DCI     = 5
     ACI     = 6
     OHM_EXT = 7
+    NTC     = 8
+    NTCF    = 9
 
 class Range(Enum):
     """
@@ -147,6 +150,16 @@ class HP_3478A:     # pylint: disable=too-many-public-methods,invalid-name
 
     def __init__(self, connection):
         self.__conn = connection
+        self.__special_function = None
+        # Default constants taken from Amphenol DC95 (Material Type 10kY)
+        # https://f.hubspotusercontent40.net/hubfs/9035299/Product%20Documents/AAS-913-318C-Temperature-resistance-curves-071816-web%20(1).pdf
+        self.__ntc_parameters = {
+            'rt25': 10*10**3,
+            'a': 3.3540153*10**-3,
+            'b': 2.7867185*10**-4,
+            'c': 4.0006637*10**-6,
+            'd': 1.5575628*10**-7
+        }
 
     async def __aenter__(self):
         await self.connect()
@@ -193,6 +206,80 @@ class HP_3478A:     # pylint: disable=too-many-public-methods,invalid-name
         finally:
             await self.__conn.disconnect()
 
+    def set_ntc_parameters(self, a, b, c, d, rt25):
+        """
+        Set the parameters used when in mode `FunctionType.NTC` or
+        `FunctionType.NTCF`. The formula for convering resistance values to
+        temperature is:
+        1/T=a+b*Log(Rt/R25)+c*Log(Rt/R25)**2+d*Log(Rt/R25)**3
+
+        Parameters
+        ----------
+        a: float
+            See formula
+        b: float
+            See formula
+        c: float
+            See formula
+        d: float
+            See formula
+        rt25: int
+            The resistance at 25 °C
+        """
+        assert all([rt25 > 0, a > 0, b > 0, c > 0, d > 0])
+        self.__ntc_parameters = {
+            'a': a,
+            'b': b,
+            'c': c,
+            'd': d,
+            'rt25': rt25
+        }
+
+    def __convert_thermistor_to_temperature(self, value, a, b, c, d, rt25):
+        """
+        Convert a resistance to temperature using the formula
+        1/T=a+b*Log(Rt/R25)+c*Log(Rt/R25)**2+d*Log(Rt/R25)**3
+
+        Parameters
+        ----------
+        value: Decimal or float
+            The resistance of the NTC
+        a: float
+            See formula
+        b: float
+            See formula
+        c: float
+            See formula
+        d: float
+            See formula
+        rt25: int
+            The resistance at 25 °C
+
+        Returns
+        -------
+        Decimal or float
+            The temperature in K
+        """
+        return 1 / (a + b * log(value / rt25) + c * log(value / rt25)**2 + d * log(value / rt25)**3) - 273.15
+
+    def __post_process(self, value):
+        """
+        Post process the DMM value, if a special function was selected using `set_function()`.
+        Returns the unmodified value if no special function was selected.
+
+        Parameters
+        ----------
+        value: Decimal or float
+            The vlaue to post process
+        Returns
+        -------
+        Decimal or float
+            the post processed value
+        """
+        if self.__special_function is not None:
+            return self.__convert_thermistor_to_temperature(value, **self.__ntc_parameters)
+        return value
+
     async def read(self, length=None):
         """
         Read a single value from the device. If `length' is given, read `length` bytes, else
@@ -217,7 +304,7 @@ class HP_3478A:     # pylint: disable=too-many-public-methods,invalid-name
         if match is not None:
             if match[0] == b"+9.99999E+9":
                 raise OverflowError("DMM input overloaded")
-            return Decimal(match[0].decode('ascii'))
+            return self.__post_process(Decimal(match[0].decode('ascii')))
         return result   # else return the bytes
 
     async def read_all(self, length=None):
@@ -345,6 +432,12 @@ class HP_3478A:     # pylint: disable=too-many-public-methods,invalid-name
             The function type to be measured.
         """
         value = FunctionType(value)
+        if value in (FunctionType.NTC, FunctionType.NTCF):
+            self.__special_function = value
+            # Convert to OHM/OHMF
+            value = FunctionType(((value.value - 8 ) % 2) + 3)
+        else:
+            self.__special_function = None
         await self.write("F{value:d}".format(value=value.value).encode('ascii'))
 
     async def set_autozero(self, enable):
