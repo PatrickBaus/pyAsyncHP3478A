@@ -158,7 +158,8 @@ class HP_3478A:     # pylint: disable=too-many-public-methods,invalid-name
     async def get_id(self):
         """
         The HP 3478A does not support an ID request, so we will report a constant for compatibility
-        reasons. The method is not async, but again for compatibility reason chose to be.
+        reasons. The method is not async, but again for compatibility reasons with other drivers,
+        it is declared async.
         """
         return "HP3478A"
 
@@ -259,7 +260,7 @@ class HP_3478A:     # pylint: disable=too-many-public-methods,invalid-name
         text: str
             The text to display if `value` is not set to DisplayType.NORMAL.
         """
-        assert isinstance(value, DisplayType)
+        value = DisplayType(value)
         if value == DisplayType.NORMAL:
             # Do not allow text in normal display mode
             await self.write("D{value:d}".format(value=value.value).encode('ascii'))
@@ -276,7 +277,7 @@ class HP_3478A:     # pylint: disable=too-many-public-methods,invalid-name
         value: TriggerType
             The trigger type used when taking measurements.
         """
-        assert isinstance(value, TriggerType)
+        value = TriggerType(value)
         await self.write("T{value:d}".format(value=value.value).encode('ascii'))
 
     async def write(self, msg):
@@ -300,7 +301,7 @@ class HP_3478A:     # pylint: disable=too-many-public-methods,invalid-name
         msg: str or bytes
             The string to be sent to the device.
         """
-        assert isinstance(value, SrqMask)
+        value = SrqMask(value)
         await self.write("M{value:02o}".format(value=value.value).encode('ascii'))
 
     async def get_front_rear_switch_position(self):
@@ -343,7 +344,7 @@ class HP_3478A:     # pylint: disable=too-many-public-methods,invalid-name
         value: FunctionType
             The function type to be measured.
         """
-        assert isinstance(value, FunctionType)
+        value = FunctionType(value)
         await self.write("F{value:d}".format(value=value.value).encode('ascii'))
 
     async def set_autozero(self, enable):
@@ -355,7 +356,7 @@ class HP_3478A:     # pylint: disable=too-many-public-methods,invalid-name
         enable: bool
             `True` to enable auto-zeroing.
         """
-        assert isinstance(enable, bool)
+        enable = bool(enable)
         await self.write("Z{value:d}".format(value=enable).encode('ascii'))
 
     async def set_number_of_digits(self, value):
@@ -368,6 +369,7 @@ class HP_3478A:     # pylint: disable=too-many-public-methods,invalid-name
         value: int
             A value between 4 and 6.
         """
+        value = int(value)
         assert 4 <= value <= 6
         await self.write("N{value:d}".format(value=value-1).encode('ascii'))
 
@@ -392,7 +394,7 @@ class HP_3478A:     # pylint: disable=too-many-public-methods,invalid-name
         value: Range
             The measurement range.
         """
-        assert isinstance(value, Range)
+        value = Range(value)
         await self.write("R{value}".format(value=value.value).encode('ascii'))
 
     @staticmethod
