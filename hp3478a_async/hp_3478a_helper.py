@@ -37,6 +37,7 @@ def format_cal_string(data):
     """
     return "\n".join([(data[i:i+16]).decode() for i in range(0, len(data), 16)])
 
+
 def _decode_bcd_8421(data):
     result = 0
     for i, value in enumerate(reversed(data)):
@@ -44,8 +45,10 @@ def _decode_bcd_8421(data):
 
     return result
 
+
 def _encode_bcd_8421(value):
     return [int(i) for i in str(value)]
+
 
 def _decode_offset_data(data):
     # The offset is BCD 8421 encoded, so only 4 bits are required per number
@@ -57,6 +60,7 @@ def _decode_offset_data(data):
     result = result if result < 900000 else result - 1000000
     return result
 
+
 def _encode_offset_data(value):
     assert -100000 <= value <= 899999
 
@@ -64,28 +68,30 @@ def _encode_offset_data(value):
     # The offset is BCD 8421 encoded, so only 4 bits are required per number
     # not a full byte
     result = _encode_bcd_8421(value)
-    # Pad with null bytes to return a bytestring of lenth 6
+    # Pad with null bytes to return a bytestring of length 6
     return [0] * (6 - len(result)) + result
 
+
 def _decode_gain_data(data):
-    # The gain is BCD 8421 encoded. Additionally each byte is a
+    # The gain is BCD 8421 encoded. Additionally, each byte is a
     # 4-bit two's complement signed number, hence if the 4th bit is set,
-    # the number is negative. Finally the gain is given in ppm offset from 1.
+    # the number is negative. Finally, the gain is given in ppm offset from 1.
     # Start by decoding the two's complement
-    #print(data)
     result_raw = [value-0x10 if value & 0x08 else value for value in data]
     # Then decode the BCD 8421
     result_raw = _decode_bcd_8421(result_raw)
     # finally convert it to the gain
     return 1. + (result_raw / 10**6)
 
+
 def _encode_digit(number):
     result = [int(x) for x in str(number)]
     result = [0] * (2 - len(result)) + result
     if result[1] > 5:
-        result [0] += 1
-        result[1] = result[1] - 10
+        result[0] += 1
+        result[1] -= 10
     return result
+
 
 def _encode_gain_data(value):
     # Encoding the gain is a little more tricky than decoding. The data that needs to be encoded is
@@ -113,28 +119,30 @@ def _encode_gain_data(value):
     value = int(round((value - 1.) * 10**6))
 
     digits = _encode_bcd_8421(abs(value))
-    # Pad with null bytes to return a bytestring of lenth 5
+    # Pad with null bytes to return a bytestring of length 5
     digits = [0] * (5 - len(digits)) + digits
     result = [0] * 5
 
     for idx in reversed(range(len(digits))):
         carry, digit = _encode_digit(result[idx]+digits[idx])
         result[idx] = digit
-        if idx==0 and carry != 0:
+        if idx == 0 and carry != 0:
             raise OverflowError()
         result[idx-1] += carry
 
-    result = [num if num>=0 else num+16 for num in result]
+    result = [num if num >= 0 else num+16 for num in result]
 
     if value < 0:
         result = [(~item + 1) & 0xF for item in result]
     return result
+
 
 def _calculate_cal_checksum(data):
     # The checksum is 0xFF minus the sum over the 11 data bytes
     calculated_checksum = 0xFF - (sum(data[:11]) & 0xFF)   # We need to truncate to uin8_t
 
     return calculated_checksum
+
 
 def _decode_data_block(data_block):
     calculated_checksum = _calculate_cal_checksum(data_block)
@@ -149,6 +157,7 @@ def _decode_data_block(data_block):
         "checksum": checksum,
         "isValid": calculated_checksum == checksum,
     }
+
 
 def decode_cal_data(encoded_data):
     """
@@ -165,7 +174,7 @@ def decode_cal_data(encoded_data):
         encoded_data = encoded_data.encode("ascii")
     # The first nibble (4 bit, half-byte) contains the position of the front panel "CAL ENABLE" switch
     # data[0] = 0x0 if(CAL ENABLE) else 0xF
-    # This byte does not contribute to the checksum and needs to removed
+    # This byte does not contribute to the checksum and needs to be removed
     # The last 8 bytes are unused as well
     # The actual data is 19 blocks (one for calibration entry) of 11 bytes data + 2 bytes checksum = 247 bytes
     # Three blocks are not used for data, so their checksums do not matter: Blocks 6, 17 and 19
@@ -179,7 +188,7 @@ def decode_cal_data(encoded_data):
 
     # Strip off non-data bytes
     data = data[1:248]
-    # Split the the string into substrings of length block_size
+    # Split the string into substrings of length block_size
     data_blocks = [(data[i:i+block_size]) for i in range(0, len(data), block_size)]
 
     # Now decode the data block
@@ -187,12 +196,14 @@ def decode_cal_data(encoded_data):
     # 2. decode the block and split it into its 3 components
     return is_cal_enabled, [_decode_data_block(data_block) for data_block in data_blocks]
 
+
 def _encode_data_block(data_block):
     result = _encode_offset_data(data_block["offset"]) + _encode_gain_data(data_block["gain"])
     checksum = _calculate_cal_checksum(result)
     result += [(checksum >> 4) & 0xF, (checksum >> 0) & 0xF]
 
     return [value+0x40 for value in result]
+
 
 def encode_cal_data(data_blocks, cal_enable):
     """
@@ -216,6 +227,6 @@ def encode_cal_data(data_blocks, cal_enable):
     for encoded_data_block in encoded_data_blocks:
         result += encoded_data_block
 
-    # Finally pad with the cal_enable byte at the beginning and 8 0 bytes at the end
+    # Finally, pad with the cal_enable byte at the beginning and 8 0 bytes at the end
     result = [0xF*bool(not cal_enable) + 0x40] + result + [0 + 0x40] * 8
     return bytes(result)

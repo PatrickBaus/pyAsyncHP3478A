@@ -27,50 +27,55 @@ from enum import Enum, Flag
 from math import log
 import re   # Used to test for numerical return values
 
+
 class DisplayType(Enum):
     """
     The front panel display settings. See page 12 of the manual for details.
     """
-    NORMAL               = 1
-    SHOW_TEXT            = 2
+    NORMAL = 1
+    SHOW_TEXT = 2
     SHOW_TEXT_AND_FREEZE = 3
+
 
 class FrontRearSwitchPosition(Enum):
     """
     The position of the front/rear binding posts switch on the front panel.
     """
-    REAR  = 0
+    REAR = 0
     FRONT = 1
+
 
 class FunctionType(Enum):
     """
-    The measurement functions. See page 55 of the extented ohms setting.
+    The measurement functions. See page 55 of the extended ohms setting.
     """
-    DCV     = 1
-    ACV     = 2
-    OHM     = 3
-    OHMF    = 4
-    DCI     = 5
-    ACI     = 6
+    DCV = 1
+    ACV = 2
+    OHM = 3
+    OHMF = 4
+    DCI = 5
+    ACI = 6
     OHM_EXT = 7
-    NTC     = 8
-    NTCF    = 9
+    NTC = 8
+    NTCF = 9
+
 
 class Range(Enum):
     """
     The measurement range of the device. See page 20 of the manual for details.
     """
-    RANGE_30M   = -2
-    RANGE_300M  = -1
-    RANGE_3     = 0
-    RANGE_30    = 1
-    RANGE_300   = 2
-    RANGE_3k    = 3     # small k due to SI pylint: disable=invalid-name
-    RANGE_30k   = 4     # small k due to SI pylint: disable=invalid-name
-    RANGE_300k  = 5     # small k due to SI pylint: disable=invalid-name
-    RANGE_3MEG  = 6
+    RANGE_30M = -2
+    RANGE_300M = -1
+    RANGE_3 = 0
+    RANGE_30 = 1
+    RANGE_300 = 2
+    RANGE_3k = 3     # small k due to SI pylint: disable=invalid-name
+    RANGE_30k = 4     # small k due to SI pylint: disable=invalid-name
+    RANGE_300k = 5     # small k due to SI pylint: disable=invalid-name
+    RANGE_3MEG = 6
     RANGE_30MEG = 7
-    RANGE_AUTO  = "A"
+    RANGE_AUTO = "A"
+
 
 class TriggerType(Enum):
     """
@@ -78,64 +83,70 @@ class TriggerType(Enum):
     """
     INTERNAL = 1
     EXTERNAL = 2
-    SINGLE   = 3
-    HOLD     = 4
-    FAST     = 5
+    SINGLE = 3
+    HOLD = 4
+    FAST = 5
+
 
 class SrqMask(Flag):
     """
     The service interrupt register flags. See page 46 of the manual for details.
     """
-    NONE                = 0b0
-    DATA_READY          = 0b1
-    SYNTAX_ERROR        = 0b100
-    HARDWARE_ERROR      = 0b1000
-    FRONT_PANEL_SRQ     = 0b10000
+    NONE = 0b0
+    DATA_READY = 0b1
+    SYNTAX_ERROR = 0b100
+    HARDWARE_ERROR = 0b1000
+    FRONT_PANEL_SRQ = 0b10000
     CALIBRATION_FAILURE = 0b100000
+
 
 class ErrorFlags(Flag):
     """
     The error register flags. See page 62 of the manual for details.
     """
-    NONE                 = 0b0
-    CAL_RAM_CHECKSUM     = 0b1
-    RAM_FAILURE          = 0b10
-    ROM_FAILURE          = 0b100
+    NONE = 0b0
+    CAL_RAM_CHECKSUM = 0b1
+    RAM_FAILURE = 0b10
+    ROM_FAILURE = 0b100
     AD_SLOPE_CONVERGENCE = 0b1000
-    AD_SELFTEST_FAILURE  = 0b10000
-    AD_LINK_FAILURE      = 0b100000
+    AD_SELFTEST_FAILURE = 0b10000
+    AD_LINK_FAILURE = 0b100000
+
 
 class StatusFlags(Flag):
     """
     The device status register flags. See page 47 of the manual for details.
     """
-    NONE                     = 0b0
+    NONE = 0b0
     INTERNAL_TRIGGER_ENABLED = 0b1
-    AUTO_RANGE_ENABLED       = 0b10
-    AUTO_ZERO_ENABLED        = 0b100
-    LINE_FREQUENCY_50_HZ     = 0b1000
-    FRONT_SWITCH_ENABLED     = 0b10000
-    CAL_RAM_ENABLED          = 0b100000
+    AUTO_RANGE_ENABLED = 0b10
+    AUTO_ZERO_ENABLED = 0b100
+    LINE_FREQUENCY_50_HZ = 0b1000
+    FRONT_SWITCH_ENABLED = 0b10000
+    CAL_RAM_ENABLED = 0b100000
     EXTERNAL_TRIGGER_ENABLED = 0b1000000
+
 
 class SerialPollFlags(Flag):
     """
     The serial poll flags as returned by SPOLL. See page 50 of the manual for details.
     """
-    NONE                  = 0b0
-    SRQ_ON_READING        = 0b1
-    SRQ_ON_SYNTAX_ERROR   = 0b10
+    NONE = 0b0
+    SRQ_ON_READING = 0b1
+    SRQ_ON_SYNTAX_ERROR = 0b10
     SRQ_ON_HARDWARE_ERROR = 0b100
-    SRQ_ON_SRQ_BUTTON     = 0b1000
-    SRQ_ON_CAL_FAILURE    = 0b10000
-    SRQ_ON_POWER_ON       = 0b1000000
+    SRQ_ON_SRQ_BUTTON = 0b1000
+    SRQ_ON_CAL_FAILURE = 0b10000
+    SRQ_ON_POWER_ON = 0b1000000
+
 
 # Used to test for numerical return values of the read() command
-numerical_test_pattern = re.compile(rb"^[+-][0-9]+\.[0-9]+[E][+-][0-9]")
+numerical_test_pattern = re.compile(rb"^[+-]\d+\.\d+E[+-]\d")
+
 
 class HP_3478A:     # pylint: disable=too-many-public-methods,invalid-name
     """
-    The driver for the HP 3478A 5.5 digit multimeter. It support both linux-gpib and the Prologix
+    The driver for the HP 3478A 5.5 digit multimeter. It supports both linux-gpib and the Prologix
     GPIB adapters.
     """
     @property
@@ -152,7 +163,7 @@ class HP_3478A:     # pylint: disable=too-many-public-methods,invalid-name
         self.__conn = connection
         self.__special_function = None
         # Default constants taken from Amphenol DC95 (Material Type 10kY)
-        # https://f.hubspotusercontent40.net/hubfs/9035299/Product%20Documents/AAS-913-318C-Temperature-resistance-curves-071816-web%20(1).pdf
+        # https://www.amphenol-sensors.com/hubfs/Documents/AAS-913-318C-Temperature-resistance-curves-071816-web.pdf
         self.__ntc_parameters = {
             'rt25': 10*10**3,
             'a': 3.3540153*10**-3,
@@ -209,7 +220,7 @@ class HP_3478A:     # pylint: disable=too-many-public-methods,invalid-name
     def set_ntc_parameters(self, a, b, c, d, rt25):     # pylint: disable=too-many-arguments
         """
         Set the parameters used when in mode `FunctionType.NTC` or
-        `FunctionType.NTCF`. The formula for convering resistance values to
+        `FunctionType.NTCF`. The formula for converting resistance values to
         temperature is:
         1/T=a+b*Log(Rt/R25)+c*Log(Rt/R25)**2+d*Log(Rt/R25)**3
 
@@ -236,7 +247,7 @@ class HP_3478A:     # pylint: disable=too-many-public-methods,invalid-name
         }
 
     @staticmethod
-    def __convert_thermistor_to_temperature(value, a, b, c, d, rt25):     #pylint: disable=too-many-arguments
+    def __convert_thermistor_to_temperature(value, a, b, c, d, rt25):     # pylint: disable=too-many-arguments
         """
         Convert a resistance to temperature using the formula
         1/T=a+b*Log(Rt/R25)+c*Log(Rt/R25)**2+d*Log(Rt/R25)**3
@@ -265,17 +276,17 @@ class HP_3478A:     # pylint: disable=too-many-public-methods,invalid-name
 
     def __post_process(self, value):
         """
-        Post process the DMM value, if a special function was selected using `set_function()`.
+        Postprocess the DMM value, if a special function was selected using `set_function()`.
         Returns the unmodified value if no special function was selected.
 
         Parameters
         ----------
         value: Decimal or float
-            The vlaue to post process
+            The value to postprocess
         Returns
         -------
         Decimal or float
-            the post processed value
+            the postprocessed value
         """
         if self.__special_function is not None:
             return self.__convert_thermistor_to_temperature(value, **self.__ntc_parameters)
@@ -310,7 +321,7 @@ class HP_3478A:     # pylint: disable=too-many-public-methods,invalid-name
 
     async def read_all(self, length=None):
         """
-        Read a all values from the device. If `length' is given, read `length` bytes, else
+        Read all values from the device. If `length' is given, read `length` bytes, else
         read until a line break, then yield the result.
 
         Parameters
@@ -326,7 +337,7 @@ class HP_3478A:     # pylint: disable=too-many-public-methods,invalid-name
         await self.set_srq_mask(SrqMask.DATA_READY)     # Enable a GPIB interrupt when the conversion is done
         while 'loop not cancelled':
             try:
-                await self.connection.wait((1 << 11) | (1<<14))
+                await self.connection.wait((1 << 11) | (1 << 14))
                 result = await self.read(length)
                 yield result
             except asyncio.TimeoutError:
@@ -370,7 +381,7 @@ class HP_3478A:     # pylint: disable=too-many-public-methods,invalid-name
 
     async def write(self, msg):
         """
-        Write data or commands to the instrument. Do not terminated the command with a new line or
+        Write data or commands to the instrument. Do not terminate the command with a new line or
         carriage return (\r\n).
 
         Parameters
@@ -386,8 +397,8 @@ class HP_3478A:     # pylint: disable=too-many-public-methods,invalid-name
 
         Parameters
         ----------
-        msg: str or bytes
-            The string to be sent to the device.
+        value: SrqMask
+            The service request register setting.
         """
         value = SrqMask(value)
         await self.write("M{value:02o}".format(value=value.value).encode('ascii'))
@@ -425,7 +436,7 @@ class HP_3478A:     # pylint: disable=too-many-public-methods,invalid-name
     async def set_function(self, value):
         """
         Put the device in a certain measurement mode of either DVC, ACV, Ohms, 4-W Ohms, DCI, ACI or
-        the extented ohms mode. See page 55 of the manual for details on the extended ohms mode.
+        the extended ohms mode. See page 55 of the manual for details on the extended ohms mode.
 
         Parameters
         ----------
@@ -436,7 +447,7 @@ class HP_3478A:     # pylint: disable=too-many-public-methods,invalid-name
         if value in (FunctionType.NTC, FunctionType.NTCF):
             self.__special_function = value
             # Convert to OHM/OHMF
-            value = FunctionType(((value.value - 8 ) % 2) + 3)
+            value = FunctionType(((value.value - 8) % 2) + 3)
         else:
             self.__special_function = None
         await self.write("F{value:d}".format(value=value.value).encode('ascii'))
