@@ -34,13 +34,13 @@ from hp3478a_async.hp_3478a_helper import decode_cal_data, encode_cal_data
 # and unable to reply to a status request during conversion (maximum time 10 PLC)
 
 # Uncomment if using a Prologix GPIB Ethernet adapter
-#from prologix_gpib_async.prologix_gpib_async import AsyncPrologixGpibEthernetController, EosMode
-if 'prologix_gpib_async.prologix_gpib_async' in sys.modules:
+from prologix_gpib_async import AsyncPrologixGpibEthernetController, EosMode
+if 'prologix_gpib_async' in sys.modules:
     ip_address = '127.0.0.1'
     gpib_device = AsyncPrologixGpibEthernetController(ip_address, pad=27, timeout=1000, eos_mode=EosMode.APPEND_NONE)
 
 # Uncomment if using linux-gpib
-from pyAsyncGpib.pyAsyncGpib.AsyncGpib import AsyncGpib
+#from pyAsyncGpib.AsyncGpib import AsyncGpib
 if 'pyAsyncGpib.pyAsyncGpib.AsyncGpib' in sys.modules:
     # Set the timeout to 1 second (T1s=11)
     gpib_device = AsyncGpib(name=0, pad=27, timeout=11)    # NI GPIB adapter
@@ -55,7 +55,7 @@ async def main():
         await hp3478a.clear()   # flush all buffers
         is_cal_enabled, data = decode_cal_data(result)   # decode to dict
         data[5]["gain"] = 1.    # Modify entry 5 (Note: This entry is not used, adjust to your liking)
-        result = encode_cal_data(data, cal_enable=is_cal_enabled)  # reencode caldata
+        result = encode_cal_data(data, cal_enable=is_cal_enabled)  # re-encode caldata
 
         await hp3478a.set_cal_ram(result)
         logging.getLogger(__name__).info('Calibration data written to DMM')
@@ -73,4 +73,3 @@ try:
 except KeyboardInterrupt:
     # The loop will be canceled on a KeyboardInterrupt by the run() method, we just want to suppress the exception
     pass
-

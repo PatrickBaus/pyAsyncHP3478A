@@ -32,9 +32,8 @@ from hp3478a_async import HP_3478A, FunctionType, TriggerType, Range
 # and unable to reply to a status request during conversion (maximum time 10 PLC)
 
 # Uncomment if using a Prologix GPIB Ethernet adapter
-from prologix_gpib_async.prologix_gpib_async import AsyncPrologixGpibEthernetController, EosMode
+from prologix_gpib_async import AsyncPrologixGpibEthernetController, EosMode
 if 'prologix_gpib_async.prologix_gpib_async' in sys.modules:
-    from prologix_gpib_async.ip_connection import NetworkError
     ip_address = '127.0.0.1'
     gpib_device = AsyncPrologixGpibEthernetController(ip_address, pad=27, timeout=1000, eos_mode=EosMode.APPEND_NONE)
 
@@ -69,7 +68,7 @@ async def main():
                 logging.getLogger(__name__).info(result)
 
     # Catch errors from the Prologix IP connection
-    except (ConnectionError, ConnectionRefusedError, NetworkError):
+    except (ConnectionError, ConnectionRefusedError):
         logging.getLogger(__name__).error('Could not connect to remote target. Connection refused. Is the device connected?')
 
 # Report all mistakes managing asynchronous resources.
@@ -85,4 +84,3 @@ try:
 except KeyboardInterrupt:
     # The loop will be canceled on a KeyboardInterrupt by the run() method, we just want to suppress the exception
     pass
-
