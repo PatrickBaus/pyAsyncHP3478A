@@ -23,8 +23,6 @@ import logging
 import warnings
 import sys
 
-sys.path.append("..") # Adds main directory to python modules path.
-
 # Devices
 from hp3478a_async import HP_3478A, FunctionType, TriggerType, Range
 
@@ -33,7 +31,7 @@ from hp3478a_async import HP_3478A, FunctionType, TriggerType, Range
 
 # Uncomment if using a Prologix GPIB Ethernet adapter
 from prologix_gpib_async import AsyncPrologixGpibEthernetController, EosMode
-if 'prologix_gpib_async.prologix_gpib_async' in sys.modules:
+if 'prologix_gpib_async' in sys.modules:
     ip_address = '127.0.0.1'
     gpib_device = AsyncPrologixGpibEthernetController(ip_address, pad=27, timeout=1000, eos_mode=EosMode.APPEND_NONE)
 

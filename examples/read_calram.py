@@ -24,8 +24,6 @@ import logging
 import warnings
 import sys
 
-sys.path.append('..') # Adds main directory to python modules path.
-
 # Devices
 from hp3478a_async import HP_3478A
 from hp3478a_async.hp_3478a_helper import format_cal_string, decode_cal_data

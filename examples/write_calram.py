@@ -24,8 +24,6 @@ import logging
 import warnings
 import sys
 
-sys.path.append('..') # Adds main directory to python modules path.
-
 # Devices
 from hp3478a_async import HP_3478A
 from hp3478a_async.hp_3478a_helper import decode_cal_data, encode_cal_data
@@ -51,7 +49,7 @@ async def main():
     async with aiofiles.open('calram.bin', mode='r') as filehandle:
         result = (await filehandle.read()).replace('\n', '')
 
-    async with HP_3478A(connection=gpib_device) as hp3478a
+    async with HP_3478A(connection=gpib_device) as hp3478a:
         await hp3478a.clear()   # flush all buffers
         is_cal_enabled, data = decode_cal_data(result)   # decode to dict
         data[5]["gain"] = 1.    # Modify entry 5 (Note: This entry is not used, adjust to your liking)

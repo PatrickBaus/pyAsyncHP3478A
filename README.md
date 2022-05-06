@@ -14,7 +14,7 @@ There are currently no packages available at the PyPi repository. To install the
 ```bash
 python3 -m venv env  # virtual environment, optional
 source env/bin/activate  # only if the virtual environment is used
-pip install -e git+https://github.com/PatrickBaus/pyAsyncHP3478A#egg=pyAsyncHP3478A
+pip install -e git+https://github.com/PatrickBaus/pyAsyncHP3478A#egg=hp3478a_async
 ```
 
 ## Usage
