@@ -1,5 +1,5 @@
 # pyAsyncHP3478A
-Python3 AsyncIO HP3478A driver. This library requires Python [asyncio](https://docs.python.org/3/library/asyncio.html) and AsyncIO library for the GPIB adapter. It also supports several undocuments functions for reading status registers and reading, modifying and writing the calibration memory.
+Python3 AsyncIO HP3478A driver. This library requires Python [asyncio](https://docs.python.org/3/library/asyncio.html) and AsyncIO library for the GPIB adapter. It also supports several undocumented functions for reading status registers and reading, modifying and writing the calibration memory.
 
 ## Supported GPIB Hardware
 |Device|Supported|Tested|Comments|
@@ -14,19 +14,19 @@ There are currently no packages available at the PyPi repository. To install the
 ```bash
 python3 -m venv env  # virtual environment, optional
 source env/bin/activate  # only if the virtual environment is used
-python3 setup.py install
+pip install -e git+https://github.com/PatrickBaus/pyAsyncHP3478A#egg=pyAsyncHP3478A
 ```
 
 ## Usage
-All examples assume, that the GPIB library is copied to the same root folder as the library. Either run
+All examples assume, that a GPIB library is installed as well. Either run
 ```bash
-git clone https://github.com/PatrickBaus/pyAsyncPrologixGpib    # or alternativeliy
-# git clone https://github.com/PatrickBaus/pyAsyncGpib
+pip install -e git+https://github.com/PatrickBaus/pyAsyncPrologixGpib#egg=prologix_gpib_async    # or alternatively
+# pip install -e git+https://github.com/PatrickBaus/pyAsyncGpib#egg=pyAsyncGpib
 ```
-or download the source code from the git repository and copy it yourself.
+or download the source code from the git repository and copy it to the root folder yourself.
 
-The library used a an asynchronous context manager to make cleanup easier. You can use either the
-contect manager syntax or invoke the calls manually:
+The library uses an asynchronous context manager to make cleanup easier. You can use either the
+context manager syntax or invoke the calls manually:
 
 ```python
 async with HP_3478A(connection=gpib_device) as hp3478a:
@@ -44,19 +44,18 @@ finally:
 
 A more complete example for reading voltages:
 ```python
-from pyAsyncHP3478A.HP_3478A import HP_3478A, FunctionType, TriggerType, Range
+from pyAsyncHP3478A import HP_3478A, FunctionType, TriggerType, Range
 
-from pyAsyncPrologixGpib.pyAsyncPrologixGpib.pyAsyncPrologixGpib import AsyncPrologixGpibEthernetController, EosMode
-from pyAsyncPrologixGpib.pyAsyncPrologixGpib.ip_connection import ConnectionLostError, NetworkError
+from pyAsyncPrologixGpib import AsyncPrologixGpibEthernetController, EosMode
 
-# The default GPIB address is 27. The ip address of the prologix controller needs to changed.
+# The default GPIB address is 27. The ip address of the prologix controller needs to be changed.
 ip_address = '127.0.0.1'
 gpib_device = AsyncPrologixGpibEthernetController(ip_address, pad=27, timeout=1000, eos_mode=EosMode.APPEND_NONE)
 
 # This example will print voltage data to the console
 async def main():
     try: 
-        # No need to explicitely bring up the GPIB connection. This will be done by the instrument.
+        # No need to explicitly bring up the GPIB connection. This will be done by the instrument.
         async with HP_3478A(connection=gpib_device) as hp3478a:
             await asyncio.gather(
                 hp3478a.set_function(FunctionType.DCV),      # Set to 4-wire ohm
@@ -70,7 +69,7 @@ async def main():
             # Take the measurements until Ctrl+C is pressed
             async for result in hp3478a.read_all():
                 print(result)
-    except (ConnectionError, ConnectionRefusedError, NetworkError):
+    except (ConnectionError, ConnectionRefusedError):
         logging.getLogger(__name__).error('Could not connect to remote target. Connection refused. Is the device connected?')
 
 try:
@@ -170,15 +169,15 @@ ___Returns___
 ```python
    async def get_front_rear_switch_position()
 ```
-Get the selected inpunt. The instrument has front and rear inputs.
+Get the selected input. The instrument has front and rear inputs.
 
 ___Returns___
-* [[FrontRearSwitchPosition](#frontrearswitchposition)] : The position of the the Front/Rear switch on the front panel.
+* [[FrontRearSwitchPosition](#frontrearswitchposition)] : The position of the Front/Rear switch on the front panel.
 
 ```python
    async def set_function(value)
 ```
-Set the instrument measurment mode.
+Set the instrument measurement mode.
 
 ___Arguments___
 * `value` [[FunctionType](#functiontype)] : See the manual for details on the supported options. Accepts the [FunctionType](#functiontype) enum detailed below.
@@ -220,7 +219,7 @@ Place the instrument in DCV, autorange, autozero, single trigger, 4.5 digits mod
 ```python
    async def local()
 ```
-Enable the front panel buttons, if they the instrument is in local lock out.
+Enable the front panel buttons, if the instrument is in local lockout.
 
 ```python
    async def get_error_register()
@@ -381,7 +380,7 @@ Each dictionary contains the following entries: `offset`, `gain`, `checksum` and
 
 The `encode_cal_data(data_blocks, cal_enable)` function takes a list with 19 dicts like above. In this case the dict may only contain the `offset` and `gain` all other values will be ignored. The checksum will be calculated by the function. The `cal_enable` boolean must be set to enable writing to the calibration memory.
 
-The unused indices may not contain valid data. The instrument will not complain. Typically these are set to `offset=0` and `gain=1.0`.
+The unused indices may not contain valid data. The instrument will not complain. Typically, these are set to `offset=0` and `gain=1.0`.
 
 # Unit Tests
 There are unit tests available for the calram encoder and decoder.
@@ -406,4 +405,3 @@ I use [SemVer](http://semver.org/) for versioning. For the versions available, s
 
 
 This project is licensed under the GPL v3 license - see the [LICENSE](LICENSE) file for details
-

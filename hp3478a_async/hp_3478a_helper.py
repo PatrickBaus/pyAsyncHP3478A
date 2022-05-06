@@ -19,11 +19,12 @@
 """
 Helper functions to encode and decode data formats used by the HP 3478A.
 """
+from __future__ import annotations
 
 
-def format_cal_string(data):
+def format_cal_string(data: bytes) -> str:
     """
-    Convert the calibration memory to an ASCII string.
+    Convert the calibration memory to a unicode string with only ASCII characters.
 
     Parameters
     ----------
@@ -33,12 +34,12 @@ def format_cal_string(data):
     Returns
     -------
     str
-        A human readable ASCII string.
+        A human readable string with ASCII characters.
     """
     return "\n".join([(data[i:i+16]).decode() for i in range(0, len(data), 16)])
 
 
-def _decode_bcd_8421(data):
+def _decode_bcd_8421(data: list[int] | tuple[int, ...]) -> int:
     result = 0
     for i, value in enumerate(reversed(data)):
         result += 10**i * value
@@ -46,11 +47,11 @@ def _decode_bcd_8421(data):
     return result
 
 
-def _encode_bcd_8421(value):
+def _encode_bcd_8421(value: int) -> list[int]:
     return [int(i) for i in str(value)]
 
 
-def _decode_offset_data(data):
+def _decode_offset_data(data: list[int] | tuple[int, ...]) -> int:
     # The offset is BCD 8421 encoded, so only 4 bits are required per number
     # not a full byte
     result = _decode_bcd_8421(data)
@@ -61,7 +62,7 @@ def _decode_offset_data(data):
     return result
 
 
-def _encode_offset_data(value):
+def _encode_offset_data(value: int) -> list[int]:
     assert -100000 <= value <= 899999
 
     value = value if value >= 0 else value + 1000000
@@ -72,7 +73,7 @@ def _encode_offset_data(value):
     return [0] * (6 - len(result)) + result
 
 
-def _decode_gain_data(data):
+def _decode_gain_data(data: list[int] | tuple[int, ...]) -> float:
     # The gain is BCD 8421 encoded. Additionally, each byte is a
     # 4-bit two's complement signed number, hence if the 4th bit is set,
     # the number is negative. Finally, the gain is given in ppm offset from 1.
@@ -84,7 +85,7 @@ def _decode_gain_data(data):
     return 1. + (result_raw / 10**6)
 
 
-def _encode_digit(number):
+def _encode_digit(number: int):
     result = [int(x) for x in str(number)]
     result = [0] * (2 - len(result)) + result
     if result[1] > 5:
@@ -93,12 +94,12 @@ def _encode_digit(number):
     return result
 
 
-def _encode_gain_data(value):
+def _encode_gain_data(value: float) -> list[int]:
     # Encoding the gain is a little more tricky than decoding. The data that needs to be encoded is
     # the deviation in ppm from a gain of 1.
-    # Coming the binary format, we can see that we have 5 bytes, each consisting of only 4 bits of
+    # Coming from the binary format, we can see that we have 5 bytes, each consisting of only 4 bits of
     # data due to the BCD 8421 encoding chosen.
-    # The designer also needed negative numbers, but this is a problem, because the set of numbers is
+    # The designers also needed negative numbers, but this is a problem, because the set of numbers is
     # {-9,...,9}, which is 19 numbers and 4 bits are only 15 numbers. The designers chose 4-bit
     # two's complement for their signed numbers. So the set of available numbers is {-8,...,7}.
     # Here are a few examples how numbers can be represented in this system:
@@ -124,7 +125,7 @@ def _encode_gain_data(value):
     result = [0] * 5
 
     for idx in reversed(range(len(digits))):
-        carry, digit = _encode_digit(result[idx]+digits[idx])
+        carry, digit = _encode_digit(result[idx] + digits[idx])
         result[idx] = digit
         if idx == 0 and carry != 0:
             raise OverflowError()
@@ -137,14 +138,14 @@ def _encode_gain_data(value):
     return result
 
 
-def _calculate_cal_checksum(data):
+def _calculate_cal_checksum(data: list[int] | tuple[int, ...]) -> int:
     # The checksum is 0xFF minus the sum over the 11 data bytes
     calculated_checksum = 0xFF - (sum(data[:11]) & 0xFF)   # We need to truncate to uin8_t
 
     return calculated_checksum
 
 
-def _decode_data_block(data_block):
+def _decode_data_block(data_block: list[int] | tuple[int, ...]) -> dict[str, bool | int | float]:
     calculated_checksum = _calculate_cal_checksum(data_block)
     offset, gain, checksum = data_block[:6], data_block[6:11], data_block[11:]
     checksum = (checksum[0] << 4) + checksum[1]
@@ -159,7 +160,7 @@ def _decode_data_block(data_block):
     }
 
 
-def decode_cal_data(encoded_data):
+def decode_cal_data(encoded_data: str | bytes) -> tuple[bool, tuple[dict[str, bool | int | float], ...]]:
     """
     The calibration data is stored as nibbles (4 bit, half-bytes). This function decodes the contents
     of the calibration ram and returns the status of the calibration switch.
@@ -194,10 +195,10 @@ def decode_cal_data(encoded_data):
     # Now decode the data block
     # 1. calculate and test the checksum of the data block
     # 2. decode the block and split it into its 3 components
-    return is_cal_enabled, [_decode_data_block(data_block) for data_block in data_blocks]
+    return is_cal_enabled, tuple(_decode_data_block(data_block) for data_block in data_blocks)
 
 
-def _encode_data_block(data_block):
+def _encode_data_block(data_block: dict[str, bool | int | float]) -> list[int]:
     result = _encode_offset_data(data_block["offset"]) + _encode_gain_data(data_block["gain"])
     checksum = _calculate_cal_checksum(result)
     result += [(checksum >> 4) & 0xF, (checksum >> 0) & 0xF]
@@ -205,14 +206,17 @@ def _encode_data_block(data_block):
     return [value+0x40 for value in result]
 
 
-def encode_cal_data(data_blocks, cal_enable):
+def encode_cal_data(
+        data_blocks: tuple[dict[str, bool | int | float], ...] | list[dict[str, bool | int | float]],
+        cal_enable: bool
+) -> bytes:
     """
     The calibration data is stored as nibbles (4 bit, half-bytes). This function encodes a
     dictionary with the calibration constants to bytes.
 
     Parameters
     ----------
-    data_blocks: dict[str, bool or int or float]
+    data_blocks: list[dict[str, bool or int or float]]
         The calibration data
     cal_enable:
         Set to `True`, to write the calibration data to the NVRAM.

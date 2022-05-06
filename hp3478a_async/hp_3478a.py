@@ -20,12 +20,14 @@
 """
 This is a asyncIO driver for the HP 3478A DMM to abstract away the GPIB interface.
 """
+from __future__ import annotations
 
 import asyncio
 from decimal import Decimal
 from enum import Enum, Flag
 from math import log
 import re   # Used to test for numerical return values
+from typing import Any, AsyncGenerator
 
 
 class DisplayType(Enum):
@@ -179,7 +181,8 @@ class HP_3478A:     # pylint: disable=too-many-public-methods,invalid-name
     async def __aexit__(self, exc_type, exc, traceback):
         await self.disconnect()
 
-    async def get_id(self):
+    @staticmethod
+    async def get_id() -> str:
         """
         The HP 3478A does not support an ID request, so we will report a constant for compatibility
         reasons. The method is not async, but again for compatibility reasons with other drivers,
@@ -187,7 +190,7 @@ class HP_3478A:     # pylint: disable=too-many-public-methods,invalid-name
         """
         return "HP3478A"
 
-    async def connect(self):
+    async def connect(self) -> None:
         """
         Connect the GPIB connection and configure the GPIB device for the DMM.
         """
@@ -203,7 +206,7 @@ class HP_3478A:     # pylint: disable=too-many-public-methods,invalid-name
             self.set_srq_mask(SrqMask.NONE)
         )
 
-    async def disconnect(self):
+    async def disconnect(self) -> None:
         """
         Disconnect the GPIB device and release any lock on the front panel of the device if held.
         """
@@ -217,7 +220,7 @@ class HP_3478A:     # pylint: disable=too-many-public-methods,invalid-name
         finally:
             await self.__conn.disconnect()
 
-    def set_ntc_parameters(self, a, b, c, d, rt25):     # pylint: disable=too-many-arguments
+    def set_ntc_parameters(self, a: float, b: float, c: float, d: float, rt25: float):     # pylint: disable=too-many-arguments
         """
         Set the parameters used when in mode `FunctionType.NTC` or
         `FunctionType.NTCF`. The formula for converting resistance values to
@@ -247,7 +250,14 @@ class HP_3478A:     # pylint: disable=too-many-public-methods,invalid-name
         }
 
     @staticmethod
-    def __convert_thermistor_to_temperature(value, a, b, c, d, rt25):     # pylint: disable=too-many-arguments
+    def __convert_thermistor_to_temperature(
+            value: float,
+            a: float,
+            b: float,
+            c: float,
+            d: float,
+            rt25: float
+    ) -> Decimal | float:     # pylint: disable=too-many-arguments
         """
         Convert a resistance to temperature using the formula
         1/T=a+b*Log(Rt/R25)+c*Log(Rt/R25)**2+d*Log(Rt/R25)**3
@@ -274,7 +284,7 @@ class HP_3478A:     # pylint: disable=too-many-public-methods,invalid-name
         """
         return 1 / (a + b * log(value / rt25) + c * log(value / rt25)**2 + d * log(value / rt25)**3)
 
-    def __post_process(self, value):
+    def __post_process(self, value: Decimal | float) -> Decimal | float:
         """
         Postprocess the DMM value, if a special function was selected using `set_function()`.
         Returns the unmodified value if no special function was selected.
@@ -289,10 +299,13 @@ class HP_3478A:     # pylint: disable=too-many-public-methods,invalid-name
             the postprocessed value
         """
         if self.__special_function is not None:
-            return self.__convert_thermistor_to_temperature(value, **self.__ntc_parameters)
+            try:
+                return self.__convert_thermistor_to_temperature(value, **self.__ntc_parameters)
+            except ValueError:
+                raise ValueError('Cannot convert resistance to temperature. Measurement was: %s.', value) from None
         return value
 
-    async def read(self, length=None):
+    async def read(self, length: int | None = None) -> Decimal | bytes:
         """
         Read a single value from the device. If `length' is given, read `length` bytes, else
         read until a line break.
@@ -319,7 +332,7 @@ class HP_3478A:     # pylint: disable=too-many-public-methods,invalid-name
             return self.__post_process(Decimal(match[0].decode('ascii')))
         return result   # else return the bytes
 
-    async def read_all(self, length=None):
+    async def read_all(self, length: int | None = None) -> AsyncGenerator[Decimal | bytes, None]:
         """
         Read all values from the device. If `length' is given, read `length` bytes, else
         read until a line break, then yield the result.
@@ -343,12 +356,11 @@ class HP_3478A:     # pylint: disable=too-many-public-methods,invalid-name
             except asyncio.TimeoutError:
                 pass
 
-
-    async def __query(self, command, length=None):
+    async def __query(self, command: bytes, length: int | None = None) -> bytes:
         await self.write(command)
         return await self.__conn.read(length=length)
 
-    async def set_display(self, value, text=""):
+    async def set_display(self, value: DisplayType, text: str = "") -> None:
         """
         Sets a custom display text or display measurands. See page 12 of the manual for details.
 
@@ -367,7 +379,7 @@ class HP_3478A:     # pylint: disable=too-many-public-methods,invalid-name
             # The text must be terminated by a control character like \r or \n
             await self.write("D{value:d}{text}\n".format(value=value.value, text=text.rstrip()).encode('ascii'))
 
-    async def set_trigger(self, value):
+    async def set_trigger(self, value: TriggerType) -> None:
         """
         Set the DMM trigger. See page 53 of the manual for details.
 
@@ -379,19 +391,19 @@ class HP_3478A:     # pylint: disable=too-many-public-methods,invalid-name
         value = TriggerType(value)
         await self.write("T{value:d}".format(value=value.value).encode('ascii'))
 
-    async def write(self, msg):
+    async def write(self, msg: bytes) -> None:
         """
         Write data or commands to the instrument. Do not terminate the command with a new line or
         carriage return (\r\n).
 
         Parameters
         ----------
-        msg: str or bytes
+        msg: bytes
             The string to be sent to the device.
         """
         await self.__conn.write(msg)
 
-    async def set_srq_mask(self, value):
+    async def set_srq_mask(self, value: SrqMask) -> None:
         """
         Set the service interrupt mask. See page 46 of the manual for details.
 
@@ -403,7 +415,7 @@ class HP_3478A:     # pylint: disable=too-many-public-methods,invalid-name
         value = SrqMask(value)
         await self.write("M{value:02o}".format(value=value.value).encode('ascii'))
 
-    async def get_front_rear_switch_position(self):
+    async def get_front_rear_switch_position(self) -> FrontRearSwitchPosition:
         """
         Check wether the front or rear panel binding posts are active.
 
@@ -414,26 +426,26 @@ class HP_3478A:     # pylint: disable=too-many-public-methods,invalid-name
         """
         return FrontRearSwitchPosition(int(await self.__query(b"S")))
 
-    async def clear(self):
+    async def clear(self) -> None:
         """
         Clear serial poll register
         """
         await self.write(b"K")
 
-    async def reset(self):
+    async def reset(self) -> None:
         """
         Place the device in DCV, autorange, autozero, single trigger, 4.5 digits mode and erase any output stored in
         the buffers.
         """
         await self.write(b"H0")
 
-    async def local(self):
+    async def local(self) -> None:
         """
         Disable the front panel and allow only GPIB commands.
         """
         await self.__conn.ibloc()
 
-    async def set_function(self, value):
+    async def set_function(self, value: FunctionType) -> None:
         """
         Put the device in a certain measurement mode of either DVC, ACV, Ohms, 4-W Ohms, DCI, ACI or
         the extended ohms mode. See page 55 of the manual for details on the extended ohms mode.
@@ -452,7 +464,7 @@ class HP_3478A:     # pylint: disable=too-many-public-methods,invalid-name
             self.__special_function = None
         await self.write("F{value:d}".format(value=value.value).encode('ascii'))
 
-    async def set_autozero(self, enable):
+    async def set_autozero(self, enable: bool) -> None:
         """
         Change the auto-zero mode of the DMM.
 
@@ -464,7 +476,7 @@ class HP_3478A:     # pylint: disable=too-many-public-methods,invalid-name
         enable = bool(enable)
         await self.write("Z{value:d}".format(value=enable).encode('ascii'))
 
-    async def set_number_of_digits(self, value):
+    async def set_number_of_digits(self, value: int) -> None:
         """
         Set the number of digits returned by the DMM. This has an influence on the integration time.
         See page 15 of the manual for details.
@@ -478,7 +490,7 @@ class HP_3478A:     # pylint: disable=too-many-public-methods,invalid-name
         assert 4 <= value <= 6
         await self.write("N{value:d}".format(value=value-1).encode('ascii'))
 
-    async def get_error_register(self):
+    async def get_error_register(self) -> ErrorFlags:
         """
         Get the contents of the error register. See page 62 of the manual for details.
 
@@ -490,7 +502,7 @@ class HP_3478A:     # pylint: disable=too-many-public-methods,invalid-name
         result = int(await self.__query(b"E"), base=8)    # Convert the octal result to int
         return ErrorFlags(result)
 
-    async def set_range(self, value):
+    async def set_range(self, value: Range) -> None:
         """
         Sets the measurement range.
 
@@ -503,10 +515,21 @@ class HP_3478A:     # pylint: disable=too-many-public-methods,invalid-name
         await self.write("R{value}".format(value=value.value).encode('ascii'))
 
     @staticmethod
-    def __calculate_range(function, range_value):
-        # The range Enum is basically the exponent of the range
-        # Unfortunately the returned bits depend on the function, so we need to add or subtract according to the
-        # DMM function
+    def __calculate_range(function: FunctionType, range_value: int) -> Range:
+        """
+        The range Enum is basically the exponent of the range. Unfortunately the returned bits depend on the function,
+        so we need to add or subtract according to the DMM function.
+        Parameters
+        ----------
+        function: FunctionType
+            The function that is currently in use
+        range_value: int
+            The exponent
+        Returns
+        -------
+        Range
+            The adjusted range
+        """
         range_value_correction = {
             FunctionType.DCV: - 3,
             FunctionType.ACV: -2,
@@ -519,7 +542,7 @@ class HP_3478A:     # pylint: disable=too-many-public-methods,invalid-name
 
         return Range(range_value + range_value_correction[function])
 
-    async def get_cal_ram(self):
+    async def get_cal_ram(self) -> bytes:
         """
         Read the internal calibration memory from the NVRAM.
 
@@ -533,7 +556,7 @@ class HP_3478A:     # pylint: disable=too-many-public-methods,invalid-name
             result.append(ord(await self.__query(command=bytes([ord('W'), addr]), length=1)))
         return bytes(result)
 
-    async def set_cal_ram(self, data):
+    async def set_cal_ram(self, data: bytes) -> None:
         """
         Write to the internal NVRAM. Warning: This can brick the device until a valid calibration
         configuration is written to the NVRAM.
@@ -546,7 +569,7 @@ class HP_3478A:     # pylint: disable=too-many-public-methods,invalid-name
         for addr, data_block in enumerate(data):
             await self.write(bytes([ord('X'), addr, data_block]))
 
-    async def get_status(self):
+    async def get_status(self) -> dict[str, Any]:
         """
         Read the binary status register of the device. See page 61 of the manual for details.
         """
@@ -555,6 +578,14 @@ class HP_3478A:     # pylint: disable=too-many-public-methods,invalid-name
         # 5 bytes.
         result = await self.__query(command=b"B", length=5)
         function = FunctionType((result[0] >> 5) & 0b111)
+        if self.__special_function is not None and FunctionType(((self.__special_function.value - 8) % 2) + 3) is function:
+            # If a special function is enabled in the driver and the instrument is set to
+            # the correct function, we will return the special function instead
+            function = self.__special_function
+        else:
+            # If the correct function is not set on the device, we will disable the special function
+            # in the driver
+            self.__special_function = None
         dmm_range = self.__calculate_range(function, (result[0] >> 2) & 0b111)
         ndigits = 6 - (result[0] & 0b11)
         status = StatusFlags(result[1])
@@ -571,7 +602,7 @@ class HP_3478A:     # pylint: disable=too-many-public-methods,invalid-name
             "dac_value": dac_value
         }
 
-    async def serial_poll(self):
+    async def serial_poll(self) -> SerialPollFlags:
         """
         Serial poll the device/GPIB controller.
         """
