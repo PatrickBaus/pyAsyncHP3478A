@@ -313,7 +313,7 @@ class HP_3478A:     # pylint: disable=too-many-public-methods,invalid-name
         Parameters
         ----------
         length: int, default=None
-            The number of bytes to read. Ommit to read a line.
+            The number of bytes to read. Omit to read a line.
 
         Returns
         -------
@@ -340,7 +340,7 @@ class HP_3478A:     # pylint: disable=too-many-public-methods,invalid-name
         Parameters
         ----------
         length: int, default=None
-            The number of bytes to read. Ommit to read a line.
+            The number of bytes to read. Omit to read a line.
 
         Returns
         -------
@@ -417,12 +417,12 @@ class HP_3478A:     # pylint: disable=too-many-public-methods,invalid-name
 
     async def get_front_rear_switch_position(self) -> FrontRearSwitchPosition:
         """
-        Check wether the front or rear panel binding posts are active.
+        Check whether the front or rear panel binding posts are active.
 
         Returns
         ----------
         FrontRearSwitchPosition
-            The position of the front/rear swich
+            The position of the front/rear switch
         """
         return FrontRearSwitchPosition(int(await self.__query(b"S")))
 
@@ -578,8 +578,9 @@ class HP_3478A:     # pylint: disable=too-many-public-methods,invalid-name
         # 5 bytes.
         result = await self.__query(command=b"B", length=5)
         function = FunctionType((result[0] >> 5) & 0b111)
-        if self.__special_function is not None and FunctionType(((self.__special_function.value - 8) % 2) + 3) is function:
-            # If a special function is enabled in the driver and the instrument is set to
+        if self.__special_function is not None \
+                and function is FunctionType(((self.__special_function.value - 8) % 2) + 3):
+            # If a special function is enabled in the driver, and the instrument is set to
             # the correct function, we will return the special function instead
             function = self.__special_function
         else:
