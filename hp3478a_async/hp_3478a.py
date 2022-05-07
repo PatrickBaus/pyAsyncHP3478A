@@ -370,7 +370,7 @@ class HP_3478A:     # pylint: disable=too-many-public-methods,invalid-name
         await self.set_srq_mask(SrqMask.DATA_READY)     # Enable a GPIB interrupt when the conversion is done
         while 'loop not cancelled':
             try:
-                status_byte = await self.connection.wait((1 << 11) | (1 << 14))
+                status_byte = SerialPollFlags(await self.connection.wait((1 << 11) | (1 << 14)))
                 if SerialPollFlags.SRQ_ON_DATA_READY in status_byte:
                     result = await self.read(length)
                     yield result
