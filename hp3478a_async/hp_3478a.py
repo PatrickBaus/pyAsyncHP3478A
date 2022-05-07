@@ -27,7 +27,18 @@ from decimal import Decimal
 from enum import Enum, Flag
 from math import log
 import re   # Used to test for numerical return values
-from typing import Any, AsyncGenerator
+from types import TracebackType
+from typing import Any, AsyncGenerator, Type
+try:
+    from typing import Self  # Python 3.11
+except ImportError:
+    from typing_extensions import Self
+
+
+class DeviceError(Exception):
+    """
+    The device returned an error during operation
+    """
 
 
 class DisplayType(Enum):
@@ -92,14 +103,15 @@ class TriggerType(Enum):
 
 class SrqMask(Flag):
     """
-    The service interrupt register flags. See page 46 of the manual for details.
+    The service interrupt register flags. See page 47 of the manual for details.
     """
     NONE = 0b0
-    DATA_READY = 0b1
-    SYNTAX_ERROR = 0b100
-    HARDWARE_ERROR = 0b1000
-    FRONT_PANEL_SRQ = 0b10000
-    CALIBRATION_FAILURE = 0b100000
+    DATA_READY = (1 << 0)
+    # Bit 1 is always 0
+    SYNTAX_ERROR = (1 << 2)
+    HARDWARE_ERROR = (1 << 3)
+    FRONT_PANEL_SRQ = (1 << 4)
+    CALIBRATION_FAILURE = (1 << 5)
 
 
 class ErrorFlags(Flag):
@@ -107,26 +119,27 @@ class ErrorFlags(Flag):
     The error register flags. See page 62 of the manual for details.
     """
     NONE = 0b0
-    CAL_RAM_CHECKSUM = 0b1
-    RAM_FAILURE = 0b10
-    ROM_FAILURE = 0b100
-    AD_SLOPE_CONVERGENCE = 0b1000
-    AD_SELFTEST_FAILURE = 0b10000
-    AD_LINK_FAILURE = 0b100000
+    CAL_RAM_CHECKSUM = (1 << 0)
+    RAM_FAILURE = (1 << 1)
+    ROM_FAILURE = (1 << 2)
+    AD_SLOPE_CONVERGENCE = (1 << 3)
+    AD_SELFTEST_FAILURE = (1 << 4)
+    AD_LINK_FAILURE = (1 << 5)
 
 
 class StatusFlags(Flag):
     """
-    The device status register flags. See page 47 of the manual for details.
+    The device status register flags. See page 61 of the manual for details.
     """
     NONE = 0b0
-    INTERNAL_TRIGGER_ENABLED = 0b1
-    AUTO_RANGE_ENABLED = 0b10
-    AUTO_ZERO_ENABLED = 0b100
-    LINE_FREQUENCY_50_HZ = 0b1000
-    FRONT_SWITCH_ENABLED = 0b10000
-    CAL_RAM_ENABLED = 0b100000
-    EXTERNAL_TRIGGER_ENABLED = 0b1000000
+    INTERNAL_TRIGGER_ENABLED = (1 << 0)
+    AUTO_RANGE_ENABLED = (1 << 1)
+    AUTO_ZERO_ENABLED = (1 << 2)
+    LINE_FREQUENCY_50_HZ = (1 << 3)
+    FRONT_SWITCH_ENABLED = (1 << 4)
+    CAL_RAM_ENABLED = (1 << 5)
+    EXTERNAL_TRIGGER_ENABLED = (1 << 6)
+    # Bit 7 is always zero
 
 
 class SerialPollFlags(Flag):
@@ -134,12 +147,14 @@ class SerialPollFlags(Flag):
     The serial poll flags as returned by SPOLL. See page 50 of the manual for details.
     """
     NONE = 0b0
-    SRQ_ON_READING = 0b1
-    SRQ_ON_SYNTAX_ERROR = 0b10
-    SRQ_ON_HARDWARE_ERROR = 0b100
-    SRQ_ON_SRQ_BUTTON = 0b1000
-    SRQ_ON_CAL_FAILURE = 0b10000
-    SRQ_ON_POWER_ON = 0b1000000
+    SRQ_ON_DATA_READY = (1 << 0)
+    # Bit 1 is always 0
+    SRQ_ON_SYNTAX_ERROR = (1 << 2)
+    SRQ_ON_HARDWARE_ERROR = (1 << 3)
+    SRQ_ON_SRQ_BUTTON = (1 << 4)
+    SRQ_ON_CAL_FAILURE = (1 << 5)
+    SRQ_ON_HAS_SRQ = (1 << 6)
+    SRQ_ON_POWER_ON = (1 << 7)
 
 
 # Used to test for numerical return values of the read() command
@@ -163,7 +178,7 @@ class HP_3478A:     # pylint: disable=too-many-public-methods,invalid-name
 
     def __init__(self, connection):
         self.__conn = connection
-        self.__special_function = None
+        self.__special_function: FunctionType | None = None
         # Default constants taken from Amphenol DC95 (Material Type 10kY)
         # https://www.amphenol-sensors.com/hubfs/Documents/AAS-913-318C-Temperature-resistance-curves-071816-web.pdf
         self.__ntc_parameters = {
@@ -174,11 +189,16 @@ class HP_3478A:     # pylint: disable=too-many-public-methods,invalid-name
             'd': 1.5575628*10**-7
         }
 
-    async def __aenter__(self):
+    async def __aenter__(self) -> Self:
         await self.connect()
         return self
 
-    async def __aexit__(self, exc_type, exc, traceback):
+    async def __aexit__(
+            self,
+            exc_type: Type[BaseException] | None,
+            exc: BaseException | None,
+            traceback: TracebackType | None
+    ) -> None:
         await self.disconnect()
 
     @staticmethod
@@ -350,9 +370,12 @@ class HP_3478A:     # pylint: disable=too-many-public-methods,invalid-name
         await self.set_srq_mask(SrqMask.DATA_READY)     # Enable a GPIB interrupt when the conversion is done
         while 'loop not cancelled':
             try:
-                await self.connection.wait((1 << 11) | (1 << 14))
-                result = await self.read(length)
-                yield result
+                status_byte = await self.connection.wait((1 << 11) | (1 << 14))
+                if SerialPollFlags.SRQ_ON_DATA_READY in status_byte:
+                    result = await self.read(length)
+                    yield result
+                else:
+                    raise DeviceError("Device did not signal ready for read. Status was: %s", status_byte)
             except asyncio.TimeoutError:
                 pass
 
