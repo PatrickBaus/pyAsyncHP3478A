@@ -161,7 +161,7 @@ class SerialPollFlags(Flag):
 numerical_test_pattern = re.compile(rb"^[+-]\d+\.\d+E[+-]\d")
 
 
-class HP_3478A:     # pylint: disable=too-many-public-methods,invalid-name
+class HP_3478A:     # noqa pylint: disable=too-many-public-methods,invalid-name
     """
     The driver for the HP 3478A 5.5 digit multimeter. It supports both linux-gpib and the Prologix
     GPIB adapters.
@@ -240,7 +240,14 @@ class HP_3478A:     # pylint: disable=too-many-public-methods,invalid-name
         finally:
             await self.__conn.disconnect()
 
-    def set_ntc_parameters(self, a: float, b: float, c: float, d: float, rt25: float):     # pylint: disable=too-many-arguments
+    def set_ntc_parameters(
+            self,
+            a: float,
+            b: float,
+            c: float,
+            d: float,
+            rt25: float
+    ):  # pylint: disable=too-many-arguments
         """
         Set the parameters used when in mode `FunctionType.NTC` or
         `FunctionType.NTCF`. The formula for converting resistance values to
@@ -306,17 +313,17 @@ class HP_3478A:     # pylint: disable=too-many-public-methods,invalid-name
 
     def __post_process(self, value: Decimal | float) -> Decimal | float:
         """
-        Postprocess the DMM value, if a special function was selected using `set_function()`.
+        Post-process the DMM value, if a special function was selected using `set_function()`.
         Returns the unmodified value if no special function was selected.
 
         Parameters
         ----------
         value: Decimal or float
-            The value to postprocess
+            The value to post-process
         Returns
         -------
         Decimal or float
-            the postprocessed value
+            the post-processed value
         """
         if self.__special_function is not None:
             try:
@@ -448,6 +455,13 @@ class HP_3478A:     # pylint: disable=too-many-public-methods,invalid-name
             The position of the front/rear switch
         """
         return FrontRearSwitchPosition(int(await self.__query(b"S")))
+
+    async def device_clear(self) -> None:
+        """
+        Send the Selected Device Clear (SDC) event. This will trigger the self-test routine and  reset the device to
+        its power on state.
+        """
+        await self.__conn.clear()
 
     async def clear(self) -> None:
         """
@@ -611,7 +625,7 @@ class HP_3478A:     # pylint: disable=too-many-public-methods,invalid-name
             # in the driver
             self.__special_function = None
         dmm_range = self.__calculate_range(function, (result[0] >> 2) & 0b111)
-        ndigits = 6 - (result[0] & 0b11)
+        number_of_digits = 6 - (result[0] & 0b11)
         status = StatusFlags(result[1])
         srq_flags = SerialPollFlags(result[2])
         error_flags = ErrorFlags(result[3])
@@ -619,7 +633,7 @@ class HP_3478A:     # pylint: disable=too-many-public-methods,invalid-name
         return {
             "function": function,
             "range": dmm_range,
-            "ndigits": ndigits,
+            "ndigits": number_of_digits,
             "status": status,
             "srq_flags": srq_flags,
             "error_flags": error_flags,

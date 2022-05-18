@@ -212,6 +212,11 @@ ___Arguments___
 Clear the serial poll register.
 
 ```python
+   async def device_clear()
+```
+Send the Selected Device Clear (SDC) event. This will trigger the self-test routine and  reset the device to its power on state.
+
+```python
    async def reset()
 ```
 Place the instrument in DCV, autorange, autozero, single trigger, 4.5 digits mode and erase any output stored in the buffers.
