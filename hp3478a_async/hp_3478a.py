@@ -384,7 +384,7 @@ class HP_3478A:     # noqa pylint: disable=too-many-public-methods,invalid-name
                 else:
                     raise DeviceError("Device did not signal ready for read. Status was: %s", status_byte)
             except asyncio.TimeoutError:
-                pass
+                raise asyncio.TimeoutError("The GPIB controller did not respond in time.") from None
 
     async def __query(self, command: bytes, length: int | None = None) -> bytes:
         await self.write(command)
