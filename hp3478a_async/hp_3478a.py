@@ -189,6 +189,9 @@ class HP_3478A:     # noqa pylint: disable=too-many-public-methods,invalid-name
             'd': 1.5575628*10**-7
         }
 
+    def __str__(self) -> str:
+        return f"HP 3478A at {str(self.connection)}"
+
     async def __aenter__(self) -> Self:
         await self.connect()
         return self
