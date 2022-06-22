@@ -190,7 +190,7 @@ class HP_3478A:     # noqa pylint: disable=too-many-public-methods,invalid-name
         }
 
     def __str__(self) -> str:
-        return f"HP 3478A at {str(self.connection)}"
+        return f"HEWLETT-PACKARD 3478A at {str(self.connection)}"
 
     async def __aenter__(self) -> Self:
         await self.connect()
@@ -205,13 +205,13 @@ class HP_3478A:     # noqa pylint: disable=too-many-public-methods,invalid-name
         await self.disconnect()
 
     @staticmethod
-    async def get_id() -> str:
+    async def get_id() -> tuple[str, str, str, str]:
         """
         The HP 3478A does not support an ID request, so we will report a constant for compatibility
         reasons. The method is not async, but again for compatibility reasons with other drivers,
         it is declared async.
         """
-        return "HP3478A"
+        return "HEWLETT-PACKARD", "3478A", "0", "0"
 
     async def connect(self) -> None:
         """
