@@ -1,4 +1,4 @@
-[![pylint](https://github.com/PatrickBaus/hp3478a_async/actions/workflows/pylint.yml/badge.svg)](https://github.com/PatrickBaus/hp3478a_async/actions/workflows/pylint.yml)
+[![pylint](https://github.com/PatrickBaus/pyAsyncHP3478A/actions/workflows/pylint.yml/badge.svg)](https://github.com/PatrickBaus/pyAsyncHP3478A/actions/workflows/pylint.yml)
 [![code style](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 # pyAsyncHP3478A
 Python3 AsyncIO HP3478A driver. This library requires Python [asyncio](https://docs.python.org/3/library/asyncio.html) and AsyncIO library for the GPIB adapter. It also supports several undocumented functions for reading status registers and reading, modifying and writing the calibration memory.
@@ -89,7 +89,7 @@ See [examples/](examples/) for more working examples.
 ```python
    async def get_id()
 ```
-This function returns the label `HP3478A`
+This function returns the label `"HEWLETT-PACKARD", "3478A", "0", "0"` to emulate the `*IDN?` SCPI command.
 
 ```python
    async def connect()
