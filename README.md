@@ -1,3 +1,5 @@
+[![pylint](https://github.com/PatrickBaus/hp3478a_async/actions/workflows/pylint.yml/badge.svg)](https://github.com/PatrickBaus/hp3478a_async/actions/workflows/pylint.yml)
+[![code style](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 # pyAsyncHP3478A
 Python3 AsyncIO HP3478A driver. This library requires Python [asyncio](https://docs.python.org/3/library/asyncio.html) and AsyncIO library for the GPIB adapter. It also supports several undocumented functions for reading status registers and reading, modifying and writing the calibration memory.
 
@@ -8,6 +10,8 @@ Python3 AsyncIO HP3478A driver. This library requires Python [asyncio](https://d
 |[AsyncIO linux-gpib wrapper](https://github.com/PatrickBaus/pyAsyncGpib)|:heavy_check_mark:|:heavy_check_mark:|  |
 
 Tested using Linux, should work for Mac OSX, Windows and any OS with Python support.
+
+The library is fully type-hinted.
 
 # Setup
 There are currently no packages available at the PyPi repository. To install the module, clone the repository and run:
@@ -44,7 +48,7 @@ finally:
 
 A more complete example for reading voltages:
 ```python
-from pyAsyncHP3478A import HP_3478A, FunctionType, TriggerType, Range
+from hp3478a_async import HP_3478A, FunctionType, TriggerType, Range
 
 from pyAsyncPrologixGpib import AsyncPrologixGpibEthernetController, EosMode
 
@@ -353,12 +357,12 @@ class ErrorFlags(Flag):
 ## Calibration Memory
 Using the `get_cal_ram()` function returns a bytestring, which can be converted using the helper functions provided
 ```python
-from pyAsyncHP3478A.HP_3478A_helper import decode_cal_data
+from hp3478a_async.HP_3478A_helper import decode_cal_data
 
 result = await hp3478a.get_cal_ram()
 is_cal_enabled, data = decode_cal_data(result)
 ```
-This helper will return a list of dictionaries, one for each calibration range.
+This helper will return a list `CalramEntry`, one for each calibration range.
 |Index|Function|
 |--|--|
 |0|30 mV DC|
@@ -381,11 +385,11 @@ This helper will return a list of dictionaries, one for each calibration range.
 |18|300 mA/3 A AC|
 |19|Not used|
 
-Each dictionary contains the following entries: `offset`, `gain`, `checksum` and `is_valid`. The checksum is `0xFF` minus the sum over the 11 data bytes. And the `is_valid` flag is boolean which is true, if the checksum matches.
+Each `CalramEntry` contains the following entries: `offset`, `gain`, `checksum` and `is_valid`. The checksum is `0xFF` minus the sum over the 11 data bytes. And the `is_valid` flag is boolean which is true, if the checksum matches.
 
-The `encode_cal_data(data_blocks, cal_enable)` function takes a list with 19 dicts like above. In this case the dict may only contain the `offset` and `gain` all other values will be ignored. The checksum will be calculated by the function. The `cal_enable` boolean must be set to enable writing to the calibration memory.
+The `encode_cal_data(cal_enable, data_blocks)` function takes a list with 19 `CalramEntry` like above. The checksum will be calculated by the function. The `cal_enable` boolean must be set to enable writing to the calibration memory.
 
-The unused indices may not contain valid data. The instrument will not complain. Typically, these are set to `offset=0` and `gain=1.0`.
+The unused indices may contain valid data. The instrument will not complain. Typically, these are set to `offset=0` and `gain=1.0`.
 
 # Unit Tests
 There are unit tests available for the calram encoder and decoder.
