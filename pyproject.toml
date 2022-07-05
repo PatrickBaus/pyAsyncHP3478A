@@ -1,0 +1,63 @@
+[project]
+name = "hp3478a_async"
+authors = [
+  { name="Patrick Baus", email="patrick.baus@physik.tu-darmstadt.de" },
+]
+description = "Python3 AsyncIO HP3478A driver"
+readme = "README.md"
+license = { text="GNU General Public License v3 (GPLv3)" }
+requires-python = ">=3.7"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Development Status :: 5 - Production/Stable",
+    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+    "Operating System :: OS Independent",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "Natural Language :: English",
+    "Topic :: Home Automation",
+    "Topic :: Scientific/Engineering",
+]
+keywords = ["Prologix", "GPIB", "API"]
+dynamic = ["version"]
+dependencies = [
+    "typing-extensions; python_version <'3.11'",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/PatrickBaus/pyAsyncPrologixGpib"
+"Bug Tracker" = "https://github.com/PatrickBaus/pyAsyncPrologixGpib/issues"
+"Download" = "https://github.com/PatrickBaus/pyAsyncPrologixGpib/releases"
+
+[project.optional-dependencies]
+dev = [
+    "black", "build", "isort", "mypy", "pre-commit", "pylint", "pytest", "twine",
+]
+
+test = [
+    "mypy", "pylint", "pytest",
+]
+
+[tool.pylint.'MESSAGES CONTROL']
+max-line-length = 120
+
+[tool.isort]
+line_length = 120
+profile = "black"
+
+[tool.black]
+line-length = 120
+
+[build-system]
+requires = [
+    "setuptools>=61.0",
+    "typing-extensions; python_version <'3.11'",
+]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.dynamic]
+version = {attr = "hp3478a_async.__version__"}
