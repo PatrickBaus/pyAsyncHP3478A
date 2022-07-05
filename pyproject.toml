@@ -52,6 +52,12 @@ profile = "black"
 [tool.black]
 line-length = 120
 
+[tool.pytest.ini_options]
+markers = [
+    # conftest.py reorders tests moving slow ones to the end of the list
+    "slow",
+]
+
 [build-system]
 requires = [
     "setuptools>=61.0",
