@@ -22,20 +22,25 @@ classifiers = [
     "Topic :: Home Automation",
     "Topic :: Scientific/Engineering",
 ]
-keywords = ["Prologix", "GPIB", "API"]
-dynamic = ["version"]
+keywords = ["HP3478A", "GPIB", "API"]
 dependencies = [
     "typing-extensions; python_version <'3.11'",
 ]
+dynamic = ["version"]
 
 [project.urls]
-"Homepage" = "https://github.com/PatrickBaus/pyAsyncPrologixGpib"
-"Bug Tracker" = "https://github.com/PatrickBaus/pyAsyncPrologixGpib/issues"
-"Download" = "https://github.com/PatrickBaus/pyAsyncPrologixGpib/releases"
+"Homepage" = "https://github.com/PatrickBaus/pyAsyncHP3478A"
+"Bug Tracker" = "https://github.com/PatrickBaus/pyAsyncHP3478A/issues"
+"Download" = "https://github.com/PatrickBaus/pyAsyncHP3478A/releases"
 
 [project.optional-dependencies]
+linux-gpib = ["async-gpib", "gpib-ctypes"]
+
+prologix-gpib = ["prologix-gpib-async"]
+
 dev = [
-    "black", "build", "isort", "mypy", "pre-commit", "pylint", "pytest", "twine",
+    "async-gpib", "black", "build", "gpib-ctypes", "isort", "mypy", "pre-commit", "prologix-gpib-async", "pylint",
+    "pytest", "twine",
 ]
 
 test = [

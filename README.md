@@ -1,7 +1,12 @@
 [![pylint](https://github.com/PatrickBaus/pyAsyncHP3478A/actions/workflows/pylint.yml/badge.svg)](https://github.com/PatrickBaus/pyAsyncHP3478A/actions/workflows/pylint.yml)
+[![PyPI](https://img.shields.io/pypi/v/hp3478a_async)](https://pypi.org/project/hp3478a_async/)
+![PyPI - Python Version](https://img.shields.io/pypi/pyversions/hp3478a_async)
+![PyPI - Status](https://img.shields.io/pypi/status/hp3478a_async)
 [![code style](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
-# pyAsyncHP3478A
+# hp3478a_async
 Python3 AsyncIO HP3478A driver. This library requires Python [asyncio](https://docs.python.org/3/library/asyncio.html) and AsyncIO library for the GPIB adapter. It also supports several undocumented functions for reading status registers and reading, modifying and writing the calibration memory.
+
+The library is fully type-hinted.
 
 ## Supported GPIB Hardware
 |Device|Supported|Tested|Comments|
@@ -10,8 +15,6 @@ Python3 AsyncIO HP3478A driver. This library requires Python [asyncio](https://d
 |[AsyncIO linux-gpib wrapper](https://github.com/PatrickBaus/pyAsyncGpib)|:heavy_check_mark:|:heavy_check_mark:|  |
 
 Tested using Linux, should work for Mac OSX, Windows and any OS with Python support.
-
-The library is fully type-hinted.
 
 # Setup
 There are currently no packages available at the PyPi repository. To install the module, clone the repository and run:
