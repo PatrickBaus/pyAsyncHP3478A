@@ -27,8 +27,8 @@ pip install hp3478a-async
 ## Usage
 All examples assume, that a GPIB library is installed as well. Either run
 ```bash
-pip install -e git+https://github.com/PatrickBaus/pyAsyncPrologixGpib#egg=prologix_gpib_async    # or alternatively
-# pip install -e git+https://github.com/PatrickBaus/pyAsyncGpib#egg=pyAsyncGpib
+pip install prologix-gpib-async    # or alternatively
+# pip install async-gpib
 ```
 or download the source code from the git repository and copy it to the root folder yourself.
 
@@ -51,6 +51,9 @@ finally:
 
 A more complete example for reading voltages:
 ```python
+import asyncio
+import logging
+
 from hp3478a_async import HP_3478A, FunctionType, TriggerType, Range
 
 from pyAsyncPrologixGpib import AsyncPrologixGpibEthernetController, EosMode
@@ -59,8 +62,8 @@ from pyAsyncPrologixGpib import AsyncPrologixGpibEthernetController, EosMode
 ip_address = '127.0.0.1'
 gpib_device = AsyncPrologixGpibEthernetController(ip_address, pad=27, timeout=1000, eos_mode=EosMode.APPEND_NONE)
 
-# This example will print voltage data to the console
 async def main():
+    """This example will print voltage data to the console"""
     try: 
         # No need to explicitly bring up the GPIB connection. This will be done by the instrument.
         async with HP_3478A(connection=gpib_device) as hp3478a:
