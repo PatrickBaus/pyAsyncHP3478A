@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 HP3478A asyncIO library.
 """
