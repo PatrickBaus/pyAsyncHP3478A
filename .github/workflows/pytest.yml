@@ -1,25 +1,28 @@
 name: Tests
-on: [push]
- 
+
+on:
+  # Triggers the workflow on push to the master branch
+  push:
+    branches: [ "master" ]
+
 jobs:
   build:
     name: Run Python Tests
     runs-on: ubuntu-latest
- 
+
+    strategy:
+      matrix:
+        python-version: [ "3.10" ]
+
     steps:
- 
-    - uses: actions/checkout@v2
- 
-    - name: Set up Python
-      uses: actions/setup-python@v2
-      with:
-        python-version: "3.10"
- 
-    - name: Installs and upgrades pip and the test dependencies
+    - name: Checkout source repository
+      uses: actions/checkout@v3
+    - name: Set up python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+    - name: Install dependencies for testing
       run: |
         python3 -m pip install --upgrade pip
         python3 -m pip install .[test]
- 
     - name: Test with pytest
       run: |
         pytest --exitfirst --verbose --failed-first
