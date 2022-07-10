@@ -20,7 +20,7 @@ Tested using Linux, should work for Mac OSX, Windows and any OS with Python supp
 
 ## Documentation
 The full documentation can be found on GitHub Pages:
-[https://patrickbaus.github.io/hp_3478a_async/](https://patrickbaus.github.io/hp_3478a_async/). I use the
+[https://patrickbaus.github.io/pyAsyncHP3478A/](https://patrickbaus.github.io/pyAsyncHP3478A/). I use the
 [Numpydoc](https://numpydoc.readthedocs.io/en/latest/format.html) style for documentation and
 [Sphinx](https://www.sphinx-doc.org/en/master/index.html) for compiling it.
 
