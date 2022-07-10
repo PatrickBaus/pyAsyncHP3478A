@@ -1,0 +1,994 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>Module Documentation &#8212; hp3478a_async v1.3.3 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/nature.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Examples" href="examples.html" />
+    <link rel="prev" title="Readme" href="readme.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="examples.html" title="Examples"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="readme.html" title="Readme"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">hp3478a_async v1.3.3 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Module Documentation</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="module-documentation">
+<h1>Module Documentation<a class="headerlink" href="#module-documentation" title="Permalink to this heading">¶</a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<section id="module-hp3478a_async">
+<span id="hp3478a-async"></span><h2>hp3478a_async<a class="headerlink" href="#module-hp3478a_async" title="Permalink to this heading">¶</a></h2>
+<p>This is an asyncIO library for the Hewlett Packard 3478A DMM. It included all functions of DMM including some hidden
+function to read the non-volatile RAM and calibration constants of the device.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="hp3478a_async.HP_3478A">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">hp3478a_async.</span></span><span class="sig-name descname"><span class="pre">HP_3478A</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">connection</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AsyncGpib</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">AsyncPrologixGpibController</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hp3478a_async/hp_3478a.html#HP_3478A"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hp3478a_async.HP_3478A" title="Permalink to this definition">¶</a></dt>
+<dd><p>The driver for the HP 3478A 5.5 digit multimeter. It supports both linux-gpib and the Prologix
+GPIB adapters.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="hp3478a_async.HP_3478A.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">connection</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AsyncGpib</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">AsyncPrologixGpibController</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/hp3478a_async/hp_3478a.html#HP_3478A.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hp3478a_async.HP_3478A.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create an HP 3478A with the GPIB connection given.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>connection</strong> (<em>AsyncGpib</em><em> or </em><em>AsyncPrologixGpibController</em>) – The GPIB connection</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="hp3478a_async.HP_3478A.clear">
+<em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">clear</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/hp3478a_async/hp_3478a.html#HP_3478A.clear"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hp3478a_async.HP_3478A.clear" title="Permalink to this definition">¶</a></dt>
+<dd><p>Clear serial poll register</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="hp3478a_async.HP_3478A.connect">
+<em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">connect</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/hp3478a_async/hp_3478a.html#HP_3478A.connect"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hp3478a_async.HP_3478A.connect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Connect the GPIB connection and configure the GPIB device for the DMM. This function must be called from the
+loop and takes care of connecting the GPIB adapter.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="hp3478a_async.HP_3478A.connection">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">connection</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">AsyncGpib</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">AsyncPrologixGpibController</span></em><a class="headerlink" href="#hp3478a_async.HP_3478A.connection" title="Permalink to this definition">¶</a></dt>
+<dd><p>The GPIB connection.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="hp3478a_async.HP_3478A.device_clear">
+<em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">device_clear</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/hp3478a_async/hp_3478a.html#HP_3478A.device_clear"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hp3478a_async.HP_3478A.device_clear" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send the Selected Device Clear (SDC) event. This will trigger the self-test routine and  reset the device to
+its power on state.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="hp3478a_async.HP_3478A.disconnect">
+<em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">disconnect</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/hp3478a_async/hp_3478a.html#HP_3478A.disconnect"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hp3478a_async.HP_3478A.disconnect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Disconnect the GPIB device and release any lock on the front panel of the device if held.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="hp3478a_async.HP_3478A.get_cal_ram">
+<em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_cal_ram</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bytes</span></span></span><a class="reference internal" href="_modules/hp3478a_async/hp_3478a.html#HP_3478A.get_cal_ram"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hp3478a_async.HP_3478A.get_cal_ram" title="Permalink to this definition">¶</a></dt>
+<dd><p>An undocumented function. Read the internal calibration memory from the NVRAM. It can be used to backup the
+calibration memory in case the internal battery fails. See <a class="reference internal" href="examples.html"><span class="doc">Examples</span></a> for an example on how to read the
+memory and convert it to meaningful data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The contents of the calibration ram.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bytes</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="hp3478a_async.HP_3478A.get_error_register">
+<em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_error_register</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#hp3478a_async.flags.ErrorFlags" title="hp3478a_async.flags.ErrorFlags"><span class="pre">ErrorFlags</span></a></span></span><a class="reference internal" href="_modules/hp3478a_async/hp_3478a.html#HP_3478A.get_error_register"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hp3478a_async.HP_3478A.get_error_register" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the contents of the error register, which is the result of the power on self-test. See page 62 of the manual
+for details.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The error register</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#hp3478a_async.flags.ErrorFlags" title="hp3478a_async.flags.ErrorFlags">ErrorFlags</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="hp3478a_async.HP_3478A.get_front_rear_switch_position">
+<em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_front_rear_switch_position</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#hp3478a_async.enums.FrontRearSwitchPosition" title="hp3478a_async.enums.FrontRearSwitchPosition"><span class="pre">FrontRearSwitchPosition</span></a></span></span><a class="reference internal" href="_modules/hp3478a_async/hp_3478a.html#HP_3478A.get_front_rear_switch_position"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hp3478a_async.HP_3478A.get_front_rear_switch_position" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check whether the front or rear panel binding posts are active.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The position of the front/rear switch</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#hp3478a_async.enums.FrontRearSwitchPosition" title="hp3478a_async.enums.FrontRearSwitchPosition">FrontRearSwitchPosition</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="hp3478a_async.HP_3478A.get_id">
+<em class="property"><span class="pre">async</span><span class="w"> </span><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_id</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/hp3478a_async/hp_3478a.html#HP_3478A.get_id"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hp3478a_async.HP_3478A.get_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>The HP 3478A does not support an ID request, so this function returns the constant
+<cite>“HEWLETT-PACKARD”, “3478A”, “0”, “0”</cite> to emulate the <cite>*IDN?</cite> SCPI command. The method is not async, but for
+compatibility reasons with other drivers, it is declared async.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A SCPI compliant id string</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>tuple of str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="hp3478a_async.HP_3478A.get_status">
+<em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_status</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#hp3478a_async.DmmStatus" title="hp3478a_async.hp_3478a.DmmStatus"><span class="pre">DmmStatus</span></a></span></span><a class="reference internal" href="_modules/hp3478a_async/hp_3478a.html#HP_3478A.get_status"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hp3478a_async.HP_3478A.get_status" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read the binary status register of the device. See page 61 of the manual for details.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The current status of the DMM</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#hp3478a_async.DmmStatus" title="hp3478a_async.DmmStatus">DmmStatus</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="hp3478a_async.HP_3478A.local">
+<em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">local</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/hp3478a_async/hp_3478a.html#HP_3478A.local"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hp3478a_async.HP_3478A.local" title="Permalink to this definition">¶</a></dt>
+<dd><p>Disable the front panel and allow only GPIB commands.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="hp3478a_async.HP_3478A.read">
+<em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">read</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">length</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">decimal.Decimal</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bytes</span></span></span><a class="reference internal" href="_modules/hp3478a_async/hp_3478a.html#HP_3478A.read"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hp3478a_async.HP_3478A.read" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read a single value from the device. If <cite>length’ is given, read `length</cite> bytes, else read until a line break
+<code class="docutils literal notranslate"><span class="pre">b&quot;\n&quot;</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>length</strong> (<em>int</em><em>, </em><em>optional</em>) – The number of bytes to read. Omit to read a line.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Either a Decimal value or a number of bytes as defined by <cite>length</cite>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Decimal or bytes</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>OverflowError</strong> – If the instrument input is overloaded, i.e. returns <cite>+9.99999E+9</cite>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="hp3478a_async.HP_3478A.read_all">
+<em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">read_all</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">length</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">AsyncGenerator</span><span class="p"><span class="pre">[</span></span><span class="pre">decimal.Decimal</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bytes</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/hp3478a_async/hp_3478a.html#HP_3478A.read_all"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hp3478a_async.HP_3478A.read_all" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read all values from the device. If <cite>length’ is given, read `length</cite> bytes, else read until a line break
+<code class="docutils literal notranslate"><span class="pre">b&quot;\n&quot;</span></code>, then yield the result.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>length</strong> (<em>int</em><em>, </em><em>optional</em>) – The number of bytes to read. Omit to read a line.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Either a Decimal value or a number of bytes as defined by <cite>length</cite>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Iterator[Decimal or bytes]</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>OverflowError</strong> – If the instrument input is overloaded, i.e. returns <cite>+9.99999E+9</cite>.</p></li>
+<li><p><a class="reference internal" href="#hp3478a_async.errors.DeviceError" title="hp3478a_async.errors.DeviceError"><strong>DeviceError</strong></a> – If the device is not ready for read.</p></li>
+<li><p><strong>asyncio.TimeoutError</strong> – If the GPIB controller does not respond in time.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="hp3478a_async.HP_3478A.reset">
+<em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">reset</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/hp3478a_async/hp_3478a.html#HP_3478A.reset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hp3478a_async.HP_3478A.reset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Place the device in DCV, autorange, autozero, single trigger, 4.5 digits mode and erase any output stored in
+the buffers.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="hp3478a_async.HP_3478A.serial_poll">
+<em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">serial_poll</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#hp3478a_async.flags.SerialPollFlags" title="hp3478a_async.flags.SerialPollFlags"><span class="pre">SerialPollFlags</span></a></span></span><a class="reference internal" href="_modules/hp3478a_async/hp_3478a.html#HP_3478A.serial_poll"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hp3478a_async.HP_3478A.serial_poll" title="Permalink to this definition">¶</a></dt>
+<dd><p>Serial poll the device/GPIB controller. Use this in combination with the SRQ mask to determine, if the
+instrument triggered the SRQ and requests service.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The status register of the device</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#hp3478a_async.flags.SerialPollFlags" title="hp3478a_async.flags.SerialPollFlags">SerialPollFlags</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="hp3478a_async.HP_3478A.set_autozero">
+<em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">set_autozero</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">enable</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/hp3478a_async/hp_3478a.html#HP_3478A.set_autozero"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hp3478a_async.HP_3478A.set_autozero" title="Permalink to this definition">¶</a></dt>
+<dd><p>Change the auto-zero mode of the DMM. If enabled, the DMM will auto-zero between readings.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>enable</strong> (<em>bool</em>) – <cite>True</cite> to enable auto-zeroing.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="hp3478a_async.HP_3478A.set_cal_ram">
+<em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">set_cal_ram</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bytes</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/hp3478a_async/hp_3478a.html#HP_3478A.set_cal_ram"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hp3478a_async.HP_3478A.set_cal_ram" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write to the internal NVRAM. Warning: This can brick the device until a valid calibration
+configuration is written to the NVRAM. This function only works, if the front panel CAL switch is enabled.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data</strong> (<em>bytes</em>) – The data to be written to the calibration memory.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="hp3478a_async.HP_3478A.set_display">
+<em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">set_display</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#hp3478a_async.enums.DisplayType" title="hp3478a_async.enums.DisplayType"><span class="pre">DisplayType</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/hp3478a_async/hp_3478a.html#HP_3478A.set_display"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hp3478a_async.HP_3478A.set_display" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets a custom display text or display measurands. See page 12 of the manual for details.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>value</strong> (<a class="reference internal" href="#hp3478a_async.enums.DisplayType" title="hp3478a_async.enums.DisplayType"><em>DisplayType</em></a>) – The type of text to display on the front panel tft. If set to
+<a class="reference internal" href="#hp3478a_async.enums.DisplayType.NORMAL" title="hp3478a_async.enums.DisplayType.NORMAL"><code class="xref py py-attr docutils literal notranslate"><span class="pre">DisplayType.NORMAL</span></code></a>, no text will be set.</p></li>
+<li><p><strong>text</strong> (<em>str</em>) – The text to display if <cite>value</cite> is not set to
+<a class="reference internal" href="#hp3478a_async.enums.DisplayType.NORMAL" title="hp3478a_async.enums.DisplayType.NORMAL"><code class="xref py py-attr docutils literal notranslate"><span class="pre">DisplayType.NORMAL</span></code></a>. There is no need to terminate the
+string with <code class="docutils literal notranslate"><span class="pre">&quot;\r&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;\n&quot;</span></code>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="hp3478a_async.HP_3478A.set_function">
+<em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">set_function</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#hp3478a_async.enums.FunctionType" title="hp3478a_async.enums.FunctionType"><span class="pre">FunctionType</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/hp3478a_async/hp_3478a.html#HP_3478A.set_function"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hp3478a_async.HP_3478A.set_function" title="Permalink to this definition">¶</a></dt>
+<dd><p>Put the device in a certain measurement mode of either DVC, ACV, Ohms, 4-W Ohms, DCI, ACI or the extended ohms
+mode. See page 55 of the manual for details on the extended ohms mode.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>value</strong> (<a class="reference internal" href="#hp3478a_async.enums.FunctionType" title="hp3478a_async.enums.FunctionType"><em>FunctionType</em></a>) – The function type to be measured.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="hp3478a_async.HP_3478A.set_ntc_parameters">
+<span class="sig-name descname"><span class="pre">set_ntc_parameters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parameters</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#hp3478a_async.NtcParameters" title="hp3478a_async.hp_3478a.NtcParameters"><span class="pre">NtcParameters</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hp3478a_async/hp_3478a.html#HP_3478A.set_ntc_parameters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hp3478a_async.HP_3478A.set_ntc_parameters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the parameters used when in mode <a class="reference internal" href="#hp3478a_async.enums.FunctionType.NTC" title="hp3478a_async.enums.FunctionType.NTC"><code class="xref py py-attr docutils literal notranslate"><span class="pre">FunctionType.NTC</span></code></a> or
+<a class="reference internal" href="#hp3478a_async.enums.FunctionType.NTCF" title="hp3478a_async.enums.FunctionType.NTCF"><code class="xref py py-attr docutils literal notranslate"><span class="pre">FunctionType.NTCF</span></code></a>. The parameters can be found in the datasheet
+of the thermistor. The formula for converting resistance values to temperature is:</p>
+<p>1/T=a+b*Log(Rt/R25)+c*Log(Rt/R25)**2+d*Log(Rt/R25)**3</p>
+<p>See <a class="reference external" href="https://en.wikipedia.org/wiki/Steinhart%E2%80%93Hart_equation">Wikipedia: Steinhart–Hart equation</a> for
+more details.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>parameters</strong> (<a class="reference internal" href="#hp3478a_async.NtcParameters" title="hp3478a_async.NtcParameters"><em>NtcParameters</em></a>) – The parameters of the NTC thermistor used</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="hp3478a_async.HP_3478A.set_number_of_digits">
+<em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">set_number_of_digits</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/hp3478a_async/hp_3478a.html#HP_3478A.set_number_of_digits"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hp3478a_async.HP_3478A.set_number_of_digits" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the number of digits returned by the DMM. This has an influence on the integration time.
+See page 15 of the manual for details.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>value</strong> (<em>{4</em><em>, </em><em>5</em><em>, </em><em>6}</em>) – A value between 4 and 6.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="hp3478a_async.HP_3478A.set_range">
+<em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">set_range</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#hp3478a_async.enums.Range" title="hp3478a_async.enums.Range"><span class="pre">Range</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/hp3478a_async/hp_3478a.html#HP_3478A.set_range"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hp3478a_async.HP_3478A.set_range" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the measurement range. The range, that can be selected depend on the measurement mode.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>value</strong> (<a class="reference internal" href="#hp3478a_async.enums.Range" title="hp3478a_async.enums.Range"><em>Range</em></a>) – The measurement range.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="hp3478a_async.HP_3478A.set_srq_mask">
+<em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">set_srq_mask</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#hp3478a_async.flags.SrqMask" title="hp3478a_async.flags.SrqMask"><span class="pre">SrqMask</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/hp3478a_async/hp_3478a.html#HP_3478A.set_srq_mask"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hp3478a_async.HP_3478A.set_srq_mask" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the service interrupt mask. This will determine, when the GPIB SRQ is triggered by the instrument. The
+<a class="reference internal" href="#hp3478a_async.flags.SrqMask.DATA_READY" title="hp3478a_async.flags.SrqMask.DATA_READY"><code class="xref py py-attr docutils literal notranslate"><span class="pre">SrqMask.DATA_READY</span></code></a> flag is useful, when reading with long
+conversion times. See <a class="reference internal" href="examples.html"><span class="doc">Examples</span></a> for an example and page 46 of the manual for details.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>value</strong> (<a class="reference internal" href="#hp3478a_async.flags.SrqMask" title="hp3478a_async.flags.SrqMask"><em>SrqMask</em></a>) – The service request register setting.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="hp3478a_async.HP_3478A.set_trigger">
+<em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">set_trigger</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#hp3478a_async.enums.TriggerType" title="hp3478a_async.enums.TriggerType"><span class="pre">TriggerType</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/hp3478a_async/hp_3478a.html#HP_3478A.set_trigger"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hp3478a_async.HP_3478A.set_trigger" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the DMM trigger. See page 53 of the manual for details.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>value</strong> (<a class="reference internal" href="#hp3478a_async.enums.TriggerType" title="hp3478a_async.enums.TriggerType"><em>TriggerType</em></a>) – The trigger type used when taking measurements.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="hp3478a_async.HP_3478A.write">
+<em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">write</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bytes</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/hp3478a_async/hp_3478a.html#HP_3478A.write"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hp3478a_async.HP_3478A.write" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write data or commands to the instrument. Do not terminate the command with a new line or carriage return
+(<code class="docutils literal notranslate"><span class="pre">b&quot;\r&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">b&quot;\n&quot;</span></code>). This bytestring will be written as is, be careful.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>msg</strong> (<em>bytes</em>) – The string to be sent to the device.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="dataclasses">
+<h2>Dataclasses<a class="headerlink" href="#dataclasses" title="Permalink to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="hp3478a_async.hp_3478a_helper.CalramEntry">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">hp3478a_async.hp_3478a_helper.</span></span><span class="sig-name descname"><span class="pre">CalramEntry</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_block</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hp3478a_async/hp_3478a_helper.html#CalramEntry"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hp3478a_async.hp_3478a_helper.CalramEntry" title="Permalink to this definition">¶</a></dt>
+<dd><p>One out of 19 calibration memory entries, that contain the gain, offset and checksum.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hp3478a_async.hp_3478a_helper.CalramEntry.checksum">
+<span class="sig-name descname"><span class="pre">checksum</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#hp3478a_async.hp_3478a_helper.CalramEntry.checksum" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hp3478a_async.hp_3478a_helper.CalramEntry.gain">
+<span class="sig-name descname"><span class="pre">gain</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#hp3478a_async.hp_3478a_helper.CalramEntry.gain" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hp3478a_async.hp_3478a_helper.CalramEntry.is_valid">
+<span class="sig-name descname"><span class="pre">is_valid</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#hp3478a_async.hp_3478a_helper.CalramEntry.is_valid" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hp3478a_async.hp_3478a_helper.CalramEntry.offset">
+<span class="sig-name descname"><span class="pre">offset</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#hp3478a_async.hp_3478a_helper.CalramEntry.offset" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="hp3478a_async.hp_3478a_helper.CalramEntry.to_bytes">
+<span class="sig-name descname"><span class="pre">to_bytes</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bytes</span></span></span><a class="reference internal" href="_modules/hp3478a_async/hp_3478a_helper.html#CalramEntry.to_bytes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hp3478a_async.hp_3478a_helper.CalramEntry.to_bytes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the offset and gain as a bytestring. The checksum will be recalculated.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The bytestring which can be written to the HP 3478A.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bytes</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="hp3478a_async.DmmStatus">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">hp3478a_async.</span></span><span class="sig-name descname"><span class="pre">DmmStatus</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">function</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#hp3478a_async.enums.FunctionType" title="hp3478a_async.enums.FunctionType"><span class="pre">FunctionType</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">range</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#hp3478a_async.enums.Range" title="hp3478a_async.enums.Range"><span class="pre">Range</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">ndigits</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">status</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#hp3478a_async.flags.StatusFlags" title="hp3478a_async.flags.StatusFlags"><span class="pre">StatusFlags</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">srq_flags</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#hp3478a_async.flags.SerialPollFlags" title="hp3478a_async.flags.SerialPollFlags"><span class="pre">SerialPollFlags</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">error_flags</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#hp3478a_async.flags.ErrorFlags" title="hp3478a_async.flags.ErrorFlags"><span class="pre">ErrorFlags</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">dac_value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hp3478a_async/hp_3478a.html#DmmStatus"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hp3478a_async.DmmStatus" title="Permalink to this definition">¶</a></dt>
+<dd><p>The device status of them DMM</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hp3478a_async.DmmStatus.dac_value">
+<span class="sig-name descname"><span class="pre">dac_value</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#hp3478a_async.DmmStatus.dac_value" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hp3478a_async.DmmStatus.error_flags">
+<span class="sig-name descname"><span class="pre">error_flags</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#hp3478a_async.flags.ErrorFlags" title="hp3478a_async.flags.ErrorFlags"><span class="pre">ErrorFlags</span></a></em><a class="headerlink" href="#hp3478a_async.DmmStatus.error_flags" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hp3478a_async.DmmStatus.function">
+<span class="sig-name descname"><span class="pre">function</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#hp3478a_async.enums.FunctionType" title="hp3478a_async.enums.FunctionType"><span class="pre">FunctionType</span></a></em><a class="headerlink" href="#hp3478a_async.DmmStatus.function" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hp3478a_async.DmmStatus.ndigits">
+<span class="sig-name descname"><span class="pre">ndigits</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#hp3478a_async.DmmStatus.ndigits" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hp3478a_async.DmmStatus.range">
+<span class="sig-name descname"><span class="pre">range</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#hp3478a_async.enums.Range" title="hp3478a_async.enums.Range"><span class="pre">Range</span></a></em><a class="headerlink" href="#hp3478a_async.DmmStatus.range" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hp3478a_async.DmmStatus.srq_flags">
+<span class="sig-name descname"><span class="pre">srq_flags</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#hp3478a_async.flags.SerialPollFlags" title="hp3478a_async.flags.SerialPollFlags"><span class="pre">SerialPollFlags</span></a></em><a class="headerlink" href="#hp3478a_async.DmmStatus.srq_flags" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hp3478a_async.DmmStatus.status">
+<span class="sig-name descname"><span class="pre">status</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#hp3478a_async.flags.StatusFlags" title="hp3478a_async.flags.StatusFlags"><span class="pre">StatusFlags</span></a></em><a class="headerlink" href="#hp3478a_async.DmmStatus.status" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="hp3478a_async.NtcParameters">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">hp3478a_async.</span></span><span class="sig-name descname"><span class="pre">NtcParameters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">d</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rt25</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hp3478a_async/hp_3478a.html#NtcParameters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hp3478a_async.NtcParameters" title="Permalink to this definition">¶</a></dt>
+<dd><p>The Steinhart-Hart coefficient of an NTC thermistor. The formula to calculate the temperature from the resistance is
+as follows:</p>
+<p>1/T=a+b*Log(Rt/R25)+c*Log(Rt/R25)**2+d*Log(Rt/R25)**3</p>
+<p>See <a class="reference external" href="https://en.wikipedia.org/wiki/Steinhart%E2%80%93Hart_equation">Wikipedia: Steinhart–Hart equation</a> for more
+details.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hp3478a_async.NtcParameters.a">
+<span class="sig-name descname"><span class="pre">a</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#hp3478a_async.NtcParameters.a" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hp3478a_async.NtcParameters.b">
+<span class="sig-name descname"><span class="pre">b</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#hp3478a_async.NtcParameters.b" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hp3478a_async.NtcParameters.c">
+<span class="sig-name descname"><span class="pre">c</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#hp3478a_async.NtcParameters.c" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hp3478a_async.NtcParameters.d">
+<span class="sig-name descname"><span class="pre">d</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#hp3478a_async.NtcParameters.d" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hp3478a_async.NtcParameters.rt25">
+<span class="sig-name descname"><span class="pre">rt25</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#hp3478a_async.NtcParameters.rt25" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-hp3478a_async.flags">
+<span id="enums-and-flags"></span><h2>Enums and Flags<a class="headerlink" href="#module-hp3478a_async.flags" title="Permalink to this heading">¶</a></h2>
+<p>Flags are used for the status registers returned by the device.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="hp3478a_async.flags.ErrorFlags">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">hp3478a_async.flags.</span></span><span class="sig-name descname"><span class="pre">ErrorFlags</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hp3478a_async/flags.html#ErrorFlags"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hp3478a_async.flags.ErrorFlags" title="Permalink to this definition">¶</a></dt>
+<dd><p>The error register flags. See page 62 of the manual for details.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hp3478a_async.flags.ErrorFlags.AD_LINK_FAILURE">
+<span class="sig-name descname"><span class="pre">AD_LINK_FAILURE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">32</span></em><a class="headerlink" href="#hp3478a_async.flags.ErrorFlags.AD_LINK_FAILURE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hp3478a_async.flags.ErrorFlags.AD_SELFTEST_FAILURE">
+<span class="sig-name descname"><span class="pre">AD_SELFTEST_FAILURE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">16</span></em><a class="headerlink" href="#hp3478a_async.flags.ErrorFlags.AD_SELFTEST_FAILURE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hp3478a_async.flags.ErrorFlags.AD_SLOPE_CONVERGENCE">
+<span class="sig-name descname"><span class="pre">AD_SLOPE_CONVERGENCE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">8</span></em><a class="headerlink" href="#hp3478a_async.flags.ErrorFlags.AD_SLOPE_CONVERGENCE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hp3478a_async.flags.ErrorFlags.CAL_RAM_CHECKSUM">
+<span class="sig-name descname"><span class="pre">CAL_RAM_CHECKSUM</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#hp3478a_async.flags.ErrorFlags.CAL_RAM_CHECKSUM" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hp3478a_async.flags.ErrorFlags.NONE">
+<span class="sig-name descname"><span class="pre">NONE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></em><a class="headerlink" href="#hp3478a_async.flags.ErrorFlags.NONE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hp3478a_async.flags.ErrorFlags.RAM_FAILURE">
+<span class="sig-name descname"><span class="pre">RAM_FAILURE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#hp3478a_async.flags.ErrorFlags.RAM_FAILURE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hp3478a_async.flags.ErrorFlags.ROM_FAILURE">
+<span class="sig-name descname"><span class="pre">ROM_FAILURE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">4</span></em><a class="headerlink" href="#hp3478a_async.flags.ErrorFlags.ROM_FAILURE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="hp3478a_async.flags.SerialPollFlags">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">hp3478a_async.flags.</span></span><span class="sig-name descname"><span class="pre">SerialPollFlags</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hp3478a_async/flags.html#SerialPollFlags"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hp3478a_async.flags.SerialPollFlags" title="Permalink to this definition">¶</a></dt>
+<dd><p>The serial poll flags as returned by SPOLL. See page 50 of the manual for details.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hp3478a_async.flags.SerialPollFlags.NONE">
+<span class="sig-name descname"><span class="pre">NONE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></em><a class="headerlink" href="#hp3478a_async.flags.SerialPollFlags.NONE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hp3478a_async.flags.SerialPollFlags.SRQ_ON_CAL_FAILURE">
+<span class="sig-name descname"><span class="pre">SRQ_ON_CAL_FAILURE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">32</span></em><a class="headerlink" href="#hp3478a_async.flags.SerialPollFlags.SRQ_ON_CAL_FAILURE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hp3478a_async.flags.SerialPollFlags.SRQ_ON_DATA_READY">
+<span class="sig-name descname"><span class="pre">SRQ_ON_DATA_READY</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#hp3478a_async.flags.SerialPollFlags.SRQ_ON_DATA_READY" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hp3478a_async.flags.SerialPollFlags.SRQ_ON_HARDWARE_ERROR">
+<span class="sig-name descname"><span class="pre">SRQ_ON_HARDWARE_ERROR</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">8</span></em><a class="headerlink" href="#hp3478a_async.flags.SerialPollFlags.SRQ_ON_HARDWARE_ERROR" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hp3478a_async.flags.SerialPollFlags.SRQ_ON_HAS_SRQ">
+<span class="sig-name descname"><span class="pre">SRQ_ON_HAS_SRQ</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">64</span></em><a class="headerlink" href="#hp3478a_async.flags.SerialPollFlags.SRQ_ON_HAS_SRQ" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hp3478a_async.flags.SerialPollFlags.SRQ_ON_POWER_ON">
+<span class="sig-name descname"><span class="pre">SRQ_ON_POWER_ON</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">128</span></em><a class="headerlink" href="#hp3478a_async.flags.SerialPollFlags.SRQ_ON_POWER_ON" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hp3478a_async.flags.SerialPollFlags.SRQ_ON_SRQ_BUTTON">
+<span class="sig-name descname"><span class="pre">SRQ_ON_SRQ_BUTTON</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">16</span></em><a class="headerlink" href="#hp3478a_async.flags.SerialPollFlags.SRQ_ON_SRQ_BUTTON" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hp3478a_async.flags.SerialPollFlags.SRQ_ON_SYNTAX_ERROR">
+<span class="sig-name descname"><span class="pre">SRQ_ON_SYNTAX_ERROR</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">4</span></em><a class="headerlink" href="#hp3478a_async.flags.SerialPollFlags.SRQ_ON_SYNTAX_ERROR" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="hp3478a_async.flags.SrqMask">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">hp3478a_async.flags.</span></span><span class="sig-name descname"><span class="pre">SrqMask</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hp3478a_async/flags.html#SrqMask"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hp3478a_async.flags.SrqMask" title="Permalink to this definition">¶</a></dt>
+<dd><p>The service interrupt register flags. See page 47 of the manual for details.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hp3478a_async.flags.SrqMask.CALIBRATION_FAILURE">
+<span class="sig-name descname"><span class="pre">CALIBRATION_FAILURE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">32</span></em><a class="headerlink" href="#hp3478a_async.flags.SrqMask.CALIBRATION_FAILURE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hp3478a_async.flags.SrqMask.DATA_READY">
+<span class="sig-name descname"><span class="pre">DATA_READY</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#hp3478a_async.flags.SrqMask.DATA_READY" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hp3478a_async.flags.SrqMask.FRONT_PANEL_SRQ">
+<span class="sig-name descname"><span class="pre">FRONT_PANEL_SRQ</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">16</span></em><a class="headerlink" href="#hp3478a_async.flags.SrqMask.FRONT_PANEL_SRQ" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hp3478a_async.flags.SrqMask.HARDWARE_ERROR">
+<span class="sig-name descname"><span class="pre">HARDWARE_ERROR</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">8</span></em><a class="headerlink" href="#hp3478a_async.flags.SrqMask.HARDWARE_ERROR" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hp3478a_async.flags.SrqMask.NONE">
+<span class="sig-name descname"><span class="pre">NONE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></em><a class="headerlink" href="#hp3478a_async.flags.SrqMask.NONE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hp3478a_async.flags.SrqMask.SYNTAX_ERROR">
+<span class="sig-name descname"><span class="pre">SYNTAX_ERROR</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">4</span></em><a class="headerlink" href="#hp3478a_async.flags.SrqMask.SYNTAX_ERROR" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="hp3478a_async.flags.StatusFlags">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">hp3478a_async.flags.</span></span><span class="sig-name descname"><span class="pre">StatusFlags</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hp3478a_async/flags.html#StatusFlags"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hp3478a_async.flags.StatusFlags" title="Permalink to this definition">¶</a></dt>
+<dd><p>The device status register flags. See page 61 of the manual for details.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hp3478a_async.flags.StatusFlags.AUTO_RANGE_ENABLED">
+<span class="sig-name descname"><span class="pre">AUTO_RANGE_ENABLED</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#hp3478a_async.flags.StatusFlags.AUTO_RANGE_ENABLED" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hp3478a_async.flags.StatusFlags.AUTO_ZERO_ENABLED">
+<span class="sig-name descname"><span class="pre">AUTO_ZERO_ENABLED</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">4</span></em><a class="headerlink" href="#hp3478a_async.flags.StatusFlags.AUTO_ZERO_ENABLED" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hp3478a_async.flags.StatusFlags.CAL_RAM_ENABLED">
+<span class="sig-name descname"><span class="pre">CAL_RAM_ENABLED</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">32</span></em><a class="headerlink" href="#hp3478a_async.flags.StatusFlags.CAL_RAM_ENABLED" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hp3478a_async.flags.StatusFlags.EXTERNAL_TRIGGER_ENABLED">
+<span class="sig-name descname"><span class="pre">EXTERNAL_TRIGGER_ENABLED</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">64</span></em><a class="headerlink" href="#hp3478a_async.flags.StatusFlags.EXTERNAL_TRIGGER_ENABLED" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hp3478a_async.flags.StatusFlags.FRONT_SWITCH_ENABLED">
+<span class="sig-name descname"><span class="pre">FRONT_SWITCH_ENABLED</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">16</span></em><a class="headerlink" href="#hp3478a_async.flags.StatusFlags.FRONT_SWITCH_ENABLED" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hp3478a_async.flags.StatusFlags.INTERNAL_TRIGGER_ENABLED">
+<span class="sig-name descname"><span class="pre">INTERNAL_TRIGGER_ENABLED</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#hp3478a_async.flags.StatusFlags.INTERNAL_TRIGGER_ENABLED" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hp3478a_async.flags.StatusFlags.LINE_FREQUENCY_50_HZ">
+<span class="sig-name descname"><span class="pre">LINE_FREQUENCY_50_HZ</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">8</span></em><a class="headerlink" href="#hp3478a_async.flags.StatusFlags.LINE_FREQUENCY_50_HZ" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hp3478a_async.flags.StatusFlags.NONE">
+<span class="sig-name descname"><span class="pre">NONE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></em><a class="headerlink" href="#hp3478a_async.flags.StatusFlags.NONE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<span class="target" id="module-hp3478a_async.enums"></span><p>Enums are used to represent the device functions and settings.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="hp3478a_async.enums.DisplayType">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">hp3478a_async.enums.</span></span><span class="sig-name descname"><span class="pre">DisplayType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hp3478a_async/enums.html#DisplayType"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hp3478a_async.enums.DisplayType" title="Permalink to this definition">¶</a></dt>
+<dd><p>The front panel display settings. See page 12 of the manual for details.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hp3478a_async.enums.DisplayType.NORMAL">
+<span class="sig-name descname"><span class="pre">NORMAL</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#hp3478a_async.enums.DisplayType.NORMAL" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hp3478a_async.enums.DisplayType.SHOW_TEXT">
+<span class="sig-name descname"><span class="pre">SHOW_TEXT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#hp3478a_async.enums.DisplayType.SHOW_TEXT" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hp3478a_async.enums.DisplayType.SHOW_TEXT_AND_FREEZE">
+<span class="sig-name descname"><span class="pre">SHOW_TEXT_AND_FREEZE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">3</span></em><a class="headerlink" href="#hp3478a_async.enums.DisplayType.SHOW_TEXT_AND_FREEZE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="hp3478a_async.enums.FrontRearSwitchPosition">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">hp3478a_async.enums.</span></span><span class="sig-name descname"><span class="pre">FrontRearSwitchPosition</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hp3478a_async/enums.html#FrontRearSwitchPosition"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hp3478a_async.enums.FrontRearSwitchPosition" title="Permalink to this definition">¶</a></dt>
+<dd><p>The position of the front/rear binding posts switch on the front panel.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hp3478a_async.enums.FrontRearSwitchPosition.FRONT">
+<span class="sig-name descname"><span class="pre">FRONT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#hp3478a_async.enums.FrontRearSwitchPosition.FRONT" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hp3478a_async.enums.FrontRearSwitchPosition.REAR">
+<span class="sig-name descname"><span class="pre">REAR</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></em><a class="headerlink" href="#hp3478a_async.enums.FrontRearSwitchPosition.REAR" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="hp3478a_async.enums.FunctionType">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">hp3478a_async.enums.</span></span><span class="sig-name descname"><span class="pre">FunctionType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hp3478a_async/enums.html#FunctionType"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hp3478a_async.enums.FunctionType" title="Permalink to this definition">¶</a></dt>
+<dd><p>The measurement functions. See page 55 of the extended ohms setting.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hp3478a_async.enums.FunctionType.ACI">
+<span class="sig-name descname"><span class="pre">ACI</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">6</span></em><a class="headerlink" href="#hp3478a_async.enums.FunctionType.ACI" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hp3478a_async.enums.FunctionType.ACV">
+<span class="sig-name descname"><span class="pre">ACV</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#hp3478a_async.enums.FunctionType.ACV" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hp3478a_async.enums.FunctionType.DCI">
+<span class="sig-name descname"><span class="pre">DCI</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">5</span></em><a class="headerlink" href="#hp3478a_async.enums.FunctionType.DCI" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hp3478a_async.enums.FunctionType.DCV">
+<span class="sig-name descname"><span class="pre">DCV</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#hp3478a_async.enums.FunctionType.DCV" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hp3478a_async.enums.FunctionType.NTC">
+<span class="sig-name descname"><span class="pre">NTC</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">8</span></em><a class="headerlink" href="#hp3478a_async.enums.FunctionType.NTC" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hp3478a_async.enums.FunctionType.NTCF">
+<span class="sig-name descname"><span class="pre">NTCF</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">9</span></em><a class="headerlink" href="#hp3478a_async.enums.FunctionType.NTCF" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hp3478a_async.enums.FunctionType.OHM">
+<span class="sig-name descname"><span class="pre">OHM</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">3</span></em><a class="headerlink" href="#hp3478a_async.enums.FunctionType.OHM" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hp3478a_async.enums.FunctionType.OHMF">
+<span class="sig-name descname"><span class="pre">OHMF</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">4</span></em><a class="headerlink" href="#hp3478a_async.enums.FunctionType.OHMF" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hp3478a_async.enums.FunctionType.OHM_EXT">
+<span class="sig-name descname"><span class="pre">OHM_EXT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">7</span></em><a class="headerlink" href="#hp3478a_async.enums.FunctionType.OHM_EXT" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="hp3478a_async.enums.Range">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">hp3478a_async.enums.</span></span><span class="sig-name descname"><span class="pre">Range</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hp3478a_async/enums.html#Range"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hp3478a_async.enums.Range" title="Permalink to this definition">¶</a></dt>
+<dd><p>The measurement range of the device. See page 20 of the manual for details.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hp3478a_async.enums.Range.RANGE_3">
+<span class="sig-name descname"><span class="pre">RANGE_3</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></em><a class="headerlink" href="#hp3478a_async.enums.Range.RANGE_3" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hp3478a_async.enums.Range.RANGE_30">
+<span class="sig-name descname"><span class="pre">RANGE_30</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#hp3478a_async.enums.Range.RANGE_30" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hp3478a_async.enums.Range.RANGE_300">
+<span class="sig-name descname"><span class="pre">RANGE_300</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#hp3478a_async.enums.Range.RANGE_300" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hp3478a_async.enums.Range.RANGE_300M">
+<span class="sig-name descname"><span class="pre">RANGE_300M</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">-1</span></em><a class="headerlink" href="#hp3478a_async.enums.Range.RANGE_300M" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hp3478a_async.enums.Range.RANGE_300k">
+<span class="sig-name descname"><span class="pre">RANGE_300k</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">5</span></em><a class="headerlink" href="#hp3478a_async.enums.Range.RANGE_300k" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hp3478a_async.enums.Range.RANGE_30M">
+<span class="sig-name descname"><span class="pre">RANGE_30M</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">-2</span></em><a class="headerlink" href="#hp3478a_async.enums.Range.RANGE_30M" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hp3478a_async.enums.Range.RANGE_30MEG">
+<span class="sig-name descname"><span class="pre">RANGE_30MEG</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">7</span></em><a class="headerlink" href="#hp3478a_async.enums.Range.RANGE_30MEG" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hp3478a_async.enums.Range.RANGE_30k">
+<span class="sig-name descname"><span class="pre">RANGE_30k</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">4</span></em><a class="headerlink" href="#hp3478a_async.enums.Range.RANGE_30k" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hp3478a_async.enums.Range.RANGE_3MEG">
+<span class="sig-name descname"><span class="pre">RANGE_3MEG</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">6</span></em><a class="headerlink" href="#hp3478a_async.enums.Range.RANGE_3MEG" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hp3478a_async.enums.Range.RANGE_3k">
+<span class="sig-name descname"><span class="pre">RANGE_3k</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">3</span></em><a class="headerlink" href="#hp3478a_async.enums.Range.RANGE_3k" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hp3478a_async.enums.Range.RANGE_AUTO">
+<span class="sig-name descname"><span class="pre">RANGE_AUTO</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'A'</span></em><a class="headerlink" href="#hp3478a_async.enums.Range.RANGE_AUTO" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="hp3478a_async.enums.TriggerType">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">hp3478a_async.enums.</span></span><span class="sig-name descname"><span class="pre">TriggerType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hp3478a_async/enums.html#TriggerType"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hp3478a_async.enums.TriggerType" title="Permalink to this definition">¶</a></dt>
+<dd><p>The triggers supported by the DMM. See page 53 of the manual for details.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hp3478a_async.enums.TriggerType.EXTERNAL">
+<span class="sig-name descname"><span class="pre">EXTERNAL</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#hp3478a_async.enums.TriggerType.EXTERNAL" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hp3478a_async.enums.TriggerType.FAST">
+<span class="sig-name descname"><span class="pre">FAST</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">5</span></em><a class="headerlink" href="#hp3478a_async.enums.TriggerType.FAST" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hp3478a_async.enums.TriggerType.HOLD">
+<span class="sig-name descname"><span class="pre">HOLD</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">4</span></em><a class="headerlink" href="#hp3478a_async.enums.TriggerType.HOLD" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hp3478a_async.enums.TriggerType.INTERNAL">
+<span class="sig-name descname"><span class="pre">INTERNAL</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#hp3478a_async.enums.TriggerType.INTERNAL" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hp3478a_async.enums.TriggerType.SINGLE">
+<span class="sig-name descname"><span class="pre">SINGLE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">3</span></em><a class="headerlink" href="#hp3478a_async.enums.TriggerType.SINGLE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-hp3478a_async.errors">
+<span id="errors"></span><h2>Errors<a class="headerlink" href="#module-hp3478a_async.errors" title="Permalink to this heading">¶</a></h2>
+<p>Custom errors raised by the HP 3478A.</p>
+<dl class="py exception">
+<dt class="sig sig-object py" id="hp3478a_async.errors.DeviceError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">hp3478a_async.errors.</span></span><span class="sig-name descname"><span class="pre">DeviceError</span></span><a class="reference internal" href="_modules/hp3478a_async/errors.html#DeviceError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hp3478a_async.errors.DeviceError" title="Permalink to this definition">¶</a></dt>
+<dd><p>The device returned an error during operation</p>
+</dd></dl>
+
+</section>
+<section id="module-hp3478a_async.hp_3478a_helper">
+<span id="helper-functions"></span><h2>Helper functions<a class="headerlink" href="#module-hp3478a_async.hp_3478a_helper" title="Permalink to this heading">¶</a></h2>
+<p>Helper functions to encode and decode data formats used by the HP 3478A.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="hp3478a_async.hp_3478a_helper.decode_cal_data">
+<span class="sig-prename descclassname"><span class="pre">hp3478a_async.hp_3478a_helper.</span></span><span class="sig-name descname"><span class="pre">decode_cal_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">encoded_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bytes</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">bool</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#hp3478a_async.hp_3478a_helper.CalramEntry" title="hp3478a_async.hp_3478a_helper.CalramEntry"><span class="pre">hp3478a_async.hp_3478a_helper.CalramEntry</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/hp3478a_async/hp_3478a_helper.html#decode_cal_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hp3478a_async.hp_3478a_helper.decode_cal_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>The calibration data is stored as <a class="reference external" href="https://en.wikipedia.org/wiki/Nibble">nibbles</a> (4 bit, half-bytes).
+This function decodes the contents of the calibration ram and returns the status of the calibration switch.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><cite>True</cite> if the calibration switch is enabled and the calibration constants as a tuple of CalramEntry.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>tuple[bool, tuple[<a class="reference internal" href="#hp3478a_async.hp_3478a_helper.CalramEntry" title="hp3478a_async.hp_3478a_helper.CalramEntry">CalramEntry</a>]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="hp3478a_async.hp_3478a_helper.encode_cal_data">
+<span class="sig-prename descclassname"><span class="pre">hp3478a_async.hp_3478a_helper.</span></span><span class="sig-name descname"><span class="pre">encode_cal_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cal_enable</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_blocks</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#hp3478a_async.hp_3478a_helper.CalramEntry" title="hp3478a_async.hp_3478a_helper.CalramEntry"><span class="pre">hp3478a_async.hp_3478a_helper.CalramEntry</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#hp3478a_async.hp_3478a_helper.CalramEntry" title="hp3478a_async.hp_3478a_helper.CalramEntry"><span class="pre">hp3478a_async.hp_3478a_helper.CalramEntry</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bytes</span></span></span><a class="reference internal" href="_modules/hp3478a_async/hp_3478a_helper.html#encode_cal_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hp3478a_async.hp_3478a_helper.encode_cal_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>The calibration data is stored as nibbles (4 bit, half-bytes). This function encodes a
+dictionary with the calibration constants to bytes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data_blocks</strong> (<em>list</em><em>[</em><a class="reference internal" href="#hp3478a_async.hp_3478a_helper.CalramEntry" title="hp3478a_async.hp_3478a_helper.CalramEntry"><em>CalramEntry</em></a><em>] or </em><em>tuple</em><em>[</em><a class="reference internal" href="#hp3478a_async.hp_3478a_helper.CalramEntry" title="hp3478a_async.hp_3478a_helper.CalramEntry"><em>CalramEntry</em></a><em>]</em>) – The calibration data</p></li>
+<li><p><strong>cal_enable</strong> – Set to <cite>True</cite>, to write the calibration data to the NVRAM.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="hp3478a_async.hp_3478a_helper.format_cal_string">
+<span class="sig-prename descclassname"><span class="pre">hp3478a_async.hp_3478a_helper.</span></span><span class="sig-name descname"><span class="pre">format_cal_string</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bytes</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/hp3478a_async/hp_3478a_helper.html#format_cal_string"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hp3478a_async.hp_3478a_helper.format_cal_string" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert the calibration memory to a unicode string containing only printable, non-whitespace ASCII characters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data</strong> (<em>bytes</em>) – The calram contents</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A human readable string of ASCII characters.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <div>
+    <h3><a href="index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">Module Documentation</a><ul>
+<li><a class="reference internal" href="#module-hp3478a_async">hp3478a_async</a></li>
+<li><a class="reference internal" href="#dataclasses">Dataclasses</a></li>
+<li><a class="reference internal" href="#module-hp3478a_async.flags">Enums and Flags</a></li>
+<li><a class="reference internal" href="#module-hp3478a_async.errors">Errors</a></li>
+<li><a class="reference internal" href="#module-hp3478a_async.hp_3478a_helper">Helper functions</a></li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="readme.html"
+                          title="previous chapter">Readme</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="examples.html"
+                          title="next chapter">Examples</a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/modules.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="examples.html" title="Examples"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="readme.html" title="Readme"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">hp3478a_async v1.3.3 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Module Documentation</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2022, Patrick Baus.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.0.2.
+    </div>
+  </body>
+</html>

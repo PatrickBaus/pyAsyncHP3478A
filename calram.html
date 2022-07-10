@@ -1,0 +1,423 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>Calibration Memory &#8212; hp3478a_async v1.3.3 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/nature.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Examples" href="examples.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="examples.html" title="Examples"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">hp3478a_async v1.3.3 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Calibration Memory</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="calibration-memory">
+<h1>Calibration Memory<a class="headerlink" href="#calibration-memory" title="Permalink to this heading">¶</a></h1>
+<p>The HP 3478A has a battery backed calibration memory. It is recommended to create a backup of that memory in case the
+battery fails. This library supports backing up the calibration memory and also modifying it. This allows the user to
+change the calibration constants while the library does all the checksum calculations in the background.</p>
+<section id="backing-up-the-calibration-memory">
+<h2>Backing up the calibration memory<a class="headerlink" href="#backing-up-the-calibration-memory" title="Permalink to this heading">¶</a></h2>
+<p>To back up the calibration memory use the following python scrip also found in the
+<a class="reference external" href="https://github.com/PatrickBaus/pyAsyncHP3478A/tree/master/examples/">examples folder</a>. This script will copy the
+calibration memory to a file called <cite>calram.bin</cite>. Note: It will not overwrite the file and error out if it already
+exists.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python3</span>
+<span class="c1"># pylint: disable=duplicate-code</span>
+<span class="c1"># ##### BEGIN GPL LICENSE BLOCK #####</span>
+<span class="c1">#</span>
+<span class="c1"># Copyright (C) 2021  Patrick Baus</span>
+<span class="c1"># This program is free software: you can redistribute it and/or modify</span>
+<span class="c1"># it under the terms of the GNU General Public License as published by</span>
+<span class="c1"># the Free Software Foundation, either version 3 of the License, or</span>
+<span class="c1"># (at your option) any later version.</span>
+<span class="c1">#</span>
+<span class="c1"># This program is distributed in the hope that it will be useful,</span>
+<span class="c1"># but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+<span class="c1"># MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+<span class="c1"># GNU General Public License for more details.</span>
+
+<span class="c1"># You should have received a copy of the GNU General Public License</span>
+<span class="c1"># along with this program.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
+<span class="c1">#</span>
+<span class="c1"># ##### END GPL LICENSE BLOCK #####</span>
+<span class="sd">&quot;&quot;&quot;This example shows how to pull the calibration memory from the HP 3478A&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">asyncio</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">typing</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+
+<span class="kn">import</span> <span class="nn">aiofiles</span>
+
+<span class="c1"># Devices</span>
+<span class="kn">from</span> <span class="nn">hp3478a_async</span> <span class="kn">import</span> <span class="n">HP_3478A</span>
+<span class="kn">from</span> <span class="nn">hp3478a_async.hp_3478a_helper</span> <span class="kn">import</span> <span class="n">decode_cal_data</span><span class="p">,</span> <span class="n">format_cal_string</span>
+
+<span class="k">if</span> <span class="n">typing</span><span class="o">.</span><span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">async_gpib</span> <span class="kn">import</span> <span class="n">AsyncGpib</span>
+    <span class="kn">from</span> <span class="nn">prologix_gpib_async</span> <span class="kn">import</span> <span class="n">AsyncPrologixGpibEthernetController</span><span class="p">,</span> <span class="n">EosMode</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="c1"># Uncomment if using a Prologix GPIB Ethernet adapter</span>
+    <span class="kn">from</span> <span class="nn">prologix_gpib_async</span> <span class="kn">import</span> <span class="n">AsyncPrologixGpibEthernetController</span><span class="p">,</span> <span class="n">EosMode</span>
+
+    <span class="c1"># Uncomment if using linux-gpib</span>
+    <span class="c1"># from async_gpib import AsyncGpib</span>
+
+<span class="c1"># Create the gpib device. We need a timeout of &gt; 10 PLC (20 ms), because the DMM might reply to a conversion request</span>
+<span class="c1"># and unable to reply to a status request during conversion (maximum time 10 PLC)</span>
+
+<span class="k">if</span> <span class="s2">&quot;prologix_gpib_async&quot;</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">:</span>
+    <span class="n">IP_ADDRESS</span> <span class="o">=</span> <span class="s2">&quot;127.0.0.1&quot;</span>
+    <span class="c1"># pylint: disable=used-before-assignment  # false positive</span>
+    <span class="n">gpib_device</span> <span class="o">=</span> <span class="n">AsyncPrologixGpibEthernetController</span><span class="p">(</span><span class="n">IP_ADDRESS</span><span class="p">,</span> <span class="n">pad</span><span class="o">=</span><span class="mi">27</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">eos_mode</span><span class="o">=</span><span class="n">EosMode</span><span class="o">.</span><span class="n">APPEND_NONE</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="s2">&quot;async_gpib&quot;</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">:</span>
+    <span class="c1"># Set the timeout to 1 second (T1s=11)</span>
+    <span class="c1"># NI GPIB adapter</span>
+    <span class="n">gpib_device</span> <span class="o">=</span> <span class="n">AsyncGpib</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">pad</span><span class="o">=</span><span class="mi">27</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">11</span><span class="p">)</span>  <span class="c1"># pylint: disable=used-before-assignment  # false positive</span>
+
+<span class="c1"># This example will read the calibration memory and write it to a file named &#39;calram.bin&#39;</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Read the calibration memory from the DMM&quot;&quot;&quot;</span>
+    <span class="k">async</span> <span class="k">with</span> <span class="n">HP_3478A</span><span class="p">(</span><span class="n">connection</span><span class="o">=</span><span class="n">gpib_device</span><span class="p">)</span> <span class="k">as</span> <span class="n">hp3478a</span><span class="p">:</span>
+        <span class="k">await</span> <span class="n">hp3478a</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>  <span class="c1"># flush all buffers</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Reading calibration memory. This will take about 10 seconds.&quot;</span><span class="p">)</span>
+        <span class="n">result</span><span class="p">,</span> <span class="n">filehandle</span> <span class="o">=</span> <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">gather</span><span class="p">(</span><span class="n">hp3478a</span><span class="o">.</span><span class="n">get_cal_ram</span><span class="p">(),</span> <span class="n">aiofiles</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;calram.bin&quot;</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;x&quot;</span><span class="p">))</span>
+        <span class="n">is_cal_enabled</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">decode_cal_data</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>  <span class="c1"># decode to a tuple of dicts</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Calibration switch is enabled: </span><span class="si">%(enabled)s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;enabled&quot;</span><span class="p">:</span> <span class="n">is_cal_enabled</span><span class="p">})</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Calibration data: </span><span class="si">%(data)s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="n">data</span><span class="p">})</span>
+        <span class="k">await</span> <span class="n">filehandle</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">format_cal_string</span><span class="p">(</span><span class="n">result</span><span class="p">))</span>
+        <span class="k">await</span> <span class="n">filehandle</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Calibration data written to calram.bin&quot;</span><span class="p">)</span>
+
+
+<span class="c1"># Report all mistakes managing asynchronous resources.</span>
+<span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s2">&quot;always&quot;</span><span class="p">,</span> <span class="ne">ResourceWarning</span><span class="p">)</span>
+<span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span>
+    <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">%(asctime)s</span><span class="s2">.</span><span class="si">%(msecs)03d</span><span class="s2"> </span><span class="si">%(levelname)-8s</span><span class="s2"> </span><span class="si">%(message)s</span><span class="s2">&quot;</span><span class="p">,</span>
+    <span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">,</span>  <span class="c1"># Enable logs from the ip connection. Set to debug for even more info</span>
+    <span class="n">datefmt</span><span class="o">=</span><span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">main</span><span class="p">(),</span> <span class="n">debug</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span>
+    <span class="c1"># The loop will be canceled on a KeyboardInterrupt by the run() method, we just want to suppress the exception</span>
+    <span class="k">pass</span>
+</pre></div>
+</div>
+</section>
+<section id="writing-the-backup-back-to-the-dmm">
+<h2>Writing the backup back to the DMM<a class="headerlink" href="#writing-the-backup-back-to-the-dmm" title="Permalink to this heading">¶</a></h2>
+<p>The backup can be written back to the dmm using another script. To do so, the <code class="docutils literal notranslate"><span class="pre">CAL</span></code> switch on the front panel must be
+set to <cite>enable</cite>. Otherwise the memory cannot be written to.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python3</span>
+<span class="c1"># pylint: disable=duplicate-code</span>
+<span class="c1"># ##### BEGIN GPL LICENSE BLOCK #####</span>
+<span class="c1">#</span>
+<span class="c1"># Copyright (C) 2021  Patrick Baus</span>
+<span class="c1"># This program is free software: you can redistribute it and/or modify</span>
+<span class="c1"># it under the terms of the GNU General Public License as published by</span>
+<span class="c1"># the Free Software Foundation, either version 3 of the License, or</span>
+<span class="c1"># (at your option) any later version.</span>
+<span class="c1">#</span>
+<span class="c1"># This program is distributed in the hope that it will be useful,</span>
+<span class="c1"># but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+<span class="c1"># MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+<span class="c1"># GNU General Public License for more details.</span>
+
+<span class="c1"># You should have received a copy of the GNU General Public License</span>
+<span class="c1"># along with this program.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
+<span class="c1">#</span>
+<span class="c1"># ##### END GPL LICENSE BLOCK #####</span>
+<span class="sd">&quot;&quot;&quot;This example shows how to write the calibration memory from a file to the HP 3478A&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">asyncio</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">typing</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+
+<span class="kn">import</span> <span class="nn">aiofiles</span>
+
+<span class="c1"># Devices</span>
+<span class="kn">from</span> <span class="nn">hp3478a_async</span> <span class="kn">import</span> <span class="n">HP_3478A</span>
+<span class="kn">from</span> <span class="nn">hp3478a_async.hp_3478a_helper</span> <span class="kn">import</span> <span class="n">decode_cal_data</span><span class="p">,</span> <span class="n">encode_cal_data</span>
+
+<span class="k">if</span> <span class="n">typing</span><span class="o">.</span><span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">async_gpib</span> <span class="kn">import</span> <span class="n">AsyncGpib</span>
+    <span class="kn">from</span> <span class="nn">prologix_gpib_async</span> <span class="kn">import</span> <span class="n">AsyncPrologixGpibEthernetController</span><span class="p">,</span> <span class="n">EosMode</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="c1"># Uncomment if using a Prologix GPIB Ethernet adapter</span>
+    <span class="kn">from</span> <span class="nn">prologix_gpib_async</span> <span class="kn">import</span> <span class="n">AsyncPrologixGpibEthernetController</span><span class="p">,</span> <span class="n">EosMode</span>
+
+    <span class="c1"># Uncomment if using linux-gpib</span>
+    <span class="c1"># from async_gpib import AsyncGpib</span>
+
+
+<span class="c1"># Create the gpib device. We need a timeout of &gt; 10 PLC (20 ms), because the DMM might reply to a conversion request</span>
+<span class="c1"># and unable to reply to a status request during conversion (maximum time 10 PLC)</span>
+<span class="k">if</span> <span class="s2">&quot;prologix_gpib_async&quot;</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">:</span>
+    <span class="n">IP_ADDRESS</span> <span class="o">=</span> <span class="s2">&quot;127.0.0.1&quot;</span>
+    <span class="c1"># pylint: disable=used-before-assignment  # false positive</span>
+    <span class="n">gpib_device</span> <span class="o">=</span> <span class="n">AsyncPrologixGpibEthernetController</span><span class="p">(</span><span class="n">IP_ADDRESS</span><span class="p">,</span> <span class="n">pad</span><span class="o">=</span><span class="mi">27</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">eos_mode</span><span class="o">=</span><span class="n">EosMode</span><span class="o">.</span><span class="n">APPEND_NONE</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="s2">&quot;async_gpib&quot;</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">:</span>
+    <span class="c1"># Set the timeout to 1 second (T1s=11)</span>
+    <span class="c1"># NI GPIB adapter</span>
+    <span class="n">gpib_device</span> <span class="o">=</span> <span class="n">AsyncGpib</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">pad</span><span class="o">=</span><span class="mi">27</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">11</span><span class="p">)</span>  <span class="c1"># pylint: disable=used-before-assignment  # false positive</span>
+
+
+<span class="k">async</span> <span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Read the calibration memory from a file and write it to the DMM&quot;&quot;&quot;</span>
+
+    <span class="c1"># Read the calibration memory file</span>
+    <span class="k">async</span> <span class="k">with</span> <span class="n">aiofiles</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;calram.bin&quot;</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">filehandle</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="p">(</span><span class="k">await</span> <span class="n">filehandle</span><span class="o">.</span><span class="n">read</span><span class="p">())</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+
+    <span class="n">is_cal_enabled</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">decode_cal_data</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>  <span class="c1"># decode to dict</span>
+
+    <span class="k">async</span> <span class="k">with</span> <span class="n">HP_3478A</span><span class="p">(</span><span class="n">connection</span><span class="o">=</span><span class="n">gpib_device</span><span class="p">)</span> <span class="k">as</span> <span class="n">hp3478a</span><span class="p">:</span>
+        <span class="k">await</span> <span class="n">hp3478a</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>  <span class="c1"># flush all buffers</span>
+        <span class="n">is_cal_enabled</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">decode_cal_data</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>  <span class="c1"># decode to dict</span>
+        <span class="n">data</span><span class="p">[</span><span class="mi">5</span><span class="p">][</span><span class="s2">&quot;gain&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>  <span class="c1"># Modify entry 5 (Note: This entry is not used, adjust to your liking)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">encode_cal_data</span><span class="p">(</span><span class="n">cal_enable</span><span class="o">=</span><span class="n">is_cal_enabled</span><span class="p">,</span> <span class="n">data_blocks</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>  <span class="c1"># re-encode caldata</span>
+
+        <span class="k">await</span> <span class="n">hp3478a</span><span class="o">.</span><span class="n">set_cal_ram</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Calibration data written to DMM&quot;</span><span class="p">)</span>
+
+
+<span class="c1"># Report all mistakes managing asynchronous resources.</span>
+<span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s2">&quot;always&quot;</span><span class="p">,</span> <span class="ne">ResourceWarning</span><span class="p">)</span>
+<span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span>
+    <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">%(asctime)s</span><span class="s2">.</span><span class="si">%(msecs)03d</span><span class="s2"> </span><span class="si">%(levelname)-8s</span><span class="s2"> </span><span class="si">%(message)s</span><span class="s2">&quot;</span><span class="p">,</span>
+    <span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">,</span>  <span class="c1"># Enable logs from the ip connection. Set to debug for even more info</span>
+    <span class="n">datefmt</span><span class="o">=</span><span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">main</span><span class="p">(),</span> <span class="n">debug</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span>
+    <span class="c1"># The loop will be canceled on a KeyboardInterrupt by the run() method, we just want to suppress the exception</span>
+    <span class="k">pass</span>
+</pre></div>
+</div>
+</section>
+<section id="technical-details">
+<h2>Technical details<a class="headerlink" href="#technical-details" title="Permalink to this heading">¶</a></h2>
+<p>The calibration memory dump is a human-readable ASCII string, that contain only printable characters. This was done by
+adding <code class="docutils literal notranslate"><span class="pre">0x40</span></code> to each byte. After subtracting <code class="docutils literal notranslate"><span class="pre">0x40</span></code>, the result is  a mix of bytes and
+<a class="reference external" href="https://en.wikipedia.org/wiki/Nibble">nibbles</a> (4 bit, half-bytes). The calibration data is stored as nibbles, while
+the checksum and the status of the <code class="docutils literal notranslate"><span class="pre">CAL</span></code> switch have 8 bit boundaries. The first byte of the memory dump contain said
+<code class="docutils literal notranslate"><span class="pre">CAL</span></code> switch position and
+is not part of the checksum-protected calibration data. The calibration memory is stored as
+nibbles which contain
+<a class="reference external" href="https://en.wikipedia.org/wiki/Binary-coded_decimal">Binary-coded decimal (BCD)</a>
+encoded digits. The encoding is similar to BCD 8421. At the end there are two bytes for the checksum. The memory layout
+is:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head" colspan="2"><p>Memory Layout</p></th>
+</tr>
+<tr class="row-even"><th class="head"><p>0</p></th>
+<th class="head"><p>1:247</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">CAL</span></code> switch</p></td>
+<td><p>Calibration data</p></td>
+</tr>
+<tr class="row-even"><td></td>
+<td><p>13 bytes per entry</p></td>
+</tr>
+</tbody>
+</table>
+<p>The calibration data consists of 19 entries, that have 11 bytes (22 nibbles) of data and 2 bytes for checksum:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head" colspan="3"><p>Calram entry</p></th>
+</tr>
+<tr class="row-even"><th class="head"><p>0:5</p></th>
+<th class="head"><p>6:10</p></th>
+<th class="head"><p>11:12</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-odd"><td><p>Offset</p></td>
+<td><p>Gain</p></td>
+<td><p>Checksum</p></td>
+</tr>
+</tbody>
+</table>
+<p>The offset is standard BCD 8421 encoded. The gain field is a little more complicated. The gain is stored as a 4-bit
+two’s complement signed number. Once decoded it gives the gain deviation from 1 in units of ppm. Finally the checksum
+is <code class="docutils literal notranslate"><span class="pre">0xFF</span></code> minus the sum over the 11 data bytes. For implementation details check the source code of the
+<a class="reference internal" href="modules.html#module-hp3478a_async.hp_3478a_helper" title="hp3478a_async.hp_3478a_helper"><code class="xref py py-mod docutils literal notranslate"><span class="pre">hp3478a_async.hp_3478a_helper</span></code></a>.</p>
+<p>The 19 calibration memory entries are the following functions:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Index</p></th>
+<th class="head"><p>Function</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>0</p></td>
+<td><p>30 mV DC</p></td>
+</tr>
+<tr class="row-odd"><td><p>1</p></td>
+<td><p>300 mV DC</p></td>
+</tr>
+<tr class="row-even"><td><p>2</p></td>
+<td><p>3 V DC</p></td>
+</tr>
+<tr class="row-odd"><td><p>3</p></td>
+<td><p>30 V DC</p></td>
+</tr>
+<tr class="row-even"><td><p>4</p></td>
+<td><p>300 V DC</p></td>
+</tr>
+<tr class="row-odd"><td><p>5</p></td>
+<td><p>Not used</p></td>
+</tr>
+<tr class="row-even"><td><p>6</p></td>
+<td><p>V AC</p></td>
+</tr>
+<tr class="row-odd"><td><p>7</p></td>
+<td><p>30 Ω 2W/4W</p></td>
+</tr>
+<tr class="row-even"><td><p>8</p></td>
+<td><p>300 Ω 2W/4W</p></td>
+</tr>
+<tr class="row-odd"><td><p>9</p></td>
+<td><p>3 kΩ 2W/4W</p></td>
+</tr>
+<tr class="row-even"><td><p>10</p></td>
+<td><p>30 kΩ 2W/4W</p></td>
+</tr>
+<tr class="row-odd"><td><p>11</p></td>
+<td><p>300 kΩ 2W/4W</p></td>
+</tr>
+<tr class="row-even"><td><p>12</p></td>
+<td><p>3 MΩ 2W/4W</p></td>
+</tr>
+<tr class="row-odd"><td><p>13</p></td>
+<td><p>30 MΩ 2W/4W</p></td>
+</tr>
+<tr class="row-even"><td><p>14</p></td>
+<td><p>300 mA DC</p></td>
+</tr>
+<tr class="row-odd"><td><p>15</p></td>
+<td><p>3 A DC</p></td>
+</tr>
+<tr class="row-even"><td><p>16</p></td>
+<td><p>Not used</p></td>
+</tr>
+<tr class="row-odd"><td><p>17</p></td>
+<td><p>300 mA/3 A AC</p></td>
+</tr>
+<tr class="row-even"><td><p>18</p></td>
+<td><p>Not used</p></td>
+</tr>
+</tbody>
+</table>
+<p>The device ignores the unused entries and does not complain about invalid data. Typically these entries are set to
+<code class="docutils literal notranslate"><span class="pre">offset=0</span></code> and <code class="docutils literal notranslate"><span class="pre">gain=1.0</span></code>.</p>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <div>
+    <h3><a href="index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">Calibration Memory</a><ul>
+<li><a class="reference internal" href="#backing-up-the-calibration-memory">Backing up the calibration memory</a></li>
+<li><a class="reference internal" href="#writing-the-backup-back-to-the-dmm">Writing the backup back to the DMM</a></li>
+<li><a class="reference internal" href="#technical-details">Technical details</a></li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="examples.html"
+                          title="previous chapter">Examples</a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/calram.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="examples.html" title="Examples"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">hp3478a_async v1.3.3 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Calibration Memory</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2022, Patrick Baus.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.0.2.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,150 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>hp3478a_async.enums &#8212; hp3478a_async v1.3.3 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/nature.css" />
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">hp3478a_async v1.3.3 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">hp3478a_async.enums</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for hp3478a_async.enums</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Enums are used to represent the device functions and settings.&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">Enum</span>
+
+
+<div class="viewcode-block" id="DisplayType"><a class="viewcode-back" href="../../modules.html#hp3478a_async.enums.DisplayType">[docs]</a><span class="k">class</span> <span class="nc">DisplayType</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The front panel display settings. See page 12 of the manual for details.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">NORMAL</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">SHOW_TEXT</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">SHOW_TEXT_AND_FREEZE</span> <span class="o">=</span> <span class="mi">3</span></div>
+
+
+<div class="viewcode-block" id="FrontRearSwitchPosition"><a class="viewcode-back" href="../../modules.html#hp3478a_async.enums.FrontRearSwitchPosition">[docs]</a><span class="k">class</span> <span class="nc">FrontRearSwitchPosition</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The position of the front/rear binding posts switch on the front panel.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">REAR</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">FRONT</span> <span class="o">=</span> <span class="mi">1</span></div>
+
+
+<div class="viewcode-block" id="FunctionType"><a class="viewcode-back" href="../../modules.html#hp3478a_async.enums.FunctionType">[docs]</a><span class="k">class</span> <span class="nc">FunctionType</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The measurement functions. See page 55 of the extended ohms setting.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">DCV</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">ACV</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">OHM</span> <span class="o">=</span> <span class="mi">3</span>
+    <span class="n">OHMF</span> <span class="o">=</span> <span class="mi">4</span>
+    <span class="n">DCI</span> <span class="o">=</span> <span class="mi">5</span>
+    <span class="n">ACI</span> <span class="o">=</span> <span class="mi">6</span>
+    <span class="n">OHM_EXT</span> <span class="o">=</span> <span class="mi">7</span>
+    <span class="n">NTC</span> <span class="o">=</span> <span class="mi">8</span>
+    <span class="n">NTCF</span> <span class="o">=</span> <span class="mi">9</span></div>
+
+
+<div class="viewcode-block" id="Range"><a class="viewcode-back" href="../../modules.html#hp3478a_async.enums.Range">[docs]</a><span class="k">class</span> <span class="nc">Range</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The measurement range of the device. See page 20 of the manual for details.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">RANGE_30M</span> <span class="o">=</span> <span class="o">-</span><span class="mi">2</span>
+    <span class="n">RANGE_300M</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="n">RANGE_3</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">RANGE_30</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">RANGE_300</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">RANGE_3k</span> <span class="o">=</span> <span class="mi">3</span>  <span class="c1"># small k due to SI pylint: disable=invalid-name</span>
+    <span class="n">RANGE_30k</span> <span class="o">=</span> <span class="mi">4</span>  <span class="c1"># small k due to SI pylint: disable=invalid-name</span>
+    <span class="n">RANGE_300k</span> <span class="o">=</span> <span class="mi">5</span>  <span class="c1"># small k due to SI pylint: disable=invalid-name</span>
+    <span class="n">RANGE_3MEG</span> <span class="o">=</span> <span class="mi">6</span>
+    <span class="n">RANGE_30MEG</span> <span class="o">=</span> <span class="mi">7</span>
+    <span class="n">RANGE_AUTO</span> <span class="o">=</span> <span class="s2">&quot;A&quot;</span></div>
+
+
+<div class="viewcode-block" id="TriggerType"><a class="viewcode-back" href="../../modules.html#hp3478a_async.enums.TriggerType">[docs]</a><span class="k">class</span> <span class="nc">TriggerType</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The triggers supported by the DMM. See page 53 of the manual for details.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">INTERNAL</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">EXTERNAL</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">SINGLE</span> <span class="o">=</span> <span class="mi">3</span>
+    <span class="n">HOLD</span> <span class="o">=</span> <span class="mi">4</span>
+    <span class="n">FAST</span> <span class="o">=</span> <span class="mi">5</span></div>
+</pre></div>
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">hp3478a_async v1.3.3 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">hp3478a_async.enums</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2022, Patrick Baus.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.0.2.
+    </div>
+  </body>
+</html>
