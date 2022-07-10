@@ -32,6 +32,7 @@ dynamic = ["version"]
 "Homepage" = "https://github.com/PatrickBaus/pyAsyncHP3478A"
 "Bug Tracker" = "https://github.com/PatrickBaus/pyAsyncHP3478A/issues"
 "Download" = "https://github.com/PatrickBaus/pyAsyncHP3478A/releases"
+"Documentation" = "https://patrickbaus.github.io/pyAsyncHP3478A/"
 
 [project.optional-dependencies]
 linux-gpib = ["async-gpib", "gpib-ctypes"]
