@@ -55,7 +55,7 @@ if "async_gpib" in sys.modules:
 
 
 async def main():
-    """Write the calibration memory to a file"""
+    """Read the calibration memory from a file and write it to the DMM"""
 
     # Read the calibration memory file
     async with aiofiles.open("calram.bin", mode="r") as filehandle:

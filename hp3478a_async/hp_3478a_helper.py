@@ -58,7 +58,7 @@ class CalramEntry:
 
 def format_cal_string(data: bytes) -> str:
     """
-    Convert the calibration memory to a unicode string with only ASCII characters.
+    Convert the calibration memory to a unicode string containing only printable, non-whitespace ASCII characters.
 
     Parameters
     ----------
@@ -68,7 +68,7 @@ def format_cal_string(data: bytes) -> str:
     Returns
     -------
     str
-        A human readable string with ASCII characters.
+        A human readable string of ASCII characters.
     """
     return "\n".join([(data[i : i + 16]).decode() for i in range(0, len(data), 16)])
 
@@ -181,13 +181,13 @@ def _calculate_cal_checksum(data: list[int] | tuple[int, ...]) -> int:
 
 def decode_cal_data(encoded_data: str | bytes) -> tuple[bool, tuple[CalramEntry, ...]]:
     """
-    The calibration data is stored as nibbles (4 bit, half-bytes). This function decodes the contents
-    of the calibration ram and returns the status of the calibration switch.
+    The calibration data is stored as `nibbles <https://en.wikipedia.org/wiki/Nibble>`_ (4 bit, half-bytes).
+    This function decodes the contents of the calibration ram and returns the status of the calibration switch.
 
     Returns
     ----------
-    tuple[bool, dict]
-        `True` if the calibration switch is enabled and the calibration constants as a dict
+    tuple[bool, tuple[CalramEntry]]
+        `True` if the calibration switch is enabled and the calibration constants as a tuple of CalramEntry.
     """
     if isinstance(encoded_data, str):
         # If we receive a unicode string, we will try to encode it to bytes
@@ -224,7 +224,7 @@ def encode_cal_data(cal_enable: bool, data_blocks: tuple[CalramEntry, ...] | lis
 
     Parameters
     ----------
-    data_blocks: list[dict[str, bool or int or float]]
+    data_blocks: list[CalramEntry] or tuple[CalramEntry]
         The calibration data
     cal_enable:
         Set to `True`, to write the calibration data to the NVRAM.

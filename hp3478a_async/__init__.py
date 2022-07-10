@@ -1,7 +1,9 @@
 """
-HP3478A asyncIO library.
+This is an asyncIO library for the Hewlett Packard 3478A DMM. It included all functions of DMM including some hidden
+function to read the non-volatile RAM and calibration constants of the device.
 """
 from ._version import __version__
-from .hp_3478a import HP_3478A, FrontRearSwitchPosition, FunctionType, NtcParameters, Range, TriggerType
+from .enums import FrontRearSwitchPosition, FunctionType, Range, TriggerType
+from .hp_3478a import HP_3478A, DmmStatus, NtcParameters
 
-VERSION = __version__
+__all__ = ["HP_3478A", "NtcParameters", "DmmStatus"]
