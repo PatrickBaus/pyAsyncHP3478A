@@ -43,6 +43,10 @@ dev = [
     "pytest", "twine",
 ]
 
+doc = [
+    "myst-parser", "sphinx",
+]
+
 test = [
     "mypy", "pylint", "pytest",
 ]

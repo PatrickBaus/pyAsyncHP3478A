@@ -6,4 +6,4 @@ from ._version import __version__
 from .enums import FrontRearSwitchPosition, FunctionType, Range, TriggerType
 from .hp_3478a import HP_3478A, DmmStatus, NtcParameters
 
-__all__ = ["HP_3478A", "NtcParameters", "DmmStatus"]
+__all__ = ["HP_3478A", "NtcParameters", "DmmStatus", "FrontRearSwitchPosition", "FunctionType", "Range", "TriggerType"]
