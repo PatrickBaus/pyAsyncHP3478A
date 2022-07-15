@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
-    <title>Module Documentation &#8212; hp3478a_async v1.4.0 documentation</title>
+    <title>Module Documentation &#8212; hp3478a_async v1.4.1 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/nature.css" />
     <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
@@ -34,7 +34,7 @@
         <li class="right" >
           <a href="readme.html" title="Readme"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">hp3478a_async v1.4.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">hp3478a_async v1.4.1 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">Module Documentation</a></li> 
       </ul>
     </div>  
@@ -303,7 +303,7 @@ mode. See page 55 of the manual for details on the extended ohms mode.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="hp3478a_async.HP_3478A.set_ntc_parameters">
-<span class="sig-name descname"><span class="pre">set_ntc_parameters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parameters</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#hp3478a_async.NtcParameters" title="hp3478a_async.hp_3478a.NtcParameters"><span class="pre">NtcParameters</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hp3478a_async/hp_3478a.html#HP_3478A.set_ntc_parameters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hp3478a_async.HP_3478A.set_ntc_parameters" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">set_ntc_parameters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">d</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rt25</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hp3478a_async/hp_3478a.html#HP_3478A.set_ntc_parameters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hp3478a_async.HP_3478A.set_ntc_parameters" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the parameters used when in mode <a class="reference internal" href="#hp3478a_async.enums.FunctionType.NTC" title="hp3478a_async.enums.FunctionType.NTC"><code class="xref py py-attr docutils literal notranslate"><span class="pre">FunctionType.NTC</span></code></a> or
 <a class="reference internal" href="#hp3478a_async.enums.FunctionType.NTCF" title="hp3478a_async.enums.FunctionType.NTCF"><code class="xref py py-attr docutils literal notranslate"><span class="pre">FunctionType.NTCF</span></code></a>. The parameters can be found in the datasheet
 of the thermistor. The formula for converting resistance values to temperature is:</p>
@@ -312,7 +312,13 @@ of the thermistor. The formula for converting resistance values to temperature i
 more details.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>parameters</strong> (<a class="reference internal" href="#hp3478a_async.NtcParameters" title="hp3478a_async.NtcParameters"><em>NtcParameters</em></a>) – The parameters of the NTC thermistor used</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>a</strong> (<em>float</em>) – The parameters of the NTC thermistor used</p></li>
+<li><p><strong>b</strong> (<em>float</em>) – The parameters of the NTC thermistor used</p></li>
+<li><p><strong>c</strong> (<em>float</em>) – The parameters of the NTC thermistor used</p></li>
+<li><p><strong>d</strong> (<em>float</em>) – The parameters of the NTC thermistor used</p></li>
+<li><p><strong>rt25</strong> (<em>float</em>) – The resistance of the NTC at 25 °C</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
@@ -982,7 +988,7 @@ dictionary with the calibration constants to bytes.</p>
         <li class="right" >
           <a href="readme.html" title="Readme"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">hp3478a_async v1.4.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">hp3478a_async v1.4.1 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">Module Documentation</a></li> 
       </ul>
     </div>

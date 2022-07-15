@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>hp3478a_async.hp_3478a &#8212; hp3478a_async v1.4.0 documentation</title>
+    <title>hp3478a_async.hp_3478a &#8212; hp3478a_async v1.4.1 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/nature.css" />
     <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
@@ -25,7 +25,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">hp3478a_async v1.4.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">hp3478a_async v1.4.1 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">hp3478a_async.hp_3478a</a></li> 
       </ul>
@@ -211,7 +211,9 @@
         <span class="k">finally</span><span class="p">:</span>
             <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">__conn</span><span class="o">.</span><span class="n">disconnect</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="HP_3478A.set_ntc_parameters"><a class="viewcode-back" href="../../modules.html#hp3478a_async.HP_3478A.set_ntc_parameters">[docs]</a>    <span class="k">def</span> <span class="nf">set_ntc_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">:</span> <span class="n">NtcParameters</span><span class="p">):</span>
+<div class="viewcode-block" id="HP_3478A.set_ntc_parameters"><a class="viewcode-back" href="../../modules.html#hp3478a_async.HP_3478A.set_ntc_parameters">[docs]</a>    <span class="k">def</span> <span class="nf">set_ntc_parameters</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">c</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">d</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">rt25</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="p">):</span>  <span class="c1"># pylint: disable=invalid-name,too-many-arguments  # this is standard naming convention</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set the parameters used when in mode :attr:`FunctionType.NTC &lt;hp3478a_async.enums.FunctionType.NTC&gt;` or</span>
 <span class="sd">        :attr:`FunctionType.NTCF &lt;hp3478a_async.enums.FunctionType.NTCF&gt;`. The parameters can be found in the datasheet</span>
@@ -224,10 +226,18 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        parameters: NtcParameters</span>
+<span class="sd">        a: float</span>
 <span class="sd">            The parameters of the NTC thermistor used</span>
+<span class="sd">        b: float</span>
+<span class="sd">            The parameters of the NTC thermistor used</span>
+<span class="sd">        c: float</span>
+<span class="sd">            The parameters of the NTC thermistor used</span>
+<span class="sd">        d: float</span>
+<span class="sd">            The parameters of the NTC thermistor used</span>
+<span class="sd">        rt25: float</span>
+<span class="sd">            The resistance of the NTC at 25 °C</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">__ntc_parameters</span> <span class="o">=</span> <span class="n">parameters</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__ntc_parameters</span> <span class="o">=</span> <span class="n">NtcParameters</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">rt25</span><span class="p">)</span></div>
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">__convert_thermistor_to_temperature</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">Decimal</span><span class="p">,</span> <span class="n">ntc_parameters</span><span class="p">:</span> <span class="n">NtcParameters</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Decimal</span><span class="p">:</span>
@@ -653,7 +663,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">hp3478a_async v1.4.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">hp3478a_async v1.4.1 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">hp3478a_async.hp_3478a</a></li> 
       </ul>
