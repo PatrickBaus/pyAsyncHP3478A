@@ -172,7 +172,9 @@ class HP_3478A:  # noqa pylint: disable=too-many-public-methods,invalid-name
         finally:
             await self.__conn.disconnect()
 
-    def set_ntc_parameters(self, parameters: NtcParameters):
+    def set_ntc_parameters(
+        self, a: float, b: float, c: float, d: float, rt25: float
+    ):  # pylint: disable=invalid-name,too-many-arguments  # this is standard naming convention
         """
         Set the parameters used when in mode :attr:`FunctionType.NTC <hp3478a_async.enums.FunctionType.NTC>` or
         :attr:`FunctionType.NTCF <hp3478a_async.enums.FunctionType.NTCF>`. The parameters can be found in the datasheet
@@ -185,10 +187,18 @@ class HP_3478A:  # noqa pylint: disable=too-many-public-methods,invalid-name
 
         Parameters
         ----------
-        parameters: NtcParameters
+        a: float
             The parameters of the NTC thermistor used
+        b: float
+            The parameters of the NTC thermistor used
+        c: float
+            The parameters of the NTC thermistor used
+        d: float
+            The parameters of the NTC thermistor used
+        rt25: float
+            The resistance of the NTC at 25 °C
         """
-        self.__ntc_parameters = parameters
+        self.__ntc_parameters = NtcParameters(a, b, c, d, rt25)
 
     @staticmethod
     def __convert_thermistor_to_temperature(value: Decimal, ntc_parameters: NtcParameters) -> Decimal:
