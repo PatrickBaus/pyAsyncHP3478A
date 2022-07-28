@@ -14,9 +14,9 @@
 # import os
 # import sys
 # sys.path.insert(0, os.path.abspath('.'))
-import hp3478a_async
 
 # -- Project information -----------------------------------------------------
+import hp3478a_async
 
 project = "hp3478a_async"
 copyright = "2022, Patrick Baus"
