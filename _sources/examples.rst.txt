@@ -1,10 +1,12 @@
 Examples
 ========
-The HP 3478A requires a GPIB connection and a supported driver. This can be either one the drivers
-supported by `Linux Gpib <https://linux-gpib.sourceforge.io/doc_html/supported-hardware.html>`_ or a
-`Prologix Ethernet adapter <http://prologix.biz/gpib-ethernet-controller.html>`_.
+The HP 3478A requires a GPIB connection and a supported driver. Currently two drivers are supported by the HP 3478A
+driver: `Linux Gpib <https://linux-gpib.sourceforge.io>`_ or
+`Prologix Ethernet adapter <http://prologix.biz/gpib-ethernet-controller.html>`_. Linux GPIB supports
+`several <https://linux-gpib.sourceforge.io/doc_html/supported-hardware.html>`_
+different hardware solutions.
 
-The drivers can be found here:
+The Python asyncio drivers can be found here:
 
 * `Linux Gpib Wrapper <https://github.com/PatrickBaus/pyAsyncGpib>`_
 * `Prologix asyncio driver <https://github.com/PatrickBaus/pyAsyncPrologixGpib>`_
