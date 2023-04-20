@@ -4,16 +4,14 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
-    <title>Calibration Memory &#8212; hp3478a_async v1.4.1 documentation</title>
+    <title>Calibration Memory &#8212; hp3478a_async v1.4.2 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/nature.css" />
     <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-    <script src="_static/jquery.js"></script>
-    <script src="_static/underscore.js"></script>
-    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="_static/doctools.js"></script>
+    <script src="_static/sphinx_highlight.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="prev" title="Examples" href="examples.html" /> 
@@ -30,7 +28,7 @@
         <li class="right" >
           <a href="examples.html" title="Examples"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">hp3478a_async v1.4.1 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">hp3478a_async v1.4.2 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">Calibration Memory</a></li> 
       </ul>
     </div>  
@@ -99,16 +97,17 @@ exists.</p>
 <span class="k">if</span> <span class="s2">&quot;prologix_gpib_async&quot;</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">:</span>
     <span class="n">IP_ADDRESS</span> <span class="o">=</span> <span class="s2">&quot;127.0.0.1&quot;</span>
     <span class="c1"># pylint: disable=used-before-assignment  # false positive</span>
-    <span class="n">gpib_device</span> <span class="o">=</span> <span class="n">AsyncPrologixGpibEthernetController</span><span class="p">(</span><span class="n">IP_ADDRESS</span><span class="p">,</span> <span class="n">pad</span><span class="o">=</span><span class="mi">27</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">eos_mode</span><span class="o">=</span><span class="n">EosMode</span><span class="o">.</span><span class="n">APPEND_NONE</span><span class="p">)</span>
+    <span class="n">gpib_device</span> <span class="o">=</span> <span class="n">AsyncPrologixGpibEthernetController</span><span class="p">(</span><span class="n">IP_ADDRESS</span><span class="p">,</span> <span class="n">pad</span><span class="o">=</span><span class="mi">27</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">eos_mode</span><span class="o">=</span><span class="n">EosMode</span><span class="o">.</span><span class="n">APPEND_NONE</span><span class="p">)</span>
 
 <span class="k">if</span> <span class="s2">&quot;async_gpib&quot;</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">:</span>
     <span class="c1"># Set the timeout to 1 second (T1s=11)</span>
     <span class="c1"># NI GPIB adapter</span>
     <span class="n">gpib_device</span> <span class="o">=</span> <span class="n">AsyncGpib</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">pad</span><span class="o">=</span><span class="mi">27</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">11</span><span class="p">)</span>  <span class="c1"># pylint: disable=used-before-assignment  # false positive</span>
 
+
 <span class="c1"># This example will read the calibration memory and write it to a file named &#39;calram.bin&#39;</span>
 <span class="k">async</span> <span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot;Read the calibration memory from the DMM&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Read the calibration memory from the DMM&quot;&quot;&quot;</span>
     <span class="k">async</span> <span class="k">with</span> <span class="n">HP_3478A</span><span class="p">(</span><span class="n">connection</span><span class="o">=</span><span class="n">gpib_device</span><span class="p">)</span> <span class="k">as</span> <span class="n">hp3478a</span><span class="p">:</span>
         <span class="k">await</span> <span class="n">hp3478a</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>  <span class="c1"># flush all buffers</span>
         <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Reading calibration memory. This will take about 10 seconds.&quot;</span><span class="p">)</span>
@@ -198,7 +197,7 @@ set to <cite>enable</cite>. Otherwise the memory cannot be written to.</p>
 
 
 <span class="k">async</span> <span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot;Read the calibration memory from a file and write it to the DMM&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Read the calibration memory from a file and write it to the DMM&quot;&quot;&quot;</span>
 
     <span class="c1"># Read the calibration memory file</span>
     <span class="k">async</span> <span class="k">with</span> <span class="n">aiofiles</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;calram.bin&quot;</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">filehandle</span><span class="p">:</span>
@@ -411,13 +410,13 @@ is <code class="docutils literal notranslate"><span class="pre">0xFF</span></cod
         <li class="right" >
           <a href="examples.html" title="Examples"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">hp3478a_async v1.4.1 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">hp3478a_async v1.4.2 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">Calibration Memory</a></li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2022, Patrick Baus.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.1.1.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 6.1.3.
     </div>
   </body>
 </html>

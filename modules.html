@@ -4,16 +4,14 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
-    <title>Module Documentation &#8212; hp3478a_async v1.4.1 documentation</title>
+    <title>Module Documentation &#8212; hp3478a_async v1.4.2 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/nature.css" />
     <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-    <script src="_static/jquery.js"></script>
-    <script src="_static/underscore.js"></script>
-    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="_static/doctools.js"></script>
+    <script src="_static/sphinx_highlight.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Examples" href="examples.html" />
@@ -34,7 +32,7 @@
         <li class="right" >
           <a href="readme.html" title="Readme"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">hp3478a_async v1.4.1 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">hp3478a_async v1.4.2 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">Module Documentation</a></li> 
       </ul>
     </div>  
@@ -183,7 +181,7 @@ compatibility reasons with other drivers, it is declared async.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="hp3478a_async.HP_3478A.read">
-<em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">read</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">length</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">decimal.Decimal</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bytes</span></span></span><a class="reference internal" href="_modules/hp3478a_async/hp_3478a.html#HP_3478A.read"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hp3478a_async.HP_3478A.read" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">read</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">length</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Decimal</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bytes</span></span></span><a class="reference internal" href="_modules/hp3478a_async/hp_3478a.html#HP_3478A.read"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hp3478a_async.HP_3478A.read" title="Permalink to this definition">¶</a></dt>
 <dd><p>Read a single value from the device. If <cite>length’ is given, read `length</cite> bytes, else read until a line break
 <code class="docutils literal notranslate"><span class="pre">b&quot;\n&quot;</span></code>.</p>
 <dl class="field-list simple">
@@ -204,7 +202,7 @@ compatibility reasons with other drivers, it is declared async.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="hp3478a_async.HP_3478A.read_all">
-<em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">read_all</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">length</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">AsyncGenerator</span><span class="p"><span class="pre">[</span></span><span class="pre">decimal.Decimal</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bytes</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/hp3478a_async/hp_3478a.html#HP_3478A.read_all"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hp3478a_async.HP_3478A.read_all" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">read_all</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">length</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">AsyncGenerator</span><span class="p"><span class="pre">[</span></span><span class="pre">Decimal</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bytes</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/hp3478a_async/hp_3478a.html#HP_3478A.read_all"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hp3478a_async.HP_3478A.read_all" title="Permalink to this definition">¶</a></dt>
 <dd><p>Read all values from the device. If <cite>length’ is given, read `length</cite> bytes, else read until a line break
 <code class="docutils literal notranslate"><span class="pre">b&quot;\n&quot;</span></code>, then yield the result.</p>
 <dl class="field-list simple">
@@ -932,11 +930,166 @@ dictionary with the calibration constants to bytes.</p>
     <h3><a href="index.html">Table of Contents</a></h3>
     <ul>
 <li><a class="reference internal" href="#">Module Documentation</a><ul>
-<li><a class="reference internal" href="#module-hp3478a_async">hp3478a_async</a></li>
-<li><a class="reference internal" href="#dataclasses">Dataclasses</a></li>
-<li><a class="reference internal" href="#module-hp3478a_async.flags">Enums and Flags</a></li>
-<li><a class="reference internal" href="#module-hp3478a_async.errors">Errors</a></li>
-<li><a class="reference internal" href="#module-hp3478a_async.hp_3478a_helper">Helper functions</a></li>
+<li><a class="reference internal" href="#module-hp3478a_async">hp3478a_async</a><ul>
+<li><a class="reference internal" href="#hp3478a_async.HP_3478A"><code class="docutils literal notranslate"><span class="pre">HP_3478A</span></code></a><ul>
+<li><a class="reference internal" href="#hp3478a_async.HP_3478A.__init__"><code class="docutils literal notranslate"><span class="pre">HP_3478A.__init__()</span></code></a></li>
+<li><a class="reference internal" href="#hp3478a_async.HP_3478A.clear"><code class="docutils literal notranslate"><span class="pre">HP_3478A.clear()</span></code></a></li>
+<li><a class="reference internal" href="#hp3478a_async.HP_3478A.connect"><code class="docutils literal notranslate"><span class="pre">HP_3478A.connect()</span></code></a></li>
+<li><a class="reference internal" href="#hp3478a_async.HP_3478A.connection"><code class="docutils literal notranslate"><span class="pre">HP_3478A.connection</span></code></a></li>
+<li><a class="reference internal" href="#hp3478a_async.HP_3478A.device_clear"><code class="docutils literal notranslate"><span class="pre">HP_3478A.device_clear()</span></code></a></li>
+<li><a class="reference internal" href="#hp3478a_async.HP_3478A.disconnect"><code class="docutils literal notranslate"><span class="pre">HP_3478A.disconnect()</span></code></a></li>
+<li><a class="reference internal" href="#hp3478a_async.HP_3478A.get_cal_ram"><code class="docutils literal notranslate"><span class="pre">HP_3478A.get_cal_ram()</span></code></a></li>
+<li><a class="reference internal" href="#hp3478a_async.HP_3478A.get_error_register"><code class="docutils literal notranslate"><span class="pre">HP_3478A.get_error_register()</span></code></a></li>
+<li><a class="reference internal" href="#hp3478a_async.HP_3478A.get_front_rear_switch_position"><code class="docutils literal notranslate"><span class="pre">HP_3478A.get_front_rear_switch_position()</span></code></a></li>
+<li><a class="reference internal" href="#hp3478a_async.HP_3478A.get_id"><code class="docutils literal notranslate"><span class="pre">HP_3478A.get_id()</span></code></a></li>
+<li><a class="reference internal" href="#hp3478a_async.HP_3478A.get_status"><code class="docutils literal notranslate"><span class="pre">HP_3478A.get_status()</span></code></a></li>
+<li><a class="reference internal" href="#hp3478a_async.HP_3478A.local"><code class="docutils literal notranslate"><span class="pre">HP_3478A.local()</span></code></a></li>
+<li><a class="reference internal" href="#hp3478a_async.HP_3478A.read"><code class="docutils literal notranslate"><span class="pre">HP_3478A.read()</span></code></a></li>
+<li><a class="reference internal" href="#hp3478a_async.HP_3478A.read_all"><code class="docutils literal notranslate"><span class="pre">HP_3478A.read_all()</span></code></a></li>
+<li><a class="reference internal" href="#hp3478a_async.HP_3478A.reset"><code class="docutils literal notranslate"><span class="pre">HP_3478A.reset()</span></code></a></li>
+<li><a class="reference internal" href="#hp3478a_async.HP_3478A.serial_poll"><code class="docutils literal notranslate"><span class="pre">HP_3478A.serial_poll()</span></code></a></li>
+<li><a class="reference internal" href="#hp3478a_async.HP_3478A.set_autozero"><code class="docutils literal notranslate"><span class="pre">HP_3478A.set_autozero()</span></code></a></li>
+<li><a class="reference internal" href="#hp3478a_async.HP_3478A.set_cal_ram"><code class="docutils literal notranslate"><span class="pre">HP_3478A.set_cal_ram()</span></code></a></li>
+<li><a class="reference internal" href="#hp3478a_async.HP_3478A.set_display"><code class="docutils literal notranslate"><span class="pre">HP_3478A.set_display()</span></code></a></li>
+<li><a class="reference internal" href="#hp3478a_async.HP_3478A.set_function"><code class="docutils literal notranslate"><span class="pre">HP_3478A.set_function()</span></code></a></li>
+<li><a class="reference internal" href="#hp3478a_async.HP_3478A.set_ntc_parameters"><code class="docutils literal notranslate"><span class="pre">HP_3478A.set_ntc_parameters()</span></code></a></li>
+<li><a class="reference internal" href="#hp3478a_async.HP_3478A.set_number_of_digits"><code class="docutils literal notranslate"><span class="pre">HP_3478A.set_number_of_digits()</span></code></a></li>
+<li><a class="reference internal" href="#hp3478a_async.HP_3478A.set_range"><code class="docutils literal notranslate"><span class="pre">HP_3478A.set_range()</span></code></a></li>
+<li><a class="reference internal" href="#hp3478a_async.HP_3478A.set_srq_mask"><code class="docutils literal notranslate"><span class="pre">HP_3478A.set_srq_mask()</span></code></a></li>
+<li><a class="reference internal" href="#hp3478a_async.HP_3478A.set_trigger"><code class="docutils literal notranslate"><span class="pre">HP_3478A.set_trigger()</span></code></a></li>
+<li><a class="reference internal" href="#hp3478a_async.HP_3478A.write"><code class="docutils literal notranslate"><span class="pre">HP_3478A.write()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#dataclasses">Dataclasses</a><ul>
+<li><a class="reference internal" href="#hp3478a_async.hp_3478a_helper.CalramEntry"><code class="docutils literal notranslate"><span class="pre">CalramEntry</span></code></a><ul>
+<li><a class="reference internal" href="#hp3478a_async.hp_3478a_helper.CalramEntry.checksum"><code class="docutils literal notranslate"><span class="pre">CalramEntry.checksum</span></code></a></li>
+<li><a class="reference internal" href="#hp3478a_async.hp_3478a_helper.CalramEntry.gain"><code class="docutils literal notranslate"><span class="pre">CalramEntry.gain</span></code></a></li>
+<li><a class="reference internal" href="#hp3478a_async.hp_3478a_helper.CalramEntry.is_valid"><code class="docutils literal notranslate"><span class="pre">CalramEntry.is_valid</span></code></a></li>
+<li><a class="reference internal" href="#hp3478a_async.hp_3478a_helper.CalramEntry.offset"><code class="docutils literal notranslate"><span class="pre">CalramEntry.offset</span></code></a></li>
+<li><a class="reference internal" href="#hp3478a_async.hp_3478a_helper.CalramEntry.to_bytes"><code class="docutils literal notranslate"><span class="pre">CalramEntry.to_bytes()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#hp3478a_async.DmmStatus"><code class="docutils literal notranslate"><span class="pre">DmmStatus</span></code></a><ul>
+<li><a class="reference internal" href="#hp3478a_async.DmmStatus.dac_value"><code class="docutils literal notranslate"><span class="pre">DmmStatus.dac_value</span></code></a></li>
+<li><a class="reference internal" href="#hp3478a_async.DmmStatus.error_flags"><code class="docutils literal notranslate"><span class="pre">DmmStatus.error_flags</span></code></a></li>
+<li><a class="reference internal" href="#hp3478a_async.DmmStatus.function"><code class="docutils literal notranslate"><span class="pre">DmmStatus.function</span></code></a></li>
+<li><a class="reference internal" href="#hp3478a_async.DmmStatus.ndigits"><code class="docutils literal notranslate"><span class="pre">DmmStatus.ndigits</span></code></a></li>
+<li><a class="reference internal" href="#hp3478a_async.DmmStatus.range"><code class="docutils literal notranslate"><span class="pre">DmmStatus.range</span></code></a></li>
+<li><a class="reference internal" href="#hp3478a_async.DmmStatus.srq_flags"><code class="docutils literal notranslate"><span class="pre">DmmStatus.srq_flags</span></code></a></li>
+<li><a class="reference internal" href="#hp3478a_async.DmmStatus.status"><code class="docutils literal notranslate"><span class="pre">DmmStatus.status</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#hp3478a_async.NtcParameters"><code class="docutils literal notranslate"><span class="pre">NtcParameters</span></code></a><ul>
+<li><a class="reference internal" href="#hp3478a_async.NtcParameters.a"><code class="docutils literal notranslate"><span class="pre">NtcParameters.a</span></code></a></li>
+<li><a class="reference internal" href="#hp3478a_async.NtcParameters.b"><code class="docutils literal notranslate"><span class="pre">NtcParameters.b</span></code></a></li>
+<li><a class="reference internal" href="#hp3478a_async.NtcParameters.c"><code class="docutils literal notranslate"><span class="pre">NtcParameters.c</span></code></a></li>
+<li><a class="reference internal" href="#hp3478a_async.NtcParameters.d"><code class="docutils literal notranslate"><span class="pre">NtcParameters.d</span></code></a></li>
+<li><a class="reference internal" href="#hp3478a_async.NtcParameters.rt25"><code class="docutils literal notranslate"><span class="pre">NtcParameters.rt25</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-hp3478a_async.flags">Enums and Flags</a><ul>
+<li><a class="reference internal" href="#hp3478a_async.flags.ErrorFlags"><code class="docutils literal notranslate"><span class="pre">ErrorFlags</span></code></a><ul>
+<li><a class="reference internal" href="#hp3478a_async.flags.ErrorFlags.AD_LINK_FAILURE"><code class="docutils literal notranslate"><span class="pre">ErrorFlags.AD_LINK_FAILURE</span></code></a></li>
+<li><a class="reference internal" href="#hp3478a_async.flags.ErrorFlags.AD_SELFTEST_FAILURE"><code class="docutils literal notranslate"><span class="pre">ErrorFlags.AD_SELFTEST_FAILURE</span></code></a></li>
+<li><a class="reference internal" href="#hp3478a_async.flags.ErrorFlags.AD_SLOPE_CONVERGENCE"><code class="docutils literal notranslate"><span class="pre">ErrorFlags.AD_SLOPE_CONVERGENCE</span></code></a></li>
+<li><a class="reference internal" href="#hp3478a_async.flags.ErrorFlags.CAL_RAM_CHECKSUM"><code class="docutils literal notranslate"><span class="pre">ErrorFlags.CAL_RAM_CHECKSUM</span></code></a></li>
+<li><a class="reference internal" href="#hp3478a_async.flags.ErrorFlags.NONE"><code class="docutils literal notranslate"><span class="pre">ErrorFlags.NONE</span></code></a></li>
+<li><a class="reference internal" href="#hp3478a_async.flags.ErrorFlags.RAM_FAILURE"><code class="docutils literal notranslate"><span class="pre">ErrorFlags.RAM_FAILURE</span></code></a></li>
+<li><a class="reference internal" href="#hp3478a_async.flags.ErrorFlags.ROM_FAILURE"><code class="docutils literal notranslate"><span class="pre">ErrorFlags.ROM_FAILURE</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#hp3478a_async.flags.SerialPollFlags"><code class="docutils literal notranslate"><span class="pre">SerialPollFlags</span></code></a><ul>
+<li><a class="reference internal" href="#hp3478a_async.flags.SerialPollFlags.NONE"><code class="docutils literal notranslate"><span class="pre">SerialPollFlags.NONE</span></code></a></li>
+<li><a class="reference internal" href="#hp3478a_async.flags.SerialPollFlags.SRQ_ON_CAL_FAILURE"><code class="docutils literal notranslate"><span class="pre">SerialPollFlags.SRQ_ON_CAL_FAILURE</span></code></a></li>
+<li><a class="reference internal" href="#hp3478a_async.flags.SerialPollFlags.SRQ_ON_DATA_READY"><code class="docutils literal notranslate"><span class="pre">SerialPollFlags.SRQ_ON_DATA_READY</span></code></a></li>
+<li><a class="reference internal" href="#hp3478a_async.flags.SerialPollFlags.SRQ_ON_HARDWARE_ERROR"><code class="docutils literal notranslate"><span class="pre">SerialPollFlags.SRQ_ON_HARDWARE_ERROR</span></code></a></li>
+<li><a class="reference internal" href="#hp3478a_async.flags.SerialPollFlags.SRQ_ON_HAS_SRQ"><code class="docutils literal notranslate"><span class="pre">SerialPollFlags.SRQ_ON_HAS_SRQ</span></code></a></li>
+<li><a class="reference internal" href="#hp3478a_async.flags.SerialPollFlags.SRQ_ON_POWER_ON"><code class="docutils literal notranslate"><span class="pre">SerialPollFlags.SRQ_ON_POWER_ON</span></code></a></li>
+<li><a class="reference internal" href="#hp3478a_async.flags.SerialPollFlags.SRQ_ON_SRQ_BUTTON"><code class="docutils literal notranslate"><span class="pre">SerialPollFlags.SRQ_ON_SRQ_BUTTON</span></code></a></li>
+<li><a class="reference internal" href="#hp3478a_async.flags.SerialPollFlags.SRQ_ON_SYNTAX_ERROR"><code class="docutils literal notranslate"><span class="pre">SerialPollFlags.SRQ_ON_SYNTAX_ERROR</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#hp3478a_async.flags.SrqMask"><code class="docutils literal notranslate"><span class="pre">SrqMask</span></code></a><ul>
+<li><a class="reference internal" href="#hp3478a_async.flags.SrqMask.CALIBRATION_FAILURE"><code class="docutils literal notranslate"><span class="pre">SrqMask.CALIBRATION_FAILURE</span></code></a></li>
+<li><a class="reference internal" href="#hp3478a_async.flags.SrqMask.DATA_READY"><code class="docutils literal notranslate"><span class="pre">SrqMask.DATA_READY</span></code></a></li>
+<li><a class="reference internal" href="#hp3478a_async.flags.SrqMask.FRONT_PANEL_SRQ"><code class="docutils literal notranslate"><span class="pre">SrqMask.FRONT_PANEL_SRQ</span></code></a></li>
+<li><a class="reference internal" href="#hp3478a_async.flags.SrqMask.HARDWARE_ERROR"><code class="docutils literal notranslate"><span class="pre">SrqMask.HARDWARE_ERROR</span></code></a></li>
+<li><a class="reference internal" href="#hp3478a_async.flags.SrqMask.NONE"><code class="docutils literal notranslate"><span class="pre">SrqMask.NONE</span></code></a></li>
+<li><a class="reference internal" href="#hp3478a_async.flags.SrqMask.SYNTAX_ERROR"><code class="docutils literal notranslate"><span class="pre">SrqMask.SYNTAX_ERROR</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#hp3478a_async.flags.StatusFlags"><code class="docutils literal notranslate"><span class="pre">StatusFlags</span></code></a><ul>
+<li><a class="reference internal" href="#hp3478a_async.flags.StatusFlags.AUTO_RANGE_ENABLED"><code class="docutils literal notranslate"><span class="pre">StatusFlags.AUTO_RANGE_ENABLED</span></code></a></li>
+<li><a class="reference internal" href="#hp3478a_async.flags.StatusFlags.AUTO_ZERO_ENABLED"><code class="docutils literal notranslate"><span class="pre">StatusFlags.AUTO_ZERO_ENABLED</span></code></a></li>
+<li><a class="reference internal" href="#hp3478a_async.flags.StatusFlags.CAL_RAM_ENABLED"><code class="docutils literal notranslate"><span class="pre">StatusFlags.CAL_RAM_ENABLED</span></code></a></li>
+<li><a class="reference internal" href="#hp3478a_async.flags.StatusFlags.EXTERNAL_TRIGGER_ENABLED"><code class="docutils literal notranslate"><span class="pre">StatusFlags.EXTERNAL_TRIGGER_ENABLED</span></code></a></li>
+<li><a class="reference internal" href="#hp3478a_async.flags.StatusFlags.FRONT_SWITCH_ENABLED"><code class="docutils literal notranslate"><span class="pre">StatusFlags.FRONT_SWITCH_ENABLED</span></code></a></li>
+<li><a class="reference internal" href="#hp3478a_async.flags.StatusFlags.INTERNAL_TRIGGER_ENABLED"><code class="docutils literal notranslate"><span class="pre">StatusFlags.INTERNAL_TRIGGER_ENABLED</span></code></a></li>
+<li><a class="reference internal" href="#hp3478a_async.flags.StatusFlags.LINE_FREQUENCY_50_HZ"><code class="docutils literal notranslate"><span class="pre">StatusFlags.LINE_FREQUENCY_50_HZ</span></code></a></li>
+<li><a class="reference internal" href="#hp3478a_async.flags.StatusFlags.NONE"><code class="docutils literal notranslate"><span class="pre">StatusFlags.NONE</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#hp3478a_async.enums.DisplayType"><code class="docutils literal notranslate"><span class="pre">DisplayType</span></code></a><ul>
+<li><a class="reference internal" href="#hp3478a_async.enums.DisplayType.NORMAL"><code class="docutils literal notranslate"><span class="pre">DisplayType.NORMAL</span></code></a></li>
+<li><a class="reference internal" href="#hp3478a_async.enums.DisplayType.SHOW_TEXT"><code class="docutils literal notranslate"><span class="pre">DisplayType.SHOW_TEXT</span></code></a></li>
+<li><a class="reference internal" href="#hp3478a_async.enums.DisplayType.SHOW_TEXT_AND_FREEZE"><code class="docutils literal notranslate"><span class="pre">DisplayType.SHOW_TEXT_AND_FREEZE</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#hp3478a_async.enums.FrontRearSwitchPosition"><code class="docutils literal notranslate"><span class="pre">FrontRearSwitchPosition</span></code></a><ul>
+<li><a class="reference internal" href="#hp3478a_async.enums.FrontRearSwitchPosition.FRONT"><code class="docutils literal notranslate"><span class="pre">FrontRearSwitchPosition.FRONT</span></code></a></li>
+<li><a class="reference internal" href="#hp3478a_async.enums.FrontRearSwitchPosition.REAR"><code class="docutils literal notranslate"><span class="pre">FrontRearSwitchPosition.REAR</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#hp3478a_async.enums.FunctionType"><code class="docutils literal notranslate"><span class="pre">FunctionType</span></code></a><ul>
+<li><a class="reference internal" href="#hp3478a_async.enums.FunctionType.ACI"><code class="docutils literal notranslate"><span class="pre">FunctionType.ACI</span></code></a></li>
+<li><a class="reference internal" href="#hp3478a_async.enums.FunctionType.ACV"><code class="docutils literal notranslate"><span class="pre">FunctionType.ACV</span></code></a></li>
+<li><a class="reference internal" href="#hp3478a_async.enums.FunctionType.DCI"><code class="docutils literal notranslate"><span class="pre">FunctionType.DCI</span></code></a></li>
+<li><a class="reference internal" href="#hp3478a_async.enums.FunctionType.DCV"><code class="docutils literal notranslate"><span class="pre">FunctionType.DCV</span></code></a></li>
+<li><a class="reference internal" href="#hp3478a_async.enums.FunctionType.NTC"><code class="docutils literal notranslate"><span class="pre">FunctionType.NTC</span></code></a></li>
+<li><a class="reference internal" href="#hp3478a_async.enums.FunctionType.NTCF"><code class="docutils literal notranslate"><span class="pre">FunctionType.NTCF</span></code></a></li>
+<li><a class="reference internal" href="#hp3478a_async.enums.FunctionType.OHM"><code class="docutils literal notranslate"><span class="pre">FunctionType.OHM</span></code></a></li>
+<li><a class="reference internal" href="#hp3478a_async.enums.FunctionType.OHMF"><code class="docutils literal notranslate"><span class="pre">FunctionType.OHMF</span></code></a></li>
+<li><a class="reference internal" href="#hp3478a_async.enums.FunctionType.OHM_EXT"><code class="docutils literal notranslate"><span class="pre">FunctionType.OHM_EXT</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#hp3478a_async.enums.Range"><code class="docutils literal notranslate"><span class="pre">Range</span></code></a><ul>
+<li><a class="reference internal" href="#hp3478a_async.enums.Range.RANGE_3"><code class="docutils literal notranslate"><span class="pre">Range.RANGE_3</span></code></a></li>
+<li><a class="reference internal" href="#hp3478a_async.enums.Range.RANGE_30"><code class="docutils literal notranslate"><span class="pre">Range.RANGE_30</span></code></a></li>
+<li><a class="reference internal" href="#hp3478a_async.enums.Range.RANGE_300"><code class="docutils literal notranslate"><span class="pre">Range.RANGE_300</span></code></a></li>
+<li><a class="reference internal" href="#hp3478a_async.enums.Range.RANGE_300M"><code class="docutils literal notranslate"><span class="pre">Range.RANGE_300M</span></code></a></li>
+<li><a class="reference internal" href="#hp3478a_async.enums.Range.RANGE_300k"><code class="docutils literal notranslate"><span class="pre">Range.RANGE_300k</span></code></a></li>
+<li><a class="reference internal" href="#hp3478a_async.enums.Range.RANGE_30M"><code class="docutils literal notranslate"><span class="pre">Range.RANGE_30M</span></code></a></li>
+<li><a class="reference internal" href="#hp3478a_async.enums.Range.RANGE_30MEG"><code class="docutils literal notranslate"><span class="pre">Range.RANGE_30MEG</span></code></a></li>
+<li><a class="reference internal" href="#hp3478a_async.enums.Range.RANGE_30k"><code class="docutils literal notranslate"><span class="pre">Range.RANGE_30k</span></code></a></li>
+<li><a class="reference internal" href="#hp3478a_async.enums.Range.RANGE_3MEG"><code class="docutils literal notranslate"><span class="pre">Range.RANGE_3MEG</span></code></a></li>
+<li><a class="reference internal" href="#hp3478a_async.enums.Range.RANGE_3k"><code class="docutils literal notranslate"><span class="pre">Range.RANGE_3k</span></code></a></li>
+<li><a class="reference internal" href="#hp3478a_async.enums.Range.RANGE_AUTO"><code class="docutils literal notranslate"><span class="pre">Range.RANGE_AUTO</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#hp3478a_async.enums.TriggerType"><code class="docutils literal notranslate"><span class="pre">TriggerType</span></code></a><ul>
+<li><a class="reference internal" href="#hp3478a_async.enums.TriggerType.EXTERNAL"><code class="docutils literal notranslate"><span class="pre">TriggerType.EXTERNAL</span></code></a></li>
+<li><a class="reference internal" href="#hp3478a_async.enums.TriggerType.FAST"><code class="docutils literal notranslate"><span class="pre">TriggerType.FAST</span></code></a></li>
+<li><a class="reference internal" href="#hp3478a_async.enums.TriggerType.HOLD"><code class="docutils literal notranslate"><span class="pre">TriggerType.HOLD</span></code></a></li>
+<li><a class="reference internal" href="#hp3478a_async.enums.TriggerType.INTERNAL"><code class="docutils literal notranslate"><span class="pre">TriggerType.INTERNAL</span></code></a></li>
+<li><a class="reference internal" href="#hp3478a_async.enums.TriggerType.SINGLE"><code class="docutils literal notranslate"><span class="pre">TriggerType.SINGLE</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-hp3478a_async.errors">Errors</a><ul>
+<li><a class="reference internal" href="#hp3478a_async.errors.DeviceError"><code class="docutils literal notranslate"><span class="pre">DeviceError</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-hp3478a_async.hp_3478a_helper">Helper functions</a><ul>
+<li><a class="reference internal" href="#hp3478a_async.hp_3478a_helper.decode_cal_data"><code class="docutils literal notranslate"><span class="pre">decode_cal_data()</span></code></a></li>
+<li><a class="reference internal" href="#hp3478a_async.hp_3478a_helper.encode_cal_data"><code class="docutils literal notranslate"><span class="pre">encode_cal_data()</span></code></a></li>
+<li><a class="reference internal" href="#hp3478a_async.hp_3478a_helper.format_cal_string"><code class="docutils literal notranslate"><span class="pre">format_cal_string()</span></code></a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -988,13 +1141,13 @@ dictionary with the calibration constants to bytes.</p>
         <li class="right" >
           <a href="readme.html" title="Readme"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">hp3478a_async v1.4.1 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">hp3478a_async v1.4.2 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">Module Documentation</a></li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2022, Patrick Baus.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.1.1.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 6.1.3.
     </div>
   </body>
 </html>
