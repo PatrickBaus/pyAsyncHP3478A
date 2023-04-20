@@ -40,8 +40,8 @@ linux-gpib = ["async-gpib", "gpib-ctypes"]
 prologix-gpib = ["prologix-gpib-async"]
 
 dev = [
-    "async-gpib", "black", "build", "gpib-ctypes", "isort", "mypy", "pre-commit", "prologix-gpib-async", "pylint",
-    "pytest", "twine",
+    "aiofiles", "async-gpib", "black", "build", "gpib-ctypes", "isort", "mypy", "pre-commit", "prologix-gpib-async",
+    "pylint", "pytest", "twine",
 ]
 
 doc = [

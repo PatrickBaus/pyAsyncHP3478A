@@ -44,7 +44,7 @@ else:
 if "prologix_gpib_async" in sys.modules:
     IP_ADDRESS = "127.0.0.1"
     # pylint: disable=used-before-assignment  # false positive
-    gpib_device = AsyncPrologixGpibEthernetController(IP_ADDRESS, pad=27, timeout=1000, eos_mode=EosMode.APPEND_NONE)
+    gpib_device = AsyncPrologixGpibEthernetController(IP_ADDRESS, pad=27, timeout=1, eos_mode=EosMode.APPEND_NONE)
 
 if "async_gpib" in sys.modules:
     # Create the gpib device. We need a timeout of > 10 PLC (20 ms), because the DMM might reply to a conversion request

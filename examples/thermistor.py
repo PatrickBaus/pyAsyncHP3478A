@@ -24,6 +24,7 @@ import logging
 import sys
 import typing
 import warnings
+from decimal import Decimal
 
 # Devices
 from hp3478a_async import HP_3478A, FunctionType, NtcParameters, Range, TriggerType
@@ -44,7 +45,7 @@ else:
 if "prologix_gpib_async" in sys.modules:
     IP_ADDRESS = "192.168.1.168"
     # pylint: disable=used-before-assignment  # false positive
-    gpib_device = AsyncPrologixGpibEthernetController(IP_ADDRESS, pad=27, timeout=1000, eos_mode=EosMode.APPEND_NONE)
+    gpib_device = AsyncPrologixGpibEthernetController(IP_ADDRESS, pad=27, timeout=1, eos_mode=EosMode.APPEND_NONE)
 
 if "async_gpib" in sys.modules:
     # Create the gpib device. We need a timeout of > 10 PLC (20 ms), because the DMM might reply to a conversion request
@@ -57,6 +58,7 @@ if "async_gpib" in sys.modules:
     gpib_board = Gpib(name=0)
     gpib_board.config(0x7, True)  # enable wait for SRQs to speed up waiting for state changes
     gpib_board.close()
+
 
 # This example will log resistance data to the console
 async def main():
@@ -89,7 +91,7 @@ async def main():
 
             # Take the measurements until Ctrl+C is pressed
             async for result in hp3478a.read_all():
-                logging.getLogger(__name__).info("%s °C", result - 273.15)
+                logging.getLogger(__name__).info("%s °C", result - Decimal(273.15))
 
     # Catch errors from the Prologix IP connection
     except (ConnectionError, ConnectionRefusedError):
