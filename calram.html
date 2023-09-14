@@ -1,17 +1,16 @@
-
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" data-content_root="./">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Calibration Memory &#8212; hp3478a_async v1.4.2 documentation</title>
-    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="_static/nature.css" />
-    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-    <script src="_static/doctools.js"></script>
-    <script src="_static/sphinx_highlight.js"></script>
+    <title>Calibration Memory &#8212; hp3478a_async v1.4.3 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="_static/nature.css?v=601dbdee" />
+    <script src="_static/documentation_options.js?v=a68a9277"></script>
+    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="prev" title="Examples" href="examples.html" /> 
@@ -28,7 +27,7 @@
         <li class="right" >
           <a href="examples.html" title="Examples"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">hp3478a_async v1.4.2 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">hp3478a_async v1.4.3 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">Calibration Memory</a></li> 
       </ul>
     </div>  
@@ -39,12 +38,12 @@
           <div class="body" role="main">
             
   <section id="calibration-memory">
-<h1>Calibration Memory<a class="headerlink" href="#calibration-memory" title="Permalink to this heading">¶</a></h1>
+<h1>Calibration Memory<a class="headerlink" href="#calibration-memory" title="Link to this heading">¶</a></h1>
 <p>The HP 3478A has a battery backed calibration memory. It is recommended to create a backup of that memory in case the
 battery fails. This library supports backing up the calibration memory and also modifying it. This allows the user to
 change the calibration constants while the library does all the checksum calculations in the background.</p>
 <section id="backing-up-the-calibration-memory">
-<h2>Backing up the calibration memory<a class="headerlink" href="#backing-up-the-calibration-memory" title="Permalink to this heading">¶</a></h2>
+<h2>Backing up the calibration memory<a class="headerlink" href="#backing-up-the-calibration-memory" title="Link to this heading">¶</a></h2>
 <p>To back up the calibration memory use the following python scrip also found in the
 <a class="reference external" href="https://github.com/PatrickBaus/pyAsyncHP3478A/tree/master/examples/">examples folder</a>. This script will copy the
 calibration memory to a file called <cite>calram.bin</cite>. Note: It will not overwrite the file and error out if it already
@@ -137,7 +136,7 @@ exists.</p>
 </div>
 </section>
 <section id="writing-the-backup-back-to-the-dmm">
-<h2>Writing the backup back to the DMM<a class="headerlink" href="#writing-the-backup-back-to-the-dmm" title="Permalink to this heading">¶</a></h2>
+<h2>Writing the backup back to the DMM<a class="headerlink" href="#writing-the-backup-back-to-the-dmm" title="Link to this heading">¶</a></h2>
 <p>The backup can be written back to the dmm using another script. To do so, the <code class="docutils literal notranslate"><span class="pre">CAL</span></code> switch on the front panel must be
 set to <cite>enable</cite>. Otherwise the memory cannot be written to.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python3</span>
@@ -232,7 +231,7 @@ set to <cite>enable</cite>. Otherwise the memory cannot be written to.</p>
 </div>
 </section>
 <section id="technical-details">
-<h2>Technical details<a class="headerlink" href="#technical-details" title="Permalink to this heading">¶</a></h2>
+<h2>Technical details<a class="headerlink" href="#technical-details" title="Link to this heading">¶</a></h2>
 <p>The calibration memory dump is a human-readable ASCII string, that contain only printable characters. This was done by
 adding <code class="docutils literal notranslate"><span class="pre">0x40</span></code> to each byte. After subtracting <code class="docutils literal notranslate"><span class="pre">0x40</span></code>, the result is  a mix of bytes and
 <a class="reference external" href="https://en.wikipedia.org/wiki/Nibble">nibbles</a> (4 bit, half-bytes). The calibration data is stored as nibbles, while
@@ -410,13 +409,13 @@ is <code class="docutils literal notranslate"><span class="pre">0xFF</span></cod
         <li class="right" >
           <a href="examples.html" title="Examples"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">hp3478a_async v1.4.2 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">hp3478a_async v1.4.3 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">Calibration Memory</a></li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2022, Patrick Baus.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 6.1.3.
+    &#169; Copyright 2022, Patrick Baus.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
     </div>
   </body>
 </html>
