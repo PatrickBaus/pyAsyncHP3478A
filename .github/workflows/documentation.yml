@@ -17,11 +17,11 @@ jobs:
 
     steps:
     - name: Checkout source repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         path: master
     - name: Checkout gh-pages repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         ref: gh-pages
         path: gh-pages
@@ -48,7 +48,7 @@ jobs:
         git config user.name github-actions
         git config user.email github-actions@github.com
         git add .
-        # git commit returns an error if there are not updates, but this is ok
+        # git commit returns an error if there are no updates, but this is ok
         git commit -m "Update documentation" -a || true
     - name: Push documentation changes
       working-directory: gh-pages

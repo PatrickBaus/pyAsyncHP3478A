@@ -27,7 +27,7 @@ import warnings
 from decimal import Decimal
 
 # Devices
-from hp3478a_async import HP_3478A, FunctionType, NtcParameters, Range, TriggerType
+from hp3478a_async import HP_3478A, FunctionType, Range, TriggerType
 
 if typing.TYPE_CHECKING:
     from async_gpib import AsyncGpib
@@ -43,7 +43,7 @@ else:
 # and unable to reply to a status request during conversion (maximum time 10 PLC)
 
 if "prologix_gpib_async" in sys.modules:
-    IP_ADDRESS = "192.168.1.168"
+    IP_ADDRESS = "127.0.0.1"
     # pylint: disable=used-before-assignment  # false positive
     gpib_device = AsyncPrologixGpibEthernetController(IP_ADDRESS, pad=27, timeout=1, eos_mode=EosMode.APPEND_NONE)
 
@@ -80,13 +80,11 @@ async def main():
             # 1/T=a+b*Log(Rt/R25)+c*Log(Rt/R25)**2+d*Log(Rt/R25)**3
             # For more details on determining those values see the examples/thermistor folder
             hp3478a.set_ntc_parameters(
-                NtcParameters(
-                    a=3.35318065e-03,
-                    b=2.93792361e-04,
-                    c=4.04412336e-06,
-                    d=1.88475068e-07,
-                    rt25=5000,
-                )
+                a=3.35318065e-03,
+                b=2.93792361e-04,
+                c=4.04412336e-06,
+                d=1.88475068e-07,
+                rt25=5000,
             )  # Set Steinhart-Hart coefficients
 
             # Take the measurements until Ctrl+C is pressed

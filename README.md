@@ -32,14 +32,13 @@ source env/bin/activate  # only if the virtual environment is used
 pip install hp3478a-async
 ```
 
-## Usage
-All examples assume, that a GPIB library is installed as well. Either run
+All examples assume that a GPIB library is installed as well. Either run
 ```bash
 pip install prologix-gpib-async    # or alternatively
 # pip install async-gpib
 ```
-or download the source code from the git repository and copy it to the root folder yourself.
 
+## Usage
 The library uses an asynchronous context manager to make cleanup easier. You can use either the
 context manager syntax or invoke the calls manually:
 
