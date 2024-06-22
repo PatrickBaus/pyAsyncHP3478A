@@ -97,11 +97,12 @@ exists.</p>
     <span class="n">IP_ADDRESS</span> <span class="o">=</span> <span class="s2">&quot;127.0.0.1&quot;</span>
     <span class="c1"># pylint: disable=used-before-assignment  # false positive</span>
     <span class="n">gpib_device</span> <span class="o">=</span> <span class="n">AsyncPrologixGpibEthernetController</span><span class="p">(</span><span class="n">IP_ADDRESS</span><span class="p">,</span> <span class="n">pad</span><span class="o">=</span><span class="mi">27</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">eos_mode</span><span class="o">=</span><span class="n">EosMode</span><span class="o">.</span><span class="n">APPEND_NONE</span><span class="p">)</span>
-
-<span class="k">if</span> <span class="s2">&quot;async_gpib&quot;</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">:</span>
+<span class="k">elif</span> <span class="s2">&quot;async_gpib&quot;</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">:</span>
     <span class="c1"># Set the timeout to 1 second (T1s=11)</span>
     <span class="c1"># NI GPIB adapter</span>
     <span class="n">gpib_device</span> <span class="o">=</span> <span class="n">AsyncGpib</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">pad</span><span class="o">=</span><span class="mi">27</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">11</span><span class="p">)</span>  <span class="c1"># pylint: disable=used-before-assignment  # false positive</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="ne">ImportWarning</span><span class="p">(</span><span class="s2">&quot;No GPIB module loaded. Please check your imports&quot;</span><span class="p">)</span>
 
 
 <span class="c1"># This example will read the calibration memory and write it to a file named &#39;calram.bin&#39;</span>
@@ -188,11 +189,12 @@ set to <cite>enable</cite>. Otherwise the memory cannot be written to.</p>
     <span class="n">IP_ADDRESS</span> <span class="o">=</span> <span class="s2">&quot;127.0.0.1&quot;</span>
     <span class="c1"># pylint: disable=used-before-assignment  # false positive</span>
     <span class="n">gpib_device</span> <span class="o">=</span> <span class="n">AsyncPrologixGpibEthernetController</span><span class="p">(</span><span class="n">IP_ADDRESS</span><span class="p">,</span> <span class="n">pad</span><span class="o">=</span><span class="mi">27</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">eos_mode</span><span class="o">=</span><span class="n">EosMode</span><span class="o">.</span><span class="n">APPEND_NONE</span><span class="p">)</span>
-
-<span class="k">if</span> <span class="s2">&quot;async_gpib&quot;</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">:</span>
+<span class="k">elif</span> <span class="s2">&quot;async_gpib&quot;</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">:</span>
     <span class="c1"># Set the timeout to 1 second (T1s=11)</span>
     <span class="c1"># NI GPIB adapter</span>
     <span class="n">gpib_device</span> <span class="o">=</span> <span class="n">AsyncGpib</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">pad</span><span class="o">=</span><span class="mi">27</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">11</span><span class="p">)</span>  <span class="c1"># pylint: disable=used-before-assignment  # false positive</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="ne">ImportWarning</span><span class="p">(</span><span class="s2">&quot;No GPIB module loaded. Please check your imports&quot;</span><span class="p">)</span>
 
 
 <span class="k">async</span> <span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
