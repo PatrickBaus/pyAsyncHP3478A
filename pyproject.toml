@@ -1,5 +1,5 @@
 [project]
-name = "hp3478a_async"
+name = "hp3478a-async"
 authors = [
   { name="Patrick Baus", email="patrick.baus@physik.tu-darmstadt.de" },
 ]
