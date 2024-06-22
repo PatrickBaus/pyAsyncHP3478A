@@ -1,4 +1,5 @@
 """Unit test for the binary-coded decimal encoder/decoder used to encode/decode the calibration memory dumps."""
+
 # ##### BEGIN GPL LICENSE BLOCK #####
 #
 # Copyright (C) 2020  Patrick Baus
