@@ -45,8 +45,7 @@ if "prologix_gpib_async" in sys.modules:
     IP_ADDRESS = "127.0.0.1"
     # pylint: disable=used-before-assignment  # false positive
     gpib_device = AsyncPrologixGpibEthernetController(IP_ADDRESS, pad=27, timeout=1, eos_mode=EosMode.APPEND_NONE)
-
-if "async_gpib" in sys.modules:
+elif "async_gpib" in sys.modules:
     # Create the gpib device. We need a timeout of > 10 PLC (20 ms), because the DMM might reply to a conversion request
     # and unable to reply to a status request during conversion (maximum time 10 PLC)
     # Set the timeout to 1 second (T1s=11)
@@ -60,6 +59,8 @@ if "async_gpib" in sys.modules:
     gpib_board = Gpib(name=0)
     gpib_board.config(0x7, True)  # enable wait for SRQs to speed up waiting for state changes
     gpib_board.close()
+else:
+    raise ImportWarning("No GPIB module loaded. Please check your imports")
 
 
 async def main():

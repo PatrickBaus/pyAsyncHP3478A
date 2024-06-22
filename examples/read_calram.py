@@ -47,11 +47,12 @@ if "prologix_gpib_async" in sys.modules:
     IP_ADDRESS = "127.0.0.1"
     # pylint: disable=used-before-assignment  # false positive
     gpib_device = AsyncPrologixGpibEthernetController(IP_ADDRESS, pad=27, timeout=1, eos_mode=EosMode.APPEND_NONE)
-
-if "async_gpib" in sys.modules:
+elif "async_gpib" in sys.modules:
     # Set the timeout to 1 second (T1s=11)
     # NI GPIB adapter
     gpib_device = AsyncGpib(name=0, pad=27, timeout=11)  # pylint: disable=used-before-assignment  # false positive
+else:
+    raise ImportWarning("No GPIB module loaded. Please check your imports")
 
 
 # This example will read the calibration memory and write it to a file named 'calram.bin'
