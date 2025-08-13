@@ -26,7 +26,7 @@ def main():
 
     # Read the calibration memory file and strip the "\n" character at the end of each line.
     # Note: This will not work with Windows line endings ("\r\n")
-    with open("calram_example.bin", mode="r", encoding="utf-8") as filehandle:
+    with open("calram_example.bin", encoding="utf-8") as filehandle:
         result = filehandle.read().replace("\n", "")
 
     is_cal_enabled, data = decode_cal_data(result)  # decode to CalramEntry
