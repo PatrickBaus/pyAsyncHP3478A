@@ -5,15 +5,15 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>hp3478a_async.hp_3478a &#8212; hp3478a_async v1.4.5 documentation</title>
-    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=a746c00c" />
-    <link rel="stylesheet" type="text/css" href="../../_static/nature.css?v=0f882399" />
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/nature.css?v=279e0f84" />
     <script src="../../_static/documentation_options.js?v=c97b86a3"></script>
-    <script src="../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
   </head><body>
-    <div class="related" role="navigation" aria-label="related navigation">
+    <div class="related" role="navigation" aria-label="Related">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -54,34 +54,34 @@
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">This is an asyncIO driver for the HP 3478A DMM to abstract away the GPIB interface.</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
-<span class="kn">import</span> <span class="nn">asyncio</span>
-<span class="kn">import</span> <span class="nn">re</span>  <span class="c1"># Used to test for numerical return values</span>
-<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
-<span class="kn">from</span> <span class="nn">decimal</span> <span class="kn">import</span> <span class="n">Decimal</span>
-<span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">log</span>
-<span class="kn">from</span> <span class="nn">types</span> <span class="kn">import</span> <span class="n">TracebackType</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">AsyncGenerator</span><span class="p">,</span> <span class="n">Type</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">asyncio</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>  <span class="c1"># Used to test for numerical return values</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">decimal</span><span class="w"> </span><span class="kn">import</span> <span class="n">Decimal</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">math</span><span class="w"> </span><span class="kn">import</span> <span class="n">log</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">types</span><span class="w"> </span><span class="kn">import</span> <span class="n">TracebackType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">AsyncGenerator</span><span class="p">,</span> <span class="n">Type</span>
 
-<span class="kn">from</span> <span class="nn">hp3478a_async.enums</span> <span class="kn">import</span> <span class="n">DisplayType</span><span class="p">,</span> <span class="n">FrontRearSwitchPosition</span><span class="p">,</span> <span class="n">FunctionType</span><span class="p">,</span> <span class="n">Range</span><span class="p">,</span> <span class="n">TriggerType</span>
-<span class="kn">from</span> <span class="nn">hp3478a_async.errors</span> <span class="kn">import</span> <span class="n">DeviceError</span>
-<span class="kn">from</span> <span class="nn">hp3478a_async.flags</span> <span class="kn">import</span> <span class="n">ErrorFlags</span><span class="p">,</span> <span class="n">SerialPollFlags</span><span class="p">,</span> <span class="n">SrqMask</span><span class="p">,</span> <span class="n">StatusFlags</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">hp3478a_async.enums</span><span class="w"> </span><span class="kn">import</span> <span class="n">DisplayType</span><span class="p">,</span> <span class="n">FrontRearSwitchPosition</span><span class="p">,</span> <span class="n">FunctionType</span><span class="p">,</span> <span class="n">Range</span><span class="p">,</span> <span class="n">TriggerType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">hp3478a_async.errors</span><span class="w"> </span><span class="kn">import</span> <span class="n">DeviceError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">hp3478a_async.flags</span><span class="w"> </span><span class="kn">import</span> <span class="n">ErrorFlags</span><span class="p">,</span> <span class="n">SerialPollFlags</span><span class="p">,</span> <span class="n">SrqMask</span><span class="p">,</span> <span class="n">StatusFlags</span>
 
 <span class="k">try</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Self</span>  <span class="c1"># type: ignore # Python 3.11</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Self</span>  <span class="c1"># type: ignore # Python 3.11</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">typing_extensions</span> <span class="kn">import</span> <span class="n">Self</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">typing_extensions</span><span class="w"> </span><span class="kn">import</span> <span class="n">Self</span>
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">async_gpib</span> <span class="kn">import</span> <span class="n">AsyncGpib</span>
-    <span class="kn">from</span> <span class="nn">prologix_gpib_async</span> <span class="kn">import</span> <span class="n">AsyncPrologixGpibController</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">async_gpib</span><span class="w"> </span><span class="kn">import</span> <span class="n">AsyncGpib</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">prologix_gpib_async</span><span class="w"> </span><span class="kn">import</span> <span class="n">AsyncPrologixGpibController</span>
 
 
 <div class="viewcode-block" id="DmmStatus">
 <a class="viewcode-back" href="../../modules.html#hp3478a_async.DmmStatus">[docs]</a>
 <span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">DmmStatus</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">DmmStatus</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The device status of them DMM&quot;&quot;&quot;</span>
 
     <span class="n">function</span><span class="p">:</span> <span class="n">FunctionType</span>
@@ -97,7 +97,7 @@
 <div class="viewcode-block" id="NtcParameters">
 <a class="viewcode-back" href="../../modules.html#hp3478a_async.NtcParameters">[docs]</a>
 <span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">NtcParameters</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">NtcParameters</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    The Steinhart-Hart coefficient of an NTC thermistor. The formula to calculate the temperature from the resistance is</span>
 <span class="sd">    as follows:</span>
@@ -114,7 +114,7 @@
     <span class="n">d</span><span class="p">:</span> <span class="nb">float</span>  <span class="c1"># pylint: disable=invalid-name  # this is standard naming convention</span>
     <span class="n">rt25</span><span class="p">:</span> <span class="nb">float</span>
 
-    <span class="k">def</span> <span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">assert</span> <span class="nb">all</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">rt25</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">a</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">b</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">c</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">d</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">])</span></div>
 
 
@@ -125,14 +125,14 @@
 
 <div class="viewcode-block" id="HP_3478A">
 <a class="viewcode-back" href="../../modules.html#hp3478a_async.HP_3478A">[docs]</a>
-<span class="k">class</span> <span class="nc">HP_3478A</span><span class="p">:</span>  <span class="c1"># noqa pylint: disable=too-many-public-methods,invalid-name</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">HP_3478A</span><span class="p">:</span>  <span class="c1"># noqa pylint: disable=too-many-public-methods,invalid-name</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    The driver for the HP 3478A 5.5 digit multimeter. It supports both linux-gpib and the Prologix</span>
 <span class="sd">    GPIB adapters.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">connection</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AsyncGpib</span> <span class="o">|</span> <span class="n">AsyncPrologixGpibController</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">connection</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AsyncGpib</span> <span class="o">|</span> <span class="n">AsyncPrologixGpibController</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        The GPIB connection.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -140,7 +140,7 @@
 
 <div class="viewcode-block" id="HP_3478A.__init__">
 <a class="viewcode-back" href="../../modules.html#hp3478a_async.HP_3478A.__init__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">connection</span><span class="p">:</span> <span class="n">AsyncGpib</span> <span class="o">|</span> <span class="n">AsyncPrologixGpibController</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">connection</span><span class="p">:</span> <span class="n">AsyncGpib</span> <span class="o">|</span> <span class="n">AsyncPrologixGpibController</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Create an HP 3478A with the GPIB connection given.</span>
 
@@ -162,14 +162,14 @@
         <span class="p">)</span></div>
 
 
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;HEWLETT-PACKARD 3478A at </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
 
-    <span class="k">async</span> <span class="k">def</span> <span class="fm">__aenter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="fm">__aenter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
         <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span>
 
-    <span class="k">async</span> <span class="k">def</span> <span class="fm">__aexit__</span><span class="p">(</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="fm">__aexit__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">exc_type</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="ne">BaseException</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="n">exc</span><span class="p">:</span> <span class="ne">BaseException</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="n">traceback</span><span class="p">:</span> <span class="n">TracebackType</span> <span class="o">|</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">disconnect</span><span class="p">()</span>
@@ -177,7 +177,7 @@
 <div class="viewcode-block" id="HP_3478A.get_id">
 <a class="viewcode-back" href="../../modules.html#hp3478a_async.HP_3478A.get_id">[docs]</a>
     <span class="nd">@staticmethod</span>
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">get_id</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">get_id</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        The HP 3478A does not support an ID request, so this function returns the constant</span>
 <span class="sd">        `&quot;HEWLETT-PACKARD&quot;, &quot;3478A&quot;, &quot;0&quot;, &quot;0&quot;` to emulate the `*IDN?` SCPI command. The method is not async, but for</span>
@@ -193,7 +193,7 @@
 
 <div class="viewcode-block" id="HP_3478A.connect">
 <a class="viewcode-back" href="../../modules.html#hp3478a_async.HP_3478A.connect">[docs]</a>
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">connect</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">connect</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Connect the GPIB connection and configure the GPIB device for the DMM. This function must be called from the</span>
 <span class="sd">        loop and takes care of connecting the GPIB adapter.</span>
@@ -213,7 +213,7 @@
 
 <div class="viewcode-block" id="HP_3478A.disconnect">
 <a class="viewcode-back" href="../../modules.html#hp3478a_async.HP_3478A.disconnect">[docs]</a>
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">disconnect</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">disconnect</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Disconnect the GPIB device and release any lock on the front panel of the device if held.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -230,9 +230,9 @@
 
 <div class="viewcode-block" id="HP_3478A.set_ntc_parameters">
 <a class="viewcode-back" href="../../modules.html#hp3478a_async.HP_3478A.set_ntc_parameters">[docs]</a>
-    <span class="k">def</span> <span class="nf">set_ntc_parameters</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_ntc_parameters</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">c</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">d</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">rt25</span><span class="p">:</span> <span class="nb">float</span>
-    <span class="p">):</span>  <span class="c1"># pylint: disable=invalid-name,too-many-arguments  # this is standard naming convention</span>
+    <span class="p">):</span>  <span class="c1"># pylint: disable=too-many-arguments,too-many-positional-arguments</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set the parameters used when in mode :attr:`FunctionType.NTC &lt;hp3478a_async.enums.FunctionType.NTC&gt;` or</span>
 <span class="sd">        :attr:`FunctionType.NTCF &lt;hp3478a_async.enums.FunctionType.NTCF&gt;`. The parameters can be found in the datasheet</span>
@@ -260,7 +260,7 @@
 
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">__convert_thermistor_to_temperature</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">Decimal</span><span class="p">,</span> <span class="n">ntc_parameters</span><span class="p">:</span> <span class="n">NtcParameters</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Decimal</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">__convert_thermistor_to_temperature</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">Decimal</span><span class="p">,</span> <span class="n">ntc_parameters</span><span class="p">:</span> <span class="n">NtcParameters</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Decimal</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Convert a resistance to temperature using the formula 1/T=a+b*Log(Rt/R25)+c*Log(Rt/R25)**2+d*Log(Rt/R25)**3.</span>
 
@@ -287,7 +287,7 @@
             <span class="p">)</span>
         <span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">__post_process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Decimal</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Decimal</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">__post_process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Decimal</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Decimal</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Post-process the DMM value, if a special function was selected using :func:`set_function`. Returns the</span>
 <span class="sd">        unmodified value if no special function was selected.</span>
@@ -306,12 +306,12 @@
             <span class="k">try</span><span class="p">:</span>
                 <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__convert_thermistor_to_temperature</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__ntc_parameters</span><span class="p">)</span>
             <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cannot convert resistance to temperature. Measurement was: </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="kc">None</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cannot convert resistance to temperature. Measurement was: </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
         <span class="k">return</span> <span class="n">value</span>
 
 <div class="viewcode-block" id="HP_3478A.read">
 <a class="viewcode-back" href="../../modules.html#hp3478a_async.HP_3478A.read">[docs]</a>
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">length</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Decimal</span> <span class="o">|</span> <span class="nb">bytes</span><span class="p">:</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">length</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Decimal</span> <span class="o">|</span> <span class="nb">bytes</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Read a single value from the device. If `length&#39; is given, read `length` bytes, else read until a line break</span>
 <span class="sd">        ``b&quot;\\n&quot;``.</span>
@@ -346,7 +346,7 @@
 
 <div class="viewcode-block" id="HP_3478A.read_all">
 <a class="viewcode-back" href="../../modules.html#hp3478a_async.HP_3478A.read_all">[docs]</a>
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">read_all</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">length</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AsyncGenerator</span><span class="p">[</span><span class="n">Decimal</span> <span class="o">|</span> <span class="nb">bytes</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">read_all</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">length</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AsyncGenerator</span><span class="p">[</span><span class="n">Decimal</span> <span class="o">|</span> <span class="nb">bytes</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Read all values from the device. If `length&#39; is given, read `length` bytes, else read until a line break</span>
 <span class="sd">        ``b&quot;\\n&quot;``, then yield the result.</span>
@@ -380,16 +380,16 @@
                 <span class="k">else</span><span class="p">:</span>
                     <span class="k">raise</span> <span class="n">DeviceError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Device did not signal ready for read. Status was: </span><span class="si">{</span><span class="n">status_byte</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
             <span class="k">except</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">TimeoutError</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">TimeoutError</span><span class="p">(</span><span class="s2">&quot;The GPIB controller did not respond in time.&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="kc">None</span></div>
+                <span class="k">raise</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">TimeoutError</span><span class="p">(</span><span class="s2">&quot;The GPIB controller did not respond in time.&quot;</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span></div>
 
 
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">__query</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">command</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span> <span class="n">length</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">__query</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">command</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span> <span class="n">length</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
         <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">command</span><span class="p">)</span>
         <span class="k">return</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">__conn</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">length</span><span class="o">=</span><span class="n">length</span><span class="p">)</span>
 
 <div class="viewcode-block" id="HP_3478A.set_display">
 <a class="viewcode-back" href="../../modules.html#hp3478a_async.HP_3478A.set_display">[docs]</a>
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">set_display</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">DisplayType</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">set_display</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">DisplayType</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Sets a custom display text or display measurands. See page 12 of the manual for details.</span>
 
@@ -414,7 +414,7 @@
 
 <div class="viewcode-block" id="HP_3478A.set_trigger">
 <a class="viewcode-back" href="../../modules.html#hp3478a_async.HP_3478A.set_trigger">[docs]</a>
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">set_trigger</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">TriggerType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">set_trigger</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">TriggerType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set the DMM trigger. See page 53 of the manual for details.</span>
 
@@ -429,7 +429,7 @@
 
 <div class="viewcode-block" id="HP_3478A.write">
 <a class="viewcode-back" href="../../modules.html#hp3478a_async.HP_3478A.write">[docs]</a>
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Write data or commands to the instrument. Do not terminate the command with a new line or carriage return</span>
 <span class="sd">        (``b&quot;\\r&quot;`` or ``b&quot;\\n&quot;``). This bytestring will be written as is, be careful.</span>
@@ -444,7 +444,7 @@
 
 <div class="viewcode-block" id="HP_3478A.set_srq_mask">
 <a class="viewcode-back" href="../../modules.html#hp3478a_async.HP_3478A.set_srq_mask">[docs]</a>
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">set_srq_mask</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">SrqMask</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">set_srq_mask</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">SrqMask</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set the service interrupt mask. This will determine, when the GPIB SRQ is triggered by the instrument. The</span>
 <span class="sd">        :attr:`SrqMask.DATA_READY &lt;hp3478a_async.flags.SrqMask.DATA_READY&gt;` flag is useful, when reading with long</span>
@@ -461,7 +461,7 @@
 
 <div class="viewcode-block" id="HP_3478A.get_front_rear_switch_position">
 <a class="viewcode-back" href="../../modules.html#hp3478a_async.HP_3478A.get_front_rear_switch_position">[docs]</a>
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">get_front_rear_switch_position</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FrontRearSwitchPosition</span><span class="p">:</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">get_front_rear_switch_position</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FrontRearSwitchPosition</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Check whether the front or rear panel binding posts are active.</span>
 
@@ -475,7 +475,7 @@
 
 <div class="viewcode-block" id="HP_3478A.device_clear">
 <a class="viewcode-back" href="../../modules.html#hp3478a_async.HP_3478A.device_clear">[docs]</a>
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">device_clear</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">device_clear</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Send the Selected Device Clear (SDC) event. This will trigger the self-test routine and  reset the device to</span>
 <span class="sd">        its power on state.</span>
@@ -485,7 +485,7 @@
 
 <div class="viewcode-block" id="HP_3478A.clear">
 <a class="viewcode-back" href="../../modules.html#hp3478a_async.HP_3478A.clear">[docs]</a>
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Clear serial poll register</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -494,7 +494,7 @@
 
 <div class="viewcode-block" id="HP_3478A.reset">
 <a class="viewcode-back" href="../../modules.html#hp3478a_async.HP_3478A.reset">[docs]</a>
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Place the device in DCV, autorange, autozero, single trigger, 4.5 digits mode and erase any output stored in</span>
 <span class="sd">        the buffers.</span>
@@ -504,7 +504,7 @@
 
 <div class="viewcode-block" id="HP_3478A.local">
 <a class="viewcode-back" href="../../modules.html#hp3478a_async.HP_3478A.local">[docs]</a>
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">local</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">local</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Disable the front panel and allow only GPIB commands.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -513,7 +513,7 @@
 
 <div class="viewcode-block" id="HP_3478A.set_function">
 <a class="viewcode-back" href="../../modules.html#hp3478a_async.HP_3478A.set_function">[docs]</a>
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">set_function</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">FunctionType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">set_function</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">FunctionType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Put the device in a certain measurement mode of either DVC, ACV, Ohms, 4-W Ohms, DCI, ACI or the extended ohms</span>
 <span class="sd">        mode. See page 55 of the manual for details on the extended ohms mode.</span>
@@ -535,7 +535,7 @@
 
 <div class="viewcode-block" id="HP_3478A.set_autozero">
 <a class="viewcode-back" href="../../modules.html#hp3478a_async.HP_3478A.set_autozero">[docs]</a>
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">set_autozero</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">enable</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">set_autozero</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">enable</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Change the auto-zero mode of the DMM. If enabled, the DMM will auto-zero between readings.</span>
 
@@ -550,7 +550,7 @@
 
 <div class="viewcode-block" id="HP_3478A.set_number_of_digits">
 <a class="viewcode-back" href="../../modules.html#hp3478a_async.HP_3478A.set_number_of_digits">[docs]</a>
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">set_number_of_digits</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">set_number_of_digits</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set the number of digits returned by the DMM. This has an influence on the integration time.</span>
 <span class="sd">        See page 15 of the manual for details.</span>
@@ -567,7 +567,7 @@
 
 <div class="viewcode-block" id="HP_3478A.get_error_register">
 <a class="viewcode-back" href="../../modules.html#hp3478a_async.HP_3478A.get_error_register">[docs]</a>
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">get_error_register</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ErrorFlags</span><span class="p">:</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">get_error_register</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ErrorFlags</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the contents of the error register, which is the result of the power on self-test. See page 62 of the manual</span>
 <span class="sd">        for details.</span>
@@ -583,7 +583,7 @@
 
 <div class="viewcode-block" id="HP_3478A.set_range">
 <a class="viewcode-back" href="../../modules.html#hp3478a_async.HP_3478A.set_range">[docs]</a>
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">set_range</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Range</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">set_range</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Range</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Sets the measurement range. The range, that can be selected depend on the measurement mode.</span>
 
@@ -597,7 +597,7 @@
 
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">__calculate_range</span><span class="p">(</span><span class="n">function</span><span class="p">:</span> <span class="n">FunctionType</span><span class="p">,</span> <span class="n">range_value</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Range</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">__calculate_range</span><span class="p">(</span><span class="n">function</span><span class="p">:</span> <span class="n">FunctionType</span><span class="p">,</span> <span class="n">range_value</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Range</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        The range Enum is basically the exponent of the range. Unfortunately the returned bits depend on the function,</span>
 <span class="sd">        so we need to add or subtract according to the DMM function.</span>
@@ -628,7 +628,7 @@
 
 <div class="viewcode-block" id="HP_3478A.get_cal_ram">
 <a class="viewcode-back" href="../../modules.html#hp3478a_async.HP_3478A.get_cal_ram">[docs]</a>
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">get_cal_ram</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">get_cal_ram</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        An undocumented function. Read the internal calibration memory from the NVRAM. It can be used to backup the</span>
 <span class="sd">        calibration memory in case the internal battery fails. See :doc:`examples` for an example on how to read the</span>
@@ -647,7 +647,7 @@
 
 <div class="viewcode-block" id="HP_3478A.set_cal_ram">
 <a class="viewcode-back" href="../../modules.html#hp3478a_async.HP_3478A.set_cal_ram">[docs]</a>
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">set_cal_ram</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">set_cal_ram</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Write to the internal NVRAM. Warning: This can brick the device until a valid calibration</span>
 <span class="sd">        configuration is written to the NVRAM. This function only works, if the front panel CAL switch is enabled.</span>
@@ -663,7 +663,7 @@
 
 <div class="viewcode-block" id="HP_3478A.get_status">
 <a class="viewcode-back" href="../../modules.html#hp3478a_async.HP_3478A.get_status">[docs]</a>
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">get_status</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DmmStatus</span><span class="p">:</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">get_status</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DmmStatus</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Read the binary status register of the device. See page 61 of the manual for details.</span>
 
@@ -700,7 +700,7 @@
 
 <div class="viewcode-block" id="HP_3478A.serial_poll">
 <a class="viewcode-back" href="../../modules.html#hp3478a_async.HP_3478A.serial_poll">[docs]</a>
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">serial_poll</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SerialPollFlags</span><span class="p">:</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">serial_poll</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SerialPollFlags</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Serial poll the device/GPIB controller. Use this in combination with the SRQ mask to determine, if the</span>
 <span class="sd">        instrument triggered the SRQ and requests service.</span>
@@ -719,7 +719,7 @@
           </div>
         </div>
       </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
         <div class="sphinxsidebarwrapper">
 <search id="searchbox" style="display: none" role="search">
   <h3 id="searchlabel">Quick search</h3>
@@ -735,7 +735,7 @@
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related" role="navigation" aria-label="related navigation">
+    <div class="related" role="navigation" aria-label="Related">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -751,7 +751,7 @@
     </div>
     <div class="footer" role="contentinfo">
     &#169; Copyright 2022, Patrick Baus.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.3.7.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
     </div>
   </body>
 </html>
