@@ -174,7 +174,7 @@ class HP_3478A:  # noqa pylint: disable=too-many-public-methods,invalid-name
 
     def set_ntc_parameters(
         self, a: float, b: float, c: float, d: float, rt25: float
-    ):  # pylint: disable=invalid-name,too-many-arguments  # this is standard naming convention
+    ):  # pylint: disable=too-many-arguments,too-many-positional-arguments
         """
         Set the parameters used when in mode :attr:`FunctionType.NTC <hp3478a_async.enums.FunctionType.NTC>` or
         :attr:`FunctionType.NTCF <hp3478a_async.enums.FunctionType.NTCF>`. The parameters can be found in the datasheet
