@@ -26,7 +26,7 @@ from dataclasses import dataclass
 from decimal import Decimal
 from math import log
 from types import TracebackType
-from typing import TYPE_CHECKING, AsyncGenerator, Type
+from typing import TYPE_CHECKING, AsyncGenerator
 
 from hp3478a_async.enums import DisplayType, FrontRearSwitchPosition, FunctionType, Range, TriggerType
 from hp3478a_async.errors import DeviceError
@@ -123,7 +123,7 @@ class HP_3478A:  # noqa pylint: disable=too-many-public-methods,invalid-name
         return self
 
     async def __aexit__(
-        self, exc_type: Type[BaseException] | None, exc: BaseException | None, traceback: TracebackType | None
+        self, exc_type: type[BaseException] | None, exc: BaseException | None, traceback: TracebackType | None
     ) -> None:
         await self.disconnect()
 
@@ -282,7 +282,7 @@ class HP_3478A:  # noqa pylint: disable=too-many-public-methods,invalid-name
             return self.__post_process(Decimal(match[0].decode("ascii")))
         return result  # else return the bytes
 
-    async def read_all(self, length: int | None = None) -> AsyncGenerator[Decimal | bytes, None]:
+    async def read_all(self, length: int | None = None) -> AsyncGenerator[Decimal | bytes]:
         """
         Read all values from the device. If `length' is given, read `length` bytes, else read until a line break
         ``b"\\n"``, then yield the result.
