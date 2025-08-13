@@ -10,14 +10,16 @@ repos:
         # Check Python files
     -   id: end-of-file-fixer
         exclude: "^.*\\.bin$"
-    -   id: fix-encoding-pragma
-        args: [--remove]
     -   id: mixed-line-ending
         args: [ --fix=lf ]
     -   id: check-executables-have-shebangs
     -   id: requirements-txt-fixer
     -   id: trailing-whitespace
         args: [ --markdown-linebreak-ext=md ]
+-   repo: https://github.com/asottile/pyupgrade
+    rev: v3.20.0
+    hooks:
+    -   id: pyupgrade
 -   repo: https://github.com/psf/black
     rev: 25.1.0
     hooks:
