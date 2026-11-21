@@ -7,10 +7,10 @@ from decimal import Decimal
 
 import pytest
 
-from hp3478a_async import HP_3478A, FunctionType, Range
+from hp3478a_async import HP_3478A, FunctionType, NtcParameters, Range
 from hp3478a_async.errors import DeviceError
 from hp3478a_async.flags import SerialPollFlags
-from hp3478a_async.hp_3478a_helper import decode_cal_data, encode_cal_data
+from hp3478a_async.hp_3478a_helper import decode_cal_data, encode_cal_data, format_cal_string
 
 
 class FakeConnection:  # pylint: disable=missing-function-docstring
@@ -22,6 +22,7 @@ class FakeConnection:  # pylint: disable=missing-function-docstring
         self.status_byte: int = 0
         self.wait_returns_status = wait_returns_status
         self.wait_timeout = False
+        self.fail_writes = False
         self.serial_polls = 0
 
     async def connect(self) -> None:
@@ -31,6 +32,9 @@ class FakeConnection:  # pylint: disable=missing-function-docstring
         pass
 
     async def write(self, msg: bytes) -> None:
+        await asyncio.sleep(0)  # Let other tasks run, like a real connection would
+        if self.fail_writes:
+            raise ConnectionError("Connection lost")
         self.written.append(msg)
 
     async def read(self, length: int | None = None) -> bytes:  # pylint: disable=unused-argument
@@ -213,3 +217,37 @@ def test_dataclasses_are_slotted():
     status = get_status(conn)
     with pytest.raises(AttributeError):
         status.unknown_attribute = 1  # type: ignore[attr-defined]  # pylint: disable=assigning-non-slot
+
+
+def test_connect_sends_default_settings():
+    """connect() must send the default display mode and SRQ mask, in that order."""
+    conn = FakeConnection()
+    asyncio.run(HP_3478A(conn).connect())
+    assert conn.written == [b"D1", b"M00"]
+
+
+def test_connect_raises_plain_connection_error():
+    """The settings are sent in a TaskGroup, but errors must not be wrapped in an ExceptionGroup."""
+    conn = FakeConnection()
+    conn.fail_writes = True
+    with pytest.raises(ConnectionError):
+        asyncio.run(HP_3478A(conn).connect())
+
+
+def test_dataclasses_are_keyword_only():
+    """The fields of NtcParameters (and DmmStatus) can only be passed by keyword."""
+    with pytest.raises(TypeError):
+        # This call is meant to fail
+        NtcParameters(3.354e-3, 2.787e-4, 4.0e-6, 1.6e-7, 10e3)  # type: ignore[misc]  # pylint: disable=E1121,E1125
+    parameters = NtcParameters(a=3.354e-3, b=2.787e-4, c=4.0e-6, d=1.6e-7, rt25=10e3)
+    assert parameters.rt25 == 10e3
+
+
+def test_format_cal_string():
+    """The calibration memory is formatted as 16 lines of 16 characters each."""
+    data = _calram()
+    lines = format_cal_string(data).split("\n")
+    assert len(lines) == 16
+    assert all(len(line) == 16 for line in lines)
+    assert "".join(lines).encode() == data
+    assert decode_cal_data("".join(lines)) == decode_cal_data(data)

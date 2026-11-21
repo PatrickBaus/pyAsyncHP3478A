@@ -27,7 +27,7 @@ from dataclasses import dataclass
 from decimal import Decimal
 from math import log
 from types import TracebackType
-from typing import TYPE_CHECKING, Self
+from typing import TYPE_CHECKING, Self, override
 
 from hp3478a_async.enums import DisplayType, FrontRearSwitchPosition, FunctionType, Range, TriggerType
 from hp3478a_async.errors import DeviceError
@@ -37,8 +37,11 @@ if TYPE_CHECKING:
     from async_gpib import AsyncGpib
     from prologix_gpib_async import AsyncPrologixGpibController
 
+# The supported GPIB connections. The alias is evaluated lazily, so the GPIB libraries are only needed for type checks.
+type GpibConnection = AsyncGpib | AsyncPrologixGpibController
 
-@dataclass(slots=True)
+
+@dataclass(slots=True, kw_only=True)
 class DmmStatus:
     """The device status of them DMM"""
 
@@ -51,7 +54,7 @@ class DmmStatus:
     dac_value: int
 
 
-@dataclass(slots=True)
+@dataclass(slots=True, kw_only=True)
 class NtcParameters:
     """
     The Steinhart-Hart coefficient of an NTC thermistor. The formula to calculate the temperature from the resistance is
@@ -87,13 +90,13 @@ class HP_3478A:  # noqa pylint: disable=too-many-public-methods,invalid-name
     """
 
     @property
-    def connection(self) -> AsyncGpib | AsyncPrologixGpibController:
+    def connection(self) -> GpibConnection:
         """
         The GPIB connection.
         """
         return self.__conn
 
-    def __init__(self, connection: AsyncGpib | AsyncPrologixGpibController) -> None:
+    def __init__(self, connection: GpibConnection) -> None:
         """
         Create an HP 3478A with the GPIB connection given.
 
@@ -114,6 +117,7 @@ class HP_3478A:  # noqa pylint: disable=too-many-public-methods,invalid-name
             d=1.5575628 * 10**-7,
         )
 
+    @override
     def __str__(self) -> str:
         return f"HEWLETT-PACKARD 3478A at {str(self.connection)}"
 
@@ -150,8 +154,16 @@ class HP_3478A:  # noqa pylint: disable=too-many-public-methods,invalid-name
             # Used by the Prologix adapters
             await self.__conn.set_eot(False)
 
-        await self.set_display(DisplayType.NORMAL)  # Default display mode
-        await self.set_srq_mask(SrqMask.NONE)  # Default SRQ Mask
+        # The settings are independent of each other, so send them concurrently. Both GPIB libraries serialize the
+        # writes in the order the tasks were created.
+        try:
+            async with asyncio.TaskGroup() as task_group:
+                task_group.create_task(self.set_display(DisplayType.NORMAL))  # Default display mode
+                task_group.create_task(self.set_srq_mask(SrqMask.NONE))  # Default SRQ Mask
+        except ExceptionGroup as exc_group:
+            # If one write fails, the other one is cancelled. Raise the error itself instead of the group, so that
+            # callers can keep catching e.g. a ConnectionError.
+            raise exc_group.exceptions[0] from None
 
     async def disconnect(self) -> None:
         """
@@ -193,7 +205,7 @@ class HP_3478A:  # noqa pylint: disable=too-many-public-methods,invalid-name
         rt25: float
             The resistance of the NTC at 25 °C
         """
-        self.__ntc_parameters = NtcParameters(a, b, c, d, rt25)
+        self.__ntc_parameters = NtcParameters(a=a, b=b, c=c, d=d, rt25=rt25)
 
     @staticmethod
     def __convert_thermistor_to_temperature(value: Decimal, ntc_parameters: NtcParameters) -> Decimal:
