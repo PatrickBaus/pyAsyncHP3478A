@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import asyncio
 from decimal import Decimal
+from typing import override
 
 import pytest
 
@@ -13,7 +14,7 @@ from hp3478a_async.flags import SerialPollFlags
 from hp3478a_async.hp_3478a_helper import decode_cal_data, encode_cal_data, format_cal_string
 
 
-class FakeConnection:  # pylint: disable=missing-function-docstring
+class FakeConnection:  # pylint: disable=missing-function-docstring,too-many-instance-attributes
     """Minimal stand-in for AsyncGpib / AsyncPrologixGpibController."""
 
     def __init__(self, *, wait_returns_status: bool = True) -> None:
@@ -24,12 +25,26 @@ class FakeConnection:  # pylint: disable=missing-function-docstring
         self.wait_timeout = False
         self.fail_writes = False
         self.serial_polls = 0
+        self.fail_local = False
+        self.calls: list[str] = []
+
+    @override
+    def __str__(self) -> str:
+        return "FakeConnection"
 
     async def connect(self) -> None:
-        pass
+        self.calls.append("connect")
 
     async def disconnect(self) -> None:
-        pass
+        self.calls.append("disconnect")
+
+    async def clear(self) -> None:
+        self.calls.append("clear")
+
+    async def ibloc(self) -> None:
+        if self.fail_local:
+            raise ConnectionError("Connection lost")
+        self.calls.append("ibloc")
 
     async def write(self, msg: bytes) -> None:
         await asyncio.sleep(0)  # Let other tasks run, like a real connection would
