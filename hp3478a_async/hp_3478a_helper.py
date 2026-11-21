@@ -229,11 +229,11 @@ def encode_cal_data(cal_enable: bool, data_blocks: tuple[CalramEntry, ...] | lis
     cal_enable:
         Set to `True`, to write the calibration data to the NVRAM.
     """
-    encoded_data_blocks = b"".join([entry.to_bytes() for entry in data_blocks])
-
-    # Put the range check here, because this enables the use of iterators as input
+    # Materialize the input first, so that iterators can be used as well
+    data_blocks = tuple(data_blocks)
     if len(data_blocks) != 19:
         raise TypeError("Invalid number of calibration constants")
+    encoded_data_blocks = b"".join([entry.to_bytes() for entry in data_blocks])
 
     # Finally, pad with the cal_enable byte at the beginning and 8 0 bytes at the end
     result = bytes([0xF * bool(not cal_enable) + 0x40]) + encoded_data_blocks + bytes([0 + 0x40] * 8)
