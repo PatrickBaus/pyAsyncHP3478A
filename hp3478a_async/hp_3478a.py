@@ -517,6 +517,8 @@ class HP_3478A:  # noqa pylint: disable=too-many-public-methods,invalid-name
             FunctionType.OHM: 0,
             FunctionType.OHMF: 0,
             FunctionType.OHM_EXT: 0,
+            FunctionType.NTC: 0,
+            FunctionType.NTCF: 0,
             FunctionType.DCI: -2,
             FunctionType.ACI: -2,
         }
