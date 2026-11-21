@@ -74,7 +74,10 @@ class NtcParameters:
     rt25: float
 
     def __post_init__(self):
-        assert all([self.rt25 > 0, self.a > 0, self.b > 0, self.c > 0, self.d > 0])
+        # Only R25 is constrained. The higher order coefficients may be zero (e.g. the classic 3-term Steinhart-Hart
+        # equation) or negative, depending on the fit.
+        if self.rt25 <= 0:
+            raise ValueError(f"R25 must be positive, got {self.rt25}.")
 
 
 # Used to test for numerical return values of the read() command
@@ -151,12 +154,8 @@ class HP_3478A:  # noqa pylint: disable=too-many-public-methods,invalid-name
             # Used by the Prologix adapters
             await self.__conn.set_eot(False)
 
-        await asyncio.gather(
-            # Default display mode
-            self.set_display(DisplayType.NORMAL),
-            # Default SRQ Mask
-            self.set_srq_mask(SrqMask.NONE),
-        )
+        await self.set_display(DisplayType.NORMAL)  # Default display mode
+        await self.set_srq_mask(SrqMask.NONE)  # Default SRQ Mask
 
     async def disconnect(self) -> None:
         """
@@ -309,7 +308,12 @@ class HP_3478A:  # noqa pylint: disable=too-many-public-methods,invalid-name
         await self.set_srq_mask(SrqMask.DATA_READY)  # Enable a GPIB interrupt when the conversion is done
         while "loop not cancelled":
             try:
-                status_byte = SerialPollFlags(await self.connection.wait((1 << 11) | (1 << 14)))
+                status = await self.connection.wait((1 << 11) | (1 << 14))
+                if status is None:
+                    # async-gpib (linux-gpib) does not return the status byte, so we need to poll the device. This
+                    # also clears the SRQ.
+                    status = await self.connection.serial_poll()
+                status_byte = SerialPollFlags(status)
                 if SerialPollFlags.SRQ_ON_DATA_READY in status_byte:
                     result = await self.read(length)
                     yield result
@@ -415,7 +419,7 @@ class HP_3478A:  # noqa pylint: disable=too-many-public-methods,invalid-name
 
     async def local(self) -> None:
         """
-        Disable the front panel and allow only GPIB commands.
+        Return the device to local mode, re-enabling the front panel controls.
         """
         await self.__conn.ibloc()
 
@@ -510,9 +514,9 @@ class HP_3478A:  # noqa pylint: disable=too-many-public-methods,invalid-name
         range_value_correction = {
             FunctionType.DCV: -3,
             FunctionType.ACV: -2,
-            FunctionType.OHM: 1,
-            FunctionType.OHMF: 1,
-            FunctionType.OHM_EXT: 1,
+            FunctionType.OHM: 0,
+            FunctionType.OHMF: 0,
+            FunctionType.OHM_EXT: 0,
             FunctionType.DCI: -2,
             FunctionType.ACI: -2,
         }
@@ -575,7 +579,8 @@ class HP_3478A:  # noqa pylint: disable=too-many-public-methods,invalid-name
         return DmmStatus(
             function=function,
             range=self.__calculate_range(function, (result[0] >> 2) & 0b111),
-            ndigits=6 - (result[0] & 0b11),
+            # 1 = 5½, 2 = 4½, 3 = 3½ digits. Report them like set_number_of_digits() expects them (6, 5, 4).
+            ndigits=7 - (result[0] & 0b11),
             status=StatusFlags(result[1]),
             srq_flags=SerialPollFlags(result[2]),
             error_flags=ErrorFlags(result[3]),
