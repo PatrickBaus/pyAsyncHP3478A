@@ -5,7 +5,7 @@
 [![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](LICENSE)
 [![code style](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 # hp3478a_async
-Python3 AsyncIO HP3478A driver. This library requires Python 3.11 or newer and uses
+Python3 AsyncIO HP3478A driver. This library requires Python 3.12 or newer and uses
 [asyncio](https://docs.python.org/3/library/asyncio.html) and an AsyncIO library for the GPIB adapter. It also supports
 several undocumented functions for reading status registers and reading, modifying and writing the calibration memory.
 
