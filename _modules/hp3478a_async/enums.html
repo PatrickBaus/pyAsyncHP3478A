@@ -34,7 +34,7 @@
           <div class="body" role="main">
             
   <h1>Source code for hp3478a_async.enums</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Enums are used to represent the device functions and settings.&quot;&quot;&quot;</span>
+<span></span><span class="sd">"""Enums are used to represent the device functions and settings."""</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
@@ -44,9 +44,9 @@
 <div class="viewcode-block" id="DisplayType">
 <a class="viewcode-back" href="../../modules.html#hp3478a_async.enums.DisplayType">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">DisplayType</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    The front panel display settings. See page 12 of the manual for details.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">NORMAL</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="n">SHOW_TEXT</span> <span class="o">=</span> <span class="mi">2</span>
@@ -57,9 +57,9 @@
 <div class="viewcode-block" id="FrontRearSwitchPosition">
 <a class="viewcode-back" href="../../modules.html#hp3478a_async.enums.FrontRearSwitchPosition">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">FrontRearSwitchPosition</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    The position of the front/rear binding posts switch on the front panel.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">REAR</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="n">FRONT</span> <span class="o">=</span> <span class="mi">1</span></div>
@@ -69,9 +69,9 @@
 <div class="viewcode-block" id="FunctionType">
 <a class="viewcode-back" href="../../modules.html#hp3478a_async.enums.FunctionType">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">FunctionType</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    The measurement functions. See page 55 of the extended ohms setting.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">DCV</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="n">ACV</span> <span class="o">=</span> <span class="mi">2</span>
@@ -88,9 +88,9 @@
 <div class="viewcode-block" id="Range">
 <a class="viewcode-back" href="../../modules.html#hp3478a_async.enums.Range">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Range</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    The measurement range of the device. See page 20 of the manual for details.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">RANGE_30M</span> <span class="o">=</span> <span class="o">-</span><span class="mi">2</span>
     <span class="n">RANGE_300M</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
@@ -102,16 +102,16 @@
     <span class="n">RANGE_300k</span> <span class="o">=</span> <span class="mi">5</span>  <span class="c1"># small k due to SI pylint: disable=invalid-name</span>
     <span class="n">RANGE_3MEG</span> <span class="o">=</span> <span class="mi">6</span>
     <span class="n">RANGE_30MEG</span> <span class="o">=</span> <span class="mi">7</span>
-    <span class="n">RANGE_AUTO</span> <span class="o">=</span> <span class="s2">&quot;A&quot;</span></div>
+    <span class="n">RANGE_AUTO</span> <span class="o">=</span> <span class="s2">"A"</span></div>
 
 
 
 <div class="viewcode-block" id="TriggerType">
 <a class="viewcode-back" href="../../modules.html#hp3478a_async.enums.TriggerType">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">TriggerType</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    The triggers supported by the DMM. See page 53 of the manual for details.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">INTERNAL</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="n">EXTERNAL</span> <span class="o">=</span> <span class="mi">2</span>
@@ -157,7 +157,7 @@
     </div>
     <div class="footer" role="contentinfo">
     &#169; Copyright 2022, Patrick Baus.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.1.0.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.2.0.
     </div>
   </body>
 </html>

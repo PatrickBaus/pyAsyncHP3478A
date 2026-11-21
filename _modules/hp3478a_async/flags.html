@@ -34,7 +34,7 @@
           <div class="body" role="main">
             
   <h1>Source code for hp3478a_async.flags</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Flags are used for the status registers returned by the device.&quot;&quot;&quot;</span>
+<span></span><span class="sd">"""Flags are used for the status registers returned by the device."""</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
@@ -44,9 +44,9 @@
 <div class="viewcode-block" id="SrqMask">
 <a class="viewcode-back" href="../../modules.html#hp3478a_async.flags.SrqMask">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">SrqMask</span><span class="p">(</span><span class="n">Flag</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    The service interrupt register flags. See page 47 of the manual for details.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">NONE</span> <span class="o">=</span> <span class="mb">0b0</span>
     <span class="n">DATA_READY</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">0</span>
@@ -61,9 +61,9 @@
 <div class="viewcode-block" id="ErrorFlags">
 <a class="viewcode-back" href="../../modules.html#hp3478a_async.flags.ErrorFlags">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">ErrorFlags</span><span class="p">(</span><span class="n">Flag</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    The error register flags. See page 62 of the manual for details.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">NONE</span> <span class="o">=</span> <span class="mb">0b0</span>
     <span class="n">CAL_RAM_CHECKSUM</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">0</span>
@@ -78,9 +78,9 @@
 <div class="viewcode-block" id="StatusFlags">
 <a class="viewcode-back" href="../../modules.html#hp3478a_async.flags.StatusFlags">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">StatusFlags</span><span class="p">(</span><span class="n">Flag</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    The device status register flags. See page 61 of the manual for details.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">NONE</span> <span class="o">=</span> <span class="mb">0b0</span>
     <span class="n">INTERNAL_TRIGGER_ENABLED</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">0</span>
@@ -97,9 +97,9 @@
 <div class="viewcode-block" id="SerialPollFlags">
 <a class="viewcode-back" href="../../modules.html#hp3478a_async.flags.SerialPollFlags">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">SerialPollFlags</span><span class="p">(</span><span class="n">Flag</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    The serial poll flags as returned by SPOLL. See page 50 of the manual for details.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">NONE</span> <span class="o">=</span> <span class="mb">0b0</span>
     <span class="n">SRQ_ON_DATA_READY</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">0</span>
@@ -149,7 +149,7 @@
     </div>
     <div class="footer" role="contentinfo">
     &#169; Copyright 2022, Patrick Baus.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.1.0.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.2.0.
     </div>
   </body>
 </html>
