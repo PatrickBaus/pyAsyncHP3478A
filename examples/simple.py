@@ -2,6 +2,7 @@
 # pylint: disable=duplicate-code
 """A simple example showing how to read voltages using the DMM. There is no error handling or logging. See the
 other examples for more advanced examples."""
+
 import asyncio
 
 from prologix_gpib_async import AsyncPrologixGpibEthernetController, EosMode

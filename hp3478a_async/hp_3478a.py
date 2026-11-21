@@ -18,6 +18,7 @@
 """
 This is an asyncIO driver for the HP 3478A DMM to abstract away the GPIB interface.
 """
+
 from __future__ import annotations
 
 import asyncio

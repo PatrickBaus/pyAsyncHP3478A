@@ -18,6 +18,7 @@
 """
 Helper functions to encode and decode data formats used by the HP 3478A.
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass
