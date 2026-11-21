@@ -19,6 +19,7 @@
 """
 An example showing how to read a 10k thermistor using automatic calculation of the temperature from the resistor value.
 """
+
 import asyncio
 import logging
 import sys
