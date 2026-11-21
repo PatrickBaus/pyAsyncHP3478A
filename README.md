@@ -1,4 +1,5 @@
 [![pylint](https://github.com/PatrickBaus/pyAsyncHP3478A/actions/workflows/pylint.yml/badge.svg)](https://github.com/PatrickBaus/pyAsyncHP3478A/actions/workflows/pylint.yml)
+[![Coverage](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/PatrickBaus/pyAsyncHP3478A/python-coverage-comment-action-data/endpoint.json)](https://github.com/PatrickBaus/pyAsyncHP3478A/tree/python-coverage-comment-action-data)
 [![PyPI](https://img.shields.io/pypi/v/hp3478a_async)](https://pypi.org/project/hp3478a_async/)
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/hp3478a_async)
 ![PyPI - Status](https://img.shields.io/pypi/status/hp3478a_async)
