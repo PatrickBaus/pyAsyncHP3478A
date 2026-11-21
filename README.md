@@ -2,15 +2,15 @@
 
 [Full report](https://htmlpreview.github.io/?https://github.com/PatrickBaus/pyAsyncHP3478A/blob/python-coverage-comment-action-data/htmlcov/index.html)
 
-| Name                                |    Stmts |     Miss |   Branch |   BrPart |   Cover |   Missing |
-|------------------------------------ | -------: | -------: | -------: | -------: | ------: | --------: |
-| hp3478a\_async/\_\_init\_\_.py      |        4 |        0 |        0 |        0 |    100% |           |
-| hp3478a\_async/enums.py             |       37 |        0 |        0 |        0 |    100% |           |
-| hp3478a\_async/errors.py            |        1 |        0 |        0 |        0 |    100% |           |
-| hp3478a\_async/flags.py             |       35 |        0 |        0 |        0 |    100% |           |
-| hp3478a\_async/hp\_3478a.py         |      172 |       41 |       26 |        6 |     74% |123, 126-127, 132, 146, 156, 173-181, 229, 255-258, 284, 291, 358, 369-370, 407, 414, 420, 427, 433, 451, 463-464, 490-491, 502-503, 548-551, 563-564, 611 |
-| hp3478a\_async/hp\_3478a\_helper.py |       87 |        1 |       16 |        1 |     98% |       170 |
-| **TOTAL**                           |  **336** |   **42** |   **42** |    **7** | **86%** |           |
+| Name                                |    Stmts |     Miss |   Branch |   BrPart |    Cover |   Missing |
+|------------------------------------ | -------: | -------: | -------: | -------: | -------: | --------: |
+| hp3478a\_async/\_\_init\_\_.py      |        4 |        0 |        0 |        0 |     100% |           |
+| hp3478a\_async/enums.py             |       37 |        0 |        0 |        0 |     100% |           |
+| hp3478a\_async/errors.py            |        1 |        0 |        0 |        0 |     100% |           |
+| hp3478a\_async/flags.py             |       35 |        0 |        0 |        0 |     100% |           |
+| hp3478a\_async/hp\_3478a.py         |      172 |        0 |       26 |        0 |     100% |           |
+| hp3478a\_async/hp\_3478a\_helper.py |       85 |        0 |       14 |        0 |     100% |           |
+| **TOTAL**                           |  **334** |    **0** |   **40** |    **0** | **100%** |           |
 
 
 ## Setup coverage badge
