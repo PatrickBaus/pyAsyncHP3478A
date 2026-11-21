@@ -1,0 +1,162 @@
+"""Unit tests for the HP 3478A driver using a fake GPIB connection (no hardware required)."""
+
+from __future__ import annotations
+
+import asyncio
+from decimal import Decimal
+
+import pytest
+
+from hp3478a_async import HP_3478A, FunctionType, Range
+from hp3478a_async.flags import SerialPollFlags
+from hp3478a_async.hp_3478a_helper import decode_cal_data, encode_cal_data
+
+
+class FakeConnection:  # pylint: disable=missing-function-docstring
+    """Minimal stand-in for AsyncGpib / AsyncPrologixGpibController."""
+
+    def __init__(self, *, wait_returns_status: bool = True) -> None:
+        self.written: list[bytes] = []
+        self.read_response: bytes = b""
+        self.status_byte: int = 0
+        self.wait_returns_status = wait_returns_status
+        self.serial_polls = 0
+
+    async def connect(self) -> None:
+        pass
+
+    async def disconnect(self) -> None:
+        pass
+
+    async def write(self, msg: bytes) -> None:
+        self.written.append(msg)
+
+    async def read(self, length: int | None = None) -> bytes:  # pylint: disable=unused-argument
+        return self.read_response
+
+    async def wait(self, mask: int) -> int | None:  # pylint: disable=unused-argument
+        # prologix-gpib-async returns the status byte, async-gpib (linux-gpib) returns None
+        return self.status_byte if self.wait_returns_status else None
+
+    async def serial_poll(self) -> int:
+        self.serial_polls += 1
+        return self.status_byte
+
+
+def status_bytes(function: int, range_code: int, digits_code: int) -> bytes:
+    """Build the 5 byte response to the "B" command."""
+    return bytes([(function << 5) | (range_code << 2) | digits_code, 0, 0, 0, 0])
+
+
+def get_status(conn: FakeConnection, dmm: HP_3478A | None = None):
+    """Run get_status() on a new or the given DMM."""
+    dmm = dmm or HP_3478A(conn)
+    return asyncio.run(dmm.get_status())
+
+
+@pytest.mark.parametrize(
+    "function, range_code, expected",
+    [
+        (FunctionType.DCV, 1, Range.RANGE_30M),
+        (FunctionType.DCV, 5, Range.RANGE_300),
+        (FunctionType.ACV, 1, Range.RANGE_300M),
+        (FunctionType.DCI, 2, Range.RANGE_3),
+        (FunctionType.OHM, 1, Range.RANGE_30),  # most sensitive ohms range is 30 Ω
+        (FunctionType.OHM, 4, Range.RANGE_30k),
+        (FunctionType.OHM, 7, Range.RANGE_30MEG),  # used to raise ValueError
+        (FunctionType.OHMF, 7, Range.RANGE_30MEG),
+        (FunctionType.OHM_EXT, 7, Range.RANGE_30MEG),
+    ],
+)
+def test_status_range(function, range_code, expected):
+    """The range bits of the status byte must map to the correct Range for each function."""
+    conn = FakeConnection()
+    conn.read_response = status_bytes(function.value, range_code, 1)
+    assert get_status(conn).range is expected
+
+
+@pytest.mark.parametrize("ndigits", [4, 5, 6])
+def test_number_of_digits_round_trip(ndigits):
+    """The value passed to set_number_of_digits() must be reported back by get_status()."""
+    conn = FakeConnection()
+    dmm = HP_3478A(conn)
+    asyncio.run(dmm.set_number_of_digits(ndigits))
+    n_command = int(conn.written[-1][1:])  # N3, N4 or N5
+    digits_code = 6 - n_command  # N5 = 5½ -> 1, N4 = 4½ -> 2, N3 = 3½ -> 3
+    conn.read_response = status_bytes(FunctionType.DCV.value, 3, digits_code)
+    assert get_status(conn, dmm).ndigits == ndigits
+
+
+@pytest.mark.parametrize("special, device_function", [(FunctionType.NTC, 3), (FunctionType.NTCF, 4)])
+def test_status_in_thermistor_mode(special, device_function):
+    """get_status() must not fail and must report the special function in thermistor mode."""
+    conn = FakeConnection()
+    dmm = HP_3478A(conn)
+    asyncio.run(dmm.set_function(special))
+    assert conn.written[-1] == f"F{device_function}".encode()
+    conn.read_response = status_bytes(device_function, 4, 1)
+    status = get_status(conn, dmm)  # used to raise KeyError
+    assert status.function is special
+    assert status.range is Range.RANGE_30k
+
+
+def test_status_clears_special_function_on_mode_change():
+    """Switching the device to another function must disable the thermistor conversion."""
+    conn = FakeConnection()
+    dmm = HP_3478A(conn)
+    asyncio.run(dmm.set_function(FunctionType.NTC))
+    conn.read_response = status_bytes(FunctionType.DCV.value, 3, 1)
+    assert get_status(conn, dmm).function is FunctionType.DCV
+    conn.read_response = b"+1.00000E+3\r\n"
+    assert asyncio.run(dmm.read()) == Decimal("1.00000E+3")  # no thermistor conversion anymore
+
+
+async def _first_reading(dmm: HP_3478A):
+    generator = dmm.read_all()
+    try:
+        return await generator.__anext__()  # pylint: disable=unnecessary-dunder-call
+    finally:
+        await generator.aclose()
+
+
+@pytest.mark.parametrize("wait_returns_status", [True, False], ids=["prologix", "linux-gpib"])
+def test_read_all(wait_returns_status):
+    """read_all() must work with both GPIB backends."""
+    conn = FakeConnection(wait_returns_status=wait_returns_status)
+    conn.status_byte = (SerialPollFlags.SRQ_ON_DATA_READY | SerialPollFlags.SRQ_ON_HAS_SRQ).value
+    conn.read_response = b"+1.23456E+0\r\n"
+    assert asyncio.run(_first_reading(HP_3478A(conn))) == Decimal("1.23456")
+    # linux-gpib does not return the status byte from wait(), so it must be serial polled
+    assert conn.serial_polls == (0 if wait_returns_status else 1)
+
+
+def test_read_overload():
+    """An overloaded input must raise an OverflowError."""
+    conn = FakeConnection()
+    conn.read_response = b"+9.99999E+9\r\n"
+    with pytest.raises(OverflowError):
+        asyncio.run(HP_3478A(conn).read())
+
+
+def test_ntc_parameters_allow_zero_and_negative_higher_order_terms():
+    """Only R25 is validated, the higher order coefficients may be zero or negative."""
+    dmm = HP_3478A(FakeConnection())
+    dmm.set_ntc_parameters(a=1.129e-3, b=2.341e-4, c=0, d=-1e-8, rt25=10e3)  # used to fail the assert
+    with pytest.raises(ValueError):
+        dmm.set_ntc_parameters(a=1e-3, b=2e-4, c=0, d=0, rt25=0)
+
+
+def _calram() -> bytes:
+    # 1 cal enable nibble + 19 blocks of zero offset, unity gain + 8 padding nibbles
+    block = [0] * 11
+    checksum = 0xFF - sum(block)
+    block += [checksum >> 4, checksum & 0xF]
+    return bytes(value + 0x40 for value in [0] + block * 19 + [0] * 8)
+
+
+def test_encode_cal_data_accepts_iterators():
+    """encode_cal_data() must accept iterators and still check the number of entries."""
+    is_cal_enabled, entries = decode_cal_data(_calram())
+    assert encode_cal_data(is_cal_enabled, iter(entries)) == _calram()
+    with pytest.raises(TypeError):
+        encode_cal_data(is_cal_enabled, iter(entries[:-1]))
