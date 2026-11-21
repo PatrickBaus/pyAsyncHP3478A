@@ -58,29 +58,28 @@
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">asyncio</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">re</span>  <span class="c1"># Used to test for numerical return values</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">AsyncGenerator</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">decimal</span><span class="w"> </span><span class="kn">import</span> <span class="n">Decimal</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">math</span><span class="w"> </span><span class="kn">import</span> <span class="n">log</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">types</span><span class="w"> </span><span class="kn">import</span> <span class="n">TracebackType</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">AsyncGenerator</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Self</span><span class="p">,</span> <span class="n">override</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">hp3478a_async.enums</span><span class="w"> </span><span class="kn">import</span> <span class="n">DisplayType</span><span class="p">,</span> <span class="n">FrontRearSwitchPosition</span><span class="p">,</span> <span class="n">FunctionType</span><span class="p">,</span> <span class="n">Range</span><span class="p">,</span> <span class="n">TriggerType</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">hp3478a_async.errors</span><span class="w"> </span><span class="kn">import</span> <span class="n">DeviceError</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">hp3478a_async.flags</span><span class="w"> </span><span class="kn">import</span> <span class="n">ErrorFlags</span><span class="p">,</span> <span class="n">SerialPollFlags</span><span class="p">,</span> <span class="n">SrqMask</span><span class="p">,</span> <span class="n">StatusFlags</span>
 
-<span class="k">try</span><span class="p">:</span>
-    <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Self</span>  <span class="c1"># type: ignore # Python 3.11</span>
-<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-    <span class="kn">from</span><span class="w"> </span><span class="nn">typing_extensions</span><span class="w"> </span><span class="kn">import</span> <span class="n">Self</span>
-
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
     <span class="kn">from</span><span class="w"> </span><span class="nn">async_gpib</span><span class="w"> </span><span class="kn">import</span> <span class="n">AsyncGpib</span>
     <span class="kn">from</span><span class="w"> </span><span class="nn">prologix_gpib_async</span><span class="w"> </span><span class="kn">import</span> <span class="n">AsyncPrologixGpibController</span>
 
+<span class="c1"># The supported GPIB connections. The alias is evaluated lazily, so the GPIB libraries are only needed for type checks.</span>
+<span class="nb">type</span> <span class="n">GpibConnection</span> <span class="o">=</span> <span class="n">AsyncGpib</span> <span class="o">|</span> <span class="n">AsyncPrologixGpibController</span>
+
 
 <div class="viewcode-block" id="DmmStatus">
 <a class="viewcode-back" href="../../modules.html#hp3478a_async.DmmStatus">[docs]</a>
-<span class="nd">@dataclass</span>
+<span class="nd">@dataclass</span><span class="p">(</span><span class="n">slots</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">DmmStatus</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""The device status of them DMM"""</span>
 
@@ -96,7 +95,7 @@
 
 <div class="viewcode-block" id="NtcParameters">
 <a class="viewcode-back" href="../../modules.html#hp3478a_async.NtcParameters">[docs]</a>
-<span class="nd">@dataclass</span>
+<span class="nd">@dataclass</span><span class="p">(</span><span class="n">slots</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">NtcParameters</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    The Steinhart-Hart coefficient of an NTC thermistor. The formula to calculate the temperature from the resistance is</span>
@@ -135,7 +134,7 @@
 <span class="sd">    """</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">connection</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AsyncGpib</span> <span class="o">|</span> <span class="n">AsyncPrologixGpibController</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">connection</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">GpibConnection</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        The GPIB connection.</span>
 <span class="sd">        """</span>
@@ -143,7 +142,7 @@
 
 <div class="viewcode-block" id="HP_3478A.__init__">
 <a class="viewcode-back" href="../../modules.html#hp3478a_async.HP_3478A.__init__">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">connection</span><span class="p">:</span> <span class="n">AsyncGpib</span> <span class="o">|</span> <span class="n">AsyncPrologixGpibController</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">connection</span><span class="p">:</span> <span class="n">GpibConnection</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Create an HP 3478A with the GPIB connection given.</span>
 
@@ -165,6 +164,7 @@
         <span class="p">)</span></div>
 
 
+    <span class="nd">@override</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">"HEWLETT-PACKARD 3478A at </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
 
@@ -206,8 +206,16 @@
             <span class="c1"># Used by the Prologix adapters</span>
             <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">__conn</span><span class="o">.</span><span class="n">set_eot</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
 
-        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">set_display</span><span class="p">(</span><span class="n">DisplayType</span><span class="o">.</span><span class="n">NORMAL</span><span class="p">)</span>  <span class="c1"># Default display mode</span>
-        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">set_srq_mask</span><span class="p">(</span><span class="n">SrqMask</span><span class="o">.</span><span class="n">NONE</span><span class="p">)</span>  <span class="c1"># Default SRQ Mask</span></div>
+        <span class="c1"># The settings are independent of each other, so send them concurrently. Both GPIB libraries serialize the</span>
+        <span class="c1"># writes in the order the tasks were created.</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">async</span> <span class="k">with</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">TaskGroup</span><span class="p">()</span> <span class="k">as</span> <span class="n">task_group</span><span class="p">:</span>
+                <span class="n">task_group</span><span class="o">.</span><span class="n">create_task</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">set_display</span><span class="p">(</span><span class="n">DisplayType</span><span class="o">.</span><span class="n">NORMAL</span><span class="p">))</span>  <span class="c1"># Default display mode</span>
+                <span class="n">task_group</span><span class="o">.</span><span class="n">create_task</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">set_srq_mask</span><span class="p">(</span><span class="n">SrqMask</span><span class="o">.</span><span class="n">NONE</span><span class="p">))</span>  <span class="c1"># Default SRQ Mask</span>
+        <span class="k">except</span> <span class="n">ExceptionGroup</span> <span class="k">as</span> <span class="n">exc_group</span><span class="p">:</span>
+            <span class="c1"># If one write fails, the other one is cancelled. Raise the error itself instead of the group, so that</span>
+            <span class="c1"># callers can keep catching e.g. a ConnectionError.</span>
+            <span class="k">raise</span> <span class="n">exc_group</span><span class="o">.</span><span class="n">exceptions</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span></div>
 
 
 <div class="viewcode-block" id="HP_3478A.disconnect">
@@ -255,7 +263,7 @@
 <span class="sd">        rt25: float</span>
 <span class="sd">            The resistance of the NTC at 25 °C</span>
 <span class="sd">        """</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">__ntc_parameters</span> <span class="o">=</span> <span class="n">NtcParameters</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">rt25</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__ntc_parameters</span> <span class="o">=</span> <span class="n">NtcParameters</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="n">c</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="n">d</span><span class="p">,</span> <span class="n">rt25</span><span class="o">=</span><span class="n">rt25</span><span class="p">)</span></div>
 
 
     <span class="nd">@staticmethod</span>
@@ -366,7 +374,7 @@
 <span class="sd">            If the instrument input is overloaded, i.e. returns `+9.99999E+9`.</span>
 <span class="sd">        DeviceError</span>
 <span class="sd">            If the device is not ready for read.</span>
-<span class="sd">        asyncio.TimeoutError</span>
+<span class="sd">        TimeoutError</span>
 <span class="sd">            If the GPIB controller does not respond in time.</span>
 <span class="sd">        """</span>
         <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">set_srq_mask</span><span class="p">(</span><span class="n">SrqMask</span><span class="o">.</span><span class="n">DATA_READY</span><span class="p">)</span>  <span class="c1"># Enable a GPIB interrupt when the conversion is done</span>
@@ -378,13 +386,13 @@
                     <span class="c1"># also clears the SRQ.</span>
                     <span class="n">status</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">serial_poll</span><span class="p">()</span>
                 <span class="n">status_byte</span> <span class="o">=</span> <span class="n">SerialPollFlags</span><span class="p">(</span><span class="n">status</span><span class="p">)</span>
-                <span class="k">if</span> <span class="n">SerialPollFlags</span><span class="o">.</span><span class="n">SRQ_ON_DATA_READY</span> <span class="ow">in</span> <span class="n">status_byte</span><span class="p">:</span>
-                    <span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">length</span><span class="p">)</span>
-                    <span class="k">yield</span> <span class="n">result</span>
-                <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">SerialPollFlags</span><span class="o">.</span><span class="n">SRQ_ON_DATA_READY</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">status_byte</span><span class="p">:</span>
                     <span class="k">raise</span> <span class="n">DeviceError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Device did not signal ready for read. Status was: </span><span class="si">{</span><span class="n">status_byte</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-            <span class="k">except</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">TimeoutError</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">TimeoutError</span><span class="p">(</span><span class="s2">"The GPIB controller did not respond in time."</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span></div>
+                <span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">length</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">TimeoutError</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">TimeoutError</span><span class="p">(</span><span class="s2">"The GPIB controller did not respond in time."</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
+            <span class="c1"># Yield outside the try block, so that a TimeoutError thrown into the generator is not reworded</span>
+            <span class="k">yield</span> <span class="n">result</span></div>
 
 
     <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">__query</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">command</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span> <span class="n">length</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>

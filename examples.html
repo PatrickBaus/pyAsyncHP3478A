@@ -75,11 +75,10 @@ different hardware solutions.</p>
 <span class="w">    </span><span class="sd">"""This example will print voltages to the console"""</span>
     <span class="k">async</span> <span class="k">with</span> <span class="n">HP_3478A</span><span class="p">(</span><span class="n">connection</span><span class="o">=</span><span class="n">gpib_device</span><span class="p">)</span> <span class="k">as</span> <span class="n">hp3478a</span><span class="p">:</span>
         <span class="k">await</span> <span class="n">hp3478a</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>  <span class="c1"># flush all buffers</span>
-        <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">gather</span><span class="p">(</span>
-            <span class="n">hp3478a</span><span class="o">.</span><span class="n">set_function</span><span class="p">(</span><span class="n">FunctionType</span><span class="o">.</span><span class="n">DCV</span><span class="p">),</span>  <span class="c1"># Set to dc voltage</span>
-            <span class="n">hp3478a</span><span class="o">.</span><span class="n">set_range</span><span class="p">(</span><span class="n">Range</span><span class="o">.</span><span class="n">RANGE_30</span><span class="p">),</span>  <span class="c1"># Set to 30 V range</span>
-            <span class="n">hp3478a</span><span class="o">.</span><span class="n">set_trigger</span><span class="p">(</span><span class="n">TriggerType</span><span class="o">.</span><span class="n">INTERNAL</span><span class="p">),</span>  <span class="c1"># Enable free running trigger</span>
-        <span class="p">)</span>
+        <span class="c1"># Send the settings one after the other, so that they reach the DMM in a fixed order</span>
+        <span class="k">await</span> <span class="n">hp3478a</span><span class="o">.</span><span class="n">set_function</span><span class="p">(</span><span class="n">FunctionType</span><span class="o">.</span><span class="n">DCV</span><span class="p">)</span>  <span class="c1"># Set to dc voltage</span>
+        <span class="k">await</span> <span class="n">hp3478a</span><span class="o">.</span><span class="n">set_range</span><span class="p">(</span><span class="n">Range</span><span class="o">.</span><span class="n">RANGE_30</span><span class="p">)</span>  <span class="c1"># Set to 30 V range</span>
+        <span class="k">await</span> <span class="n">hp3478a</span><span class="o">.</span><span class="n">set_trigger</span><span class="p">(</span><span class="n">TriggerType</span><span class="o">.</span><span class="n">INTERNAL</span><span class="p">)</span>  <span class="c1"># Enable free running trigger</span>
 
         <span class="c1"># Take the measurements until Ctrl+C is pressed</span>
         <span class="k">async</span> <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">hp3478a</span><span class="o">.</span><span class="n">read_all</span><span class="p">():</span>
