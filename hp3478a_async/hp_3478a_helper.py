@@ -166,7 +166,9 @@ def _encode_gain_data(value: float) -> list[int]:
     for idx in reversed(range(len(digits))):
         carry, digit = _encode_digit(result[idx] + digits[idx])
         result[idx] = digit
-        if idx == 0 and carry != 0:
+        # Safety net only: the range check above already rejects every value that would carry out of the top digit
+        # (the largest value is 55555), so this cannot be reached and is not covered by the tests.
+        if idx == 0 and carry != 0:  # pragma: no cover
             raise OverflowError()
         result[idx - 1] += carry
 
