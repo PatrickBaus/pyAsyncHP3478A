@@ -40,17 +40,30 @@ linux-gpib = ["async-gpib", "gpib-ctypes"]
 
 prologix-gpib = ["prologix-gpib-async"]
 
-dev = [
-    "aiofiles", "async-gpib", "black", "build", "gpib-ctypes", "isort", "mypy", "pre-commit", "prologix-gpib-async",
-    "pylint", "pytest", "twine",
+# Needed to run the scripts in examples/
+examples = [
+    "aiofiles", "async-gpib", "gpib-ctypes", "prologix-gpib-async",
 ]
-
+# Needed to run the test suite
+test = [
+    "pytest",
+]
+# Linters and type checkers. pylint also checks examples/ and tests/, so it needs their dependencies.
+lint = [
+    "hp3478a-async[examples,test]",
+    "black", "isort", "mypy", "pre-commit", "pylint", "setuptools", "types-aiofiles",
+]
+# Building and publishing to PyPI
+build = [
+    "build", "twine",
+]
+# Building the documentation
 doc = [
     "myst-parser", "sphinx",
 ]
-
-test = [
-    "mypy", "pylint", "pytest", "aiofiles", "gpib-ctypes", "prologix-gpib-async", "setuptools",
+# Everything needed for development
+dev = [
+    "hp3478a-async[examples,test,lint,build,doc]",
 ]
 
 [tool.pylint.'MESSAGES CONTROL']
