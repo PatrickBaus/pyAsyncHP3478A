@@ -17,9 +17,10 @@ repos:
     -   id: trailing-whitespace
         args: [ --markdown-linebreak-ext=md ]
 -   repo: https://github.com/asottile/pyupgrade
-    rev: v3.20.0
+    rev: v3.22.0
     hooks:
     -   id: pyupgrade
+        args: [ --py312-plus ]
 -   repo: https://github.com/psf/black
     rev: 25.1.0
     hooks:

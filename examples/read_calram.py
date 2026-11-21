@@ -58,15 +58,18 @@ else:
 # This example will read the calibration memory and write it to a file named 'calram.bin'
 async def main():
     """Read the calibration memory from the DMM"""
-    async with HP_3478A(connection=gpib_device) as hp3478a:
+    # Open the file first, so that we fail early and do not overwrite an existing file
+    async with (
+        aiofiles.open("calram.bin", mode="x") as filehandle,
+        HP_3478A(connection=gpib_device) as hp3478a,
+    ):
         await hp3478a.clear()  # flush all buffers
         logging.getLogger(__name__).info("Reading calibration memory. This will take about 10 seconds.")
-        result, filehandle = await asyncio.gather(hp3478a.get_cal_ram(), aiofiles.open("calram.bin", mode="x"))
-        is_cal_enabled, data = decode_cal_data(result)  # decode to a tuple of dicts
+        result = await hp3478a.get_cal_ram()
+        is_cal_enabled, data = decode_cal_data(result)  # decode to a tuple of CalramEntry
         logging.getLogger(__name__).info("Calibration switch is enabled: %(enabled)s", {"enabled": is_cal_enabled})
         logging.getLogger(__name__).info("Calibration data: %(data)s", {"data": data})
         await filehandle.write(format_cal_string(result))
-        await filehandle.close()
         logging.getLogger(__name__).info("Calibration data written to calram.bin")
 
 

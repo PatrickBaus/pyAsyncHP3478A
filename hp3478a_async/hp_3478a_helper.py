@@ -21,6 +21,10 @@ Helper functions to encode and decode data formats used by the HP 3478A.
 from __future__ import annotations
 
 from dataclasses import dataclass
+from itertools import batched
+
+# The calibration memory stores one 4 bit value per byte
+type Nibbles = list[int] | tuple[int, ...]
 
 
 @dataclass
@@ -32,7 +36,7 @@ class CalramEntry:
     checksum: int
     is_valid: bool
 
-    def __init__(self, data_block: list[int] | tuple[int, ...]) -> None:
+    def __init__(self, data_block: Nibbles) -> None:
         calculated_checksum = _calculate_cal_checksum(data_block)
         offset_block, gain_block, checksum_block = data_block[:6], data_block[6:11], data_block[11:]
         self.checksum = (checksum_block[0] << 4) + checksum_block[1]
@@ -70,10 +74,10 @@ def format_cal_string(data: bytes) -> str:
     str
         A human readable string of ASCII characters.
     """
-    return "\n".join([(data[i : i + 16]).decode() for i in range(0, len(data), 16)])
+    return "\n".join(bytes(line).decode() for line in batched(data, 16))
 
 
-def _decode_bcd_8421(data: list[int] | tuple[int, ...]) -> int:
+def _decode_bcd_8421(data: Nibbles) -> int:
     result = 0
     for i, value in enumerate(reversed(data)):
         result += 10**i * value
@@ -85,7 +89,7 @@ def _encode_bcd_8421(value: int) -> list[int]:
     return [int(i) for i in str(value)]
 
 
-def _decode_offset_data(data: list[int] | tuple[int, ...]) -> int:
+def _decode_offset_data(data: Nibbles) -> int:
     # The offset is BCD 8421 encoded, so only 4 bits are required per number
     # not a full byte
     result = _decode_bcd_8421(data)
@@ -107,7 +111,7 @@ def _encode_offset_data(value: int) -> list[int]:
     return [0] * (6 - len(result)) + result
 
 
-def _decode_gain_data(data: list[int] | tuple[int, ...]) -> float:
+def _decode_gain_data(data: Nibbles) -> float:
     # The gain is BCD 8421 encoded. Additionally, each byte is a
     # 4-bit two's complement signed number, hence if the 4th bit is set,
     # the number is negative. Finally, the gain is given in ppm offset from 1.
@@ -172,7 +176,7 @@ def _encode_gain_data(value: float) -> list[int]:
     return result
 
 
-def _calculate_cal_checksum(data: list[int] | tuple[int, ...]) -> int:
+def _calculate_cal_checksum(data: Nibbles) -> int:
     # The checksum is 0xFF minus the sum over the 11 data bytes
     calculated_checksum = 0xFF - (sum(data[:11]) & 0xFF)  # We need to truncate to uin8_t
 
@@ -209,7 +213,7 @@ def decode_cal_data(encoded_data: str | bytes) -> tuple[bool, tuple[CalramEntry,
     # Strip off non-data bytes
     data = data[1:248]
     # Split the string into substrings of length block_size
-    data_blocks = [(data[i : i + block_size]) for i in range(0, len(data), block_size)]
+    data_blocks = batched(data, block_size)
 
     # Now decode the data block
     # 1. calculate and test the checksum of the data block

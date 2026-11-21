@@ -7,9 +7,10 @@ from decimal import Decimal
 
 import pytest
 
-from hp3478a_async import HP_3478A, FunctionType, Range
+from hp3478a_async import HP_3478A, FunctionType, NtcParameters, Range
+from hp3478a_async.errors import DeviceError
 from hp3478a_async.flags import SerialPollFlags
-from hp3478a_async.hp_3478a_helper import decode_cal_data, encode_cal_data
+from hp3478a_async.hp_3478a_helper import decode_cal_data, encode_cal_data, format_cal_string
 
 
 class FakeConnection:  # pylint: disable=missing-function-docstring
@@ -20,6 +21,8 @@ class FakeConnection:  # pylint: disable=missing-function-docstring
         self.read_response: bytes = b""
         self.status_byte: int = 0
         self.wait_returns_status = wait_returns_status
+        self.wait_timeout = False
+        self.fail_writes = False
         self.serial_polls = 0
 
     async def connect(self) -> None:
@@ -29,12 +32,17 @@ class FakeConnection:  # pylint: disable=missing-function-docstring
         pass
 
     async def write(self, msg: bytes) -> None:
+        await asyncio.sleep(0)  # Let other tasks run, like a real connection would
+        if self.fail_writes:
+            raise ConnectionError("Connection lost")
         self.written.append(msg)
 
     async def read(self, length: int | None = None) -> bytes:  # pylint: disable=unused-argument
         return self.read_response
 
     async def wait(self, mask: int) -> int | None:  # pylint: disable=unused-argument
+        if self.wait_timeout:
+            raise TimeoutError("Timeout waiting for event.")
         # prologix-gpib-async returns the status byte, async-gpib (linux-gpib) returns None
         return self.status_byte if self.wait_returns_status else None
 
@@ -114,7 +122,7 @@ def test_status_clears_special_function_on_mode_change():
 async def _first_reading(dmm: HP_3478A):
     generator = dmm.read_all()
     try:
-        return await generator.__anext__()  # pylint: disable=unnecessary-dunder-call
+        return await anext(generator)
     finally:
         await generator.aclose()
 
@@ -160,3 +168,86 @@ def test_encode_cal_data_accepts_iterators():
     assert encode_cal_data(is_cal_enabled, iter(entries)) == _calram()
     with pytest.raises(TypeError):
         encode_cal_data(is_cal_enabled, iter(entries[:-1]))
+
+
+def _data_ready_connection() -> FakeConnection:
+    conn = FakeConnection()
+    conn.status_byte = (SerialPollFlags.SRQ_ON_DATA_READY | SerialPollFlags.SRQ_ON_HAS_SRQ).value
+    conn.read_response = b"+1.23456E+0\r\n"
+    return conn
+
+
+def test_read_all_timeout():
+    """A GPIB timeout must be raised as a TimeoutError with a clear message."""
+    conn = _data_ready_connection()
+    conn.wait_timeout = True
+    with pytest.raises(TimeoutError, match="did not respond in time"):
+        asyncio.run(_first_reading(HP_3478A(conn)))
+    # asyncio.TimeoutError is the same class since Python 3.11, so existing handlers keep working
+    assert asyncio.TimeoutError is TimeoutError
+
+
+def test_read_all_device_not_ready():
+    """read_all() must raise a DeviceError, if the device requested service for a reason other than data ready."""
+    conn = _data_ready_connection()
+    conn.status_byte = (SerialPollFlags.SRQ_ON_SYNTAX_ERROR | SerialPollFlags.SRQ_ON_HAS_SRQ).value
+    with pytest.raises(DeviceError):
+        asyncio.run(_first_reading(HP_3478A(conn)))
+
+
+def test_read_all_does_not_reword_exceptions_thrown_in():
+    """A TimeoutError thrown into the generator by the caller is not a GPIB timeout and must not be reworded."""
+
+    async def throw_into_generator():
+        generator = HP_3478A(_data_ready_connection()).read_all()
+        await anext(generator)
+        try:
+            await generator.athrow(TimeoutError("caller timeout"))
+        finally:
+            await generator.aclose()
+
+    with pytest.raises(TimeoutError, match="caller timeout"):
+        asyncio.run(throw_into_generator())
+
+
+def test_dataclasses_are_slotted():
+    """The status and NTC parameter dataclasses use __slots__."""
+    conn = FakeConnection()
+    conn.read_response = status_bytes(FunctionType.DCV.value, 3, 1)
+    status = get_status(conn)
+    with pytest.raises(AttributeError):
+        status.unknown_attribute = 1  # type: ignore[attr-defined]  # pylint: disable=assigning-non-slot
+
+
+def test_connect_sends_default_settings():
+    """connect() must send the default display mode and SRQ mask, in that order."""
+    conn = FakeConnection()
+    asyncio.run(HP_3478A(conn).connect())
+    assert conn.written == [b"D1", b"M00"]
+
+
+def test_connect_raises_plain_connection_error():
+    """The settings are sent in a TaskGroup, but errors must not be wrapped in an ExceptionGroup."""
+    conn = FakeConnection()
+    conn.fail_writes = True
+    with pytest.raises(ConnectionError):
+        asyncio.run(HP_3478A(conn).connect())
+
+
+def test_dataclasses_are_keyword_only():
+    """The fields of NtcParameters (and DmmStatus) can only be passed by keyword."""
+    with pytest.raises(TypeError):
+        # This call is meant to fail
+        NtcParameters(3.354e-3, 2.787e-4, 4.0e-6, 1.6e-7, 10e3)  # type: ignore[misc]  # pylint: disable=E1121,E1125
+    parameters = NtcParameters(a=3.354e-3, b=2.787e-4, c=4.0e-6, d=1.6e-7, rt25=10e3)
+    assert parameters.rt25 == 10e3
+
+
+def test_format_cal_string():
+    """The calibration memory is formatted as 16 lines of 16 characters each."""
+    data = _calram()
+    lines = format_cal_string(data).split("\n")
+    assert len(lines) == 16
+    assert all(len(line) == 16 for line in lines)
+    assert "".join(lines).encode() == data
+    assert decode_cal_data("".join(lines)) == decode_cal_data(data)
