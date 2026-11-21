@@ -22,16 +22,16 @@ repos:
     -   id: pyupgrade
         args: [ --py312-plus ]
 -   repo: https://github.com/psf/black
-    rev: 25.1.0
+    rev: 26.10.1
     hooks:
     -   id: black
 -   repo: https://github.com/asottile/blacken-docs
-    rev: 1.19.1
+    rev: 1.20.0
     hooks:
     -   id: blacken-docs
         args: [ --line-length=120 ]
 -   repo: https://github.com/PyCQA/isort
-    rev: 6.0.1
+    rev: 9.0.2
     hooks:
     -   id: isort
 -   repo: local
@@ -43,7 +43,7 @@ repos:
         types: [ python ]
         require_serial: true
 -   repo: https://github.com/pre-commit/mirrors-mypy
-    rev: 'v1.17.1'
+    rev: 'v2.4.1'
     hooks:
     -   id: mypy
         additional_dependencies: [types-aiofiles]
