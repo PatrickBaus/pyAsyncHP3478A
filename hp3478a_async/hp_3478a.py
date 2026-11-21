@@ -22,27 +22,23 @@ from __future__ import annotations
 
 import asyncio
 import re  # Used to test for numerical return values
+from collections.abc import AsyncGenerator
 from dataclasses import dataclass
 from decimal import Decimal
 from math import log
 from types import TracebackType
-from typing import TYPE_CHECKING, AsyncGenerator
+from typing import TYPE_CHECKING, Self
 
 from hp3478a_async.enums import DisplayType, FrontRearSwitchPosition, FunctionType, Range, TriggerType
 from hp3478a_async.errors import DeviceError
 from hp3478a_async.flags import ErrorFlags, SerialPollFlags, SrqMask, StatusFlags
-
-try:
-    from typing import Self  # type: ignore # Python 3.11
-except ImportError:
-    from typing_extensions import Self
 
 if TYPE_CHECKING:
     from async_gpib import AsyncGpib
     from prologix_gpib_async import AsyncPrologixGpibController
 
 
-@dataclass
+@dataclass(slots=True)
 class DmmStatus:
     """The device status of them DMM"""
 
@@ -55,7 +51,7 @@ class DmmStatus:
     dac_value: int
 
 
-@dataclass
+@dataclass(slots=True)
 class NtcParameters:
     """
     The Steinhart-Hart coefficient of an NTC thermistor. The formula to calculate the temperature from the resistance is
@@ -302,7 +298,7 @@ class HP_3478A:  # noqa pylint: disable=too-many-public-methods,invalid-name
             If the instrument input is overloaded, i.e. returns `+9.99999E+9`.
         DeviceError
             If the device is not ready for read.
-        asyncio.TimeoutError
+        TimeoutError
             If the GPIB controller does not respond in time.
         """
         await self.set_srq_mask(SrqMask.DATA_READY)  # Enable a GPIB interrupt when the conversion is done
@@ -314,13 +310,13 @@ class HP_3478A:  # noqa pylint: disable=too-many-public-methods,invalid-name
                     # also clears the SRQ.
                     status = await self.connection.serial_poll()
                 status_byte = SerialPollFlags(status)
-                if SerialPollFlags.SRQ_ON_DATA_READY in status_byte:
-                    result = await self.read(length)
-                    yield result
-                else:
+                if SerialPollFlags.SRQ_ON_DATA_READY not in status_byte:
                     raise DeviceError(f"Device did not signal ready for read. Status was: {status_byte}")
-            except asyncio.TimeoutError:
-                raise asyncio.TimeoutError("The GPIB controller did not respond in time.") from None
+                result = await self.read(length)
+            except TimeoutError:
+                raise TimeoutError("The GPIB controller did not respond in time.") from None
+            # Yield outside the try block, so that a TimeoutError thrown into the generator is not reworded
+            yield result
 
     async def __query(self, command: bytes, length: int | None = None) -> bytes:
         await self.write(command)

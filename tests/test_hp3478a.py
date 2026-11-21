@@ -8,6 +8,7 @@ from decimal import Decimal
 import pytest
 
 from hp3478a_async import HP_3478A, FunctionType, Range
+from hp3478a_async.errors import DeviceError
 from hp3478a_async.flags import SerialPollFlags
 from hp3478a_async.hp_3478a_helper import decode_cal_data, encode_cal_data
 
@@ -20,6 +21,7 @@ class FakeConnection:  # pylint: disable=missing-function-docstring
         self.read_response: bytes = b""
         self.status_byte: int = 0
         self.wait_returns_status = wait_returns_status
+        self.wait_timeout = False
         self.serial_polls = 0
 
     async def connect(self) -> None:
@@ -35,6 +37,8 @@ class FakeConnection:  # pylint: disable=missing-function-docstring
         return self.read_response
 
     async def wait(self, mask: int) -> int | None:  # pylint: disable=unused-argument
+        if self.wait_timeout:
+            raise TimeoutError("Timeout waiting for event.")
         # prologix-gpib-async returns the status byte, async-gpib (linux-gpib) returns None
         return self.status_byte if self.wait_returns_status else None
 
@@ -114,7 +118,7 @@ def test_status_clears_special_function_on_mode_change():
 async def _first_reading(dmm: HP_3478A):
     generator = dmm.read_all()
     try:
-        return await generator.__anext__()  # pylint: disable=unnecessary-dunder-call
+        return await anext(generator)
     finally:
         await generator.aclose()
 
@@ -160,3 +164,52 @@ def test_encode_cal_data_accepts_iterators():
     assert encode_cal_data(is_cal_enabled, iter(entries)) == _calram()
     with pytest.raises(TypeError):
         encode_cal_data(is_cal_enabled, iter(entries[:-1]))
+
+
+def _data_ready_connection() -> FakeConnection:
+    conn = FakeConnection()
+    conn.status_byte = (SerialPollFlags.SRQ_ON_DATA_READY | SerialPollFlags.SRQ_ON_HAS_SRQ).value
+    conn.read_response = b"+1.23456E+0\r\n"
+    return conn
+
+
+def test_read_all_timeout():
+    """A GPIB timeout must be raised as a TimeoutError with a clear message."""
+    conn = _data_ready_connection()
+    conn.wait_timeout = True
+    with pytest.raises(TimeoutError, match="did not respond in time"):
+        asyncio.run(_first_reading(HP_3478A(conn)))
+    # asyncio.TimeoutError is the same class since Python 3.11, so existing handlers keep working
+    assert asyncio.TimeoutError is TimeoutError
+
+
+def test_read_all_device_not_ready():
+    """read_all() must raise a DeviceError, if the device requested service for a reason other than data ready."""
+    conn = _data_ready_connection()
+    conn.status_byte = (SerialPollFlags.SRQ_ON_SYNTAX_ERROR | SerialPollFlags.SRQ_ON_HAS_SRQ).value
+    with pytest.raises(DeviceError):
+        asyncio.run(_first_reading(HP_3478A(conn)))
+
+
+def test_read_all_does_not_reword_exceptions_thrown_in():
+    """A TimeoutError thrown into the generator by the caller is not a GPIB timeout and must not be reworded."""
+
+    async def throw_into_generator():
+        generator = HP_3478A(_data_ready_connection()).read_all()
+        await anext(generator)
+        try:
+            await generator.athrow(TimeoutError("caller timeout"))
+        finally:
+            await generator.aclose()
+
+    with pytest.raises(TimeoutError, match="caller timeout"):
+        asyncio.run(throw_into_generator())
+
+
+def test_dataclasses_are_slotted():
+    """The status and NTC parameter dataclasses use __slots__."""
+    conn = FakeConnection()
+    conn.read_response = status_bytes(FunctionType.DCV.value, 3, 1)
+    status = get_status(conn)
+    with pytest.raises(AttributeError):
+        status.unknown_attribute = 1  # type: ignore[attr-defined]  # pylint: disable=assigning-non-slot

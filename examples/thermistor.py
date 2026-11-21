@@ -67,15 +67,14 @@ async def main():
     try:
         async with HP_3478A(connection=gpib_device) as hp3478a:
             await hp3478a.clear()  # flush all buffers
-            await asyncio.gather(
-                hp3478a.set_function(FunctionType.NTC),  # Set to 2-wire ohm
-                hp3478a.set_range(Range.RANGE_30k),  # Set to 30 kOhm range
-                hp3478a.set_trigger(TriggerType.INTERNAL),  # Enable free running trigger
-                hp3478a.set_autozero(True),  # Enable Autozero
-                hp3478a.set_number_of_digits(6),  # Set the resolution to 5.5 digits
-                # Optional: Set the GPIB timeout to > 10 PLC (20 ms) if polling without interrupts is used
-                # hp3478a.connection.timeout(600),
-            )
+            # Send the settings one after the other, so that they reach the DMM in a fixed order
+            await hp3478a.set_function(FunctionType.NTC)  # Set to 2-wire ohm
+            await hp3478a.set_range(Range.RANGE_30k)  # Set to 30 kOhm range
+            await hp3478a.set_trigger(TriggerType.INTERNAL)  # Enable free running trigger
+            await hp3478a.set_autozero(True)  # Enable Autozero
+            await hp3478a.set_number_of_digits(6)  # Set the resolution to 5.5 digits
+            # Optional: Set the GPIB timeout to > 10 PLC (20 ms) if polling without interrupts is used
+            # await hp3478a.connection.timeout(600)
             # The NTC paramter are the (normalized) Steinhart-hart coefficients.
             # The formula used to calculate the temperature from the resistance is the following:
             # 1/T=a+b*Log(Rt/R25)+c*Log(Rt/R25)**2+d*Log(Rt/R25)**3
