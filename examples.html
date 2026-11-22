@@ -5,10 +5,10 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Examples &#8212; hp3478a_async v2.0.1.dev10 documentation</title>
+    <title>Examples &#8212; hp3478a_async v2.0.1.dev11 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="_static/nature.css?v=279e0f84" />
-    <script src="_static/documentation_options.js?v=0c2791be"></script>
+    <script src="_static/documentation_options.js?v=a85f15a7"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -31,7 +31,7 @@
         <li class="right" >
           <a href="modules.html" title="Module Documentation"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">hp3478a_async v2.0.1.dev10 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">hp3478a_async v2.0.1.dev11 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">Examples</a></li> 
       </ul>
     </div>  
@@ -67,12 +67,15 @@ different hardware solutions.</p>
 
 <span class="c1"># Devices</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">hp3478a_async</span><span class="w"> </span><span class="kn">import</span> <span class="n">HP_3478A</span><span class="p">,</span> <span class="n">FunctionType</span><span class="p">,</span> <span class="n">Range</span><span class="p">,</span> <span class="n">TriggerType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">hp3478a_async.hp_3478a</span><span class="w"> </span><span class="kn">import</span> <span class="n">GpibConnection</span>
 
 <span class="n">IP_ADDRESS</span> <span class="o">=</span> <span class="s2">"127.0.0.1"</span>
-<span class="n">gpib_device</span> <span class="o">=</span> <span class="n">AsyncPrologixGpibEthernetController</span><span class="p">(</span><span class="n">IP_ADDRESS</span><span class="p">,</span> <span class="n">pad</span><span class="o">=</span><span class="mi">27</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">eos_mode</span><span class="o">=</span><span class="n">EosMode</span><span class="o">.</span><span class="n">APPEND_NONE</span><span class="p">)</span>
+<span class="n">gpib_device</span><span class="p">:</span> <span class="n">GpibConnection</span> <span class="o">=</span> <span class="n">AsyncPrologixGpibEthernetController</span><span class="p">(</span>
+    <span class="n">IP_ADDRESS</span><span class="p">,</span> <span class="n">pad</span><span class="o">=</span><span class="mi">27</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">eos_mode</span><span class="o">=</span><span class="n">EosMode</span><span class="o">.</span><span class="n">APPEND_NONE</span>
+<span class="p">)</span>
 
 
-<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""This example will print voltages to the console"""</span>
     <span class="k">async</span> <span class="k">with</span> <span class="n">HP_3478A</span><span class="p">(</span><span class="n">connection</span><span class="o">=</span><span class="n">gpib_device</span><span class="p">)</span> <span class="k">as</span> <span class="n">hp3478a</span><span class="p">:</span>
         <span class="k">await</span> <span class="n">hp3478a</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>  <span class="c1"># flush all buffers</span>
@@ -165,7 +168,7 @@ different hardware solutions.</p>
         <li class="right" >
           <a href="modules.html" title="Module Documentation"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">hp3478a_async v2.0.1.dev10 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">hp3478a_async v2.0.1.dev11 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">Examples</a></li> 
       </ul>
     </div>

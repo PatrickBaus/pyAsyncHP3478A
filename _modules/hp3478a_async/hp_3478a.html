@@ -4,10 +4,10 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>hp3478a_async.hp_3478a &#8212; hp3478a_async v2.0.1.dev10 documentation</title>
+    <title>hp3478a_async.hp_3478a &#8212; hp3478a_async v2.0.1.dev11 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../_static/nature.css?v=279e0f84" />
-    <script src="../../_static/documentation_options.js?v=0c2791be"></script>
+    <script src="../../_static/documentation_options.js?v=a85f15a7"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -22,7 +22,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">hp3478a_async v2.0.1.dev10 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">hp3478a_async v2.0.1.dev11 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">hp3478a_async.hp_3478a</a></li> 
       </ul>
@@ -114,7 +114,7 @@
     <span class="n">d</span><span class="p">:</span> <span class="nb">float</span>  <span class="c1"># pylint: disable=invalid-name  # this is standard naming convention</span>
     <span class="n">rt25</span><span class="p">:</span> <span class="nb">float</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="c1"># Only R25 is constrained. The higher order coefficients may be zero (e.g. the classic 3-term Steinhart-Hart</span>
         <span class="c1"># equation) or negative, depending on the fit.</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rt25</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
@@ -240,7 +240,7 @@
 <a class="viewcode-back" href="../../modules.html#hp3478a_async.HP_3478A.set_ntc_parameters">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">set_ntc_parameters</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">c</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">d</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">rt25</span><span class="p">:</span> <span class="nb">float</span>
-    <span class="p">):</span>  <span class="c1"># pylint: disable=too-many-arguments,too-many-positional-arguments</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># pylint: disable=too-many-arguments,too-many-positional-arguments</span>
 <span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Set the parameters used when in mode :attr:`FunctionType.NTC &lt;hp3478a_async.enums.FunctionType.NTC&gt;` or</span>
 <span class="sd">        :attr:`FunctionType.NTCF &lt;hp3478a_async.enums.FunctionType.NTCF&gt;`. The parameters can be found in the datasheet</span>
@@ -760,7 +760,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">hp3478a_async v2.0.1.dev10 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">hp3478a_async v2.0.1.dev11 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">hp3478a_async.hp_3478a</a></li> 
       </ul>
