@@ -34,13 +34,13 @@ dynamic = ["version"]
 "Documentation" = "https://patrickbaus.github.io/pyAsyncHP3478A/"
 
 [project.optional-dependencies]
-linux-gpib = ["async-gpib", "gpib-ctypes"]
+linux-gpib = ["async-gpib>=3.2.0", "gpib-ctypes"]
 
 prologix-gpib = ["prologix-gpib-async"]
 
 # Needed to run the scripts in examples/
 examples = [
-    "aiofiles", "async-gpib", "gpib-ctypes", "prologix-gpib-async",
+    "hp3478a-async[linux-gpib]", "aiofiles", "prologix-gpib-async",
 ]
 # Needed to run the test suite. pytest-cov measures the coverage, see the [tool.coverage] sections below.
 test = [
