@@ -61,7 +61,7 @@ decoder_data = encoder_data + [
 
 
 @pytest.mark.parametrize("decoded_gain_data, encoded_gain_data", encoder_data)
-def test_gain_encoder(decoded_gain_data, encoded_gain_data):
+def test_gain_encoder(decoded_gain_data: float, encoded_gain_data: list[int]) -> None:
     """Test the gain encoder again known good data."""
     assert _encode_gain_data(decoded_gain_data) == encoded_gain_data
 
@@ -73,7 +73,7 @@ def test_gain_encoder(decoded_gain_data, encoded_gain_data):
         1.055556,
     ],
 )
-def test_gain_encoder_too_high(decoded_gain_data):
+def test_gain_encoder_too_high(decoded_gain_data: float) -> None:
     """Test the gain encoder against known bad data, causing an overflow."""
     with pytest.raises(OverflowError):
         _encode_gain_data(decoded_gain_data)
@@ -87,13 +87,13 @@ def test_gain_encoder_too_high(decoded_gain_data):
         0.911112,
     ],
 )
-def test_gain_encoder_too_low(decoded_gain_data):
+def test_gain_encoder_too_low(decoded_gain_data: float) -> None:
     """Test the gain encoder against known bad data, causing an overflow."""
     with pytest.raises(OverflowError):
         _encode_gain_data(decoded_gain_data)
 
 
 @pytest.mark.parametrize("decoded_gain_data, encoded_gain_data", decoder_data)
-def test_gain_decoder(decoded_gain_data, encoded_gain_data):
+def test_gain_decoder(decoded_gain_data: float, encoded_gain_data: list[int]) -> None:
     """Test the gain decoder against known good data"""
     assert _decode_gain_data(encoded_gain_data) == decoded_gain_data

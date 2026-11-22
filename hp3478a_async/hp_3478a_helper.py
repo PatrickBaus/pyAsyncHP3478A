@@ -21,6 +21,7 @@ Helper functions to encode and decode data formats used by the HP 3478A.
 
 from __future__ import annotations
 
+from collections.abc import Iterable
 from dataclasses import dataclass
 from itertools import batched
 
@@ -124,7 +125,7 @@ def _decode_gain_data(data: Nibbles) -> float:
     return 1.0 + (result / 10**6)
 
 
-def _encode_digit(number: int):
+def _encode_digit(number: int) -> list[int]:
     result = [int(x) for x in str(number)]
     result = [0] * (2 - len(result)) + result
     if result[1] > 5:
@@ -224,23 +225,23 @@ def decode_cal_data(encoded_data: str | bytes) -> tuple[bool, tuple[CalramEntry,
     return is_cal_enabled, tuple(CalramEntry(data_block) for data_block in data_blocks)
 
 
-def encode_cal_data(cal_enable: bool, data_blocks: tuple[CalramEntry, ...] | list[CalramEntry]) -> bytes:
+def encode_cal_data(cal_enable: bool, data_blocks: Iterable[CalramEntry]) -> bytes:
     """
     The calibration data is stored as nibbles (4 bit, half-bytes). This function encodes a
     dictionary with the calibration constants to bytes.
 
     Parameters
     ----------
-    data_blocks: list[CalramEntry] or tuple[CalramEntry]
+    data_blocks: Iterable of CalramEntry
         The calibration data
     cal_enable:
         Set to `True`, to write the calibration data to the NVRAM.
     """
     # Materialize the input first, so that iterators can be used as well
-    data_blocks = tuple(data_blocks)
-    if len(data_blocks) != 19:
+    blocks = tuple(data_blocks)
+    if len(blocks) != 19:
         raise TypeError("Invalid number of calibration constants")
-    encoded_data_blocks = b"".join([entry.to_bytes() for entry in data_blocks])
+    encoded_data_blocks = b"".join([entry.to_bytes() for entry in blocks])
 
     # Finally, pad with the cal_enable byte at the beginning and 8 0 bytes at the end
     result = bytes([0xF * bool(not cal_enable) + 0x40]) + encoded_data_blocks + bytes([0 + 0x40] * 8)

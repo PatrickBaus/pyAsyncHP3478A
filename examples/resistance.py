@@ -27,6 +27,7 @@ import warnings
 
 # Devices
 from hp3478a_async import HP_3478A, FunctionType, Range, TriggerType
+from hp3478a_async.hp_3478a import GpibConnection
 
 if typing.TYPE_CHECKING:
     from async_gpib import AsyncGpib
@@ -45,7 +46,9 @@ else:
 if "prologix_gpib_async" in sys.modules:
     IP_ADDRESS = "127.0.0.1"
     # pylint: disable=used-before-assignment  # false positive
-    gpib_device = AsyncPrologixGpibEthernetController(IP_ADDRESS, pad=27, timeout=1, eos_mode=EosMode.APPEND_NONE)
+    gpib_device: GpibConnection = AsyncPrologixGpibEthernetController(
+        IP_ADDRESS, pad=27, timeout=1, eos_mode=EosMode.APPEND_NONE
+    )
 elif "async_gpib" in sys.modules:
     # Create the gpib device. We need a timeout of > 10 PLC (20 ms), because the DMM might reply to a conversion request
     # and unable to reply to a status request during conversion (maximum time 10 PLC)
@@ -64,7 +67,7 @@ else:
     raise ImportWarning("No GPIB module loaded. Please check your imports")
 
 
-async def main():
+async def main() -> None:
     """This example will log resistance data to the console"""
     try:
         async with HP_3478A(connection=gpib_device) as hp3478a:

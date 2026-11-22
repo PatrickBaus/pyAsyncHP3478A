@@ -8,7 +8,7 @@ from typing import override
 
 import pytest
 
-from hp3478a_async import HP_3478A, FunctionType, NtcParameters, Range
+from hp3478a_async import HP_3478A, DmmStatus, FunctionType, NtcParameters, Range
 from hp3478a_async.errors import DeviceError
 from hp3478a_async.flags import SerialPollFlags
 from hp3478a_async.hp_3478a_helper import decode_cal_data, encode_cal_data, format_cal_string
@@ -66,14 +66,20 @@ class FakeConnection:  # pylint: disable=missing-function-docstring,too-many-ins
         return self.status_byte
 
 
+def make_dmm(conn: FakeConnection) -> HP_3478A:
+    """Create a DMM, that uses the fake connection."""
+    # FakeConnection is not a GpibConnection. The ignore is unused if the adapter libraries are not installed.
+    return HP_3478A(conn)  # type: ignore[arg-type,unused-ignore]
+
+
 def status_bytes(function: int, range_code: int, digits_code: int) -> bytes:
     """Build the 5 byte response to the "B" command."""
     return bytes([(function << 5) | (range_code << 2) | digits_code, 0, 0, 0, 0])
 
 
-def get_status(conn: FakeConnection, dmm: HP_3478A | None = None):
+def get_status(conn: FakeConnection, dmm: HP_3478A | None = None) -> DmmStatus:
     """Run get_status() on a new or the given DMM."""
-    dmm = dmm or HP_3478A(conn)
+    dmm = dmm or make_dmm(conn)
     return asyncio.run(dmm.get_status())
 
 
@@ -91,7 +97,7 @@ def get_status(conn: FakeConnection, dmm: HP_3478A | None = None):
         (FunctionType.OHM_EXT, 7, Range.RANGE_30MEG),
     ],
 )
-def test_status_range(function, range_code, expected):
+def test_status_range(function: FunctionType, range_code: int, expected: Range) -> None:
     """The range bits of the status byte must map to the correct Range for each function."""
     conn = FakeConnection()
     conn.read_response = status_bytes(function.value, range_code, 1)
@@ -99,10 +105,10 @@ def test_status_range(function, range_code, expected):
 
 
 @pytest.mark.parametrize("ndigits", [4, 5, 6])
-def test_number_of_digits_round_trip(ndigits):
+def test_number_of_digits_round_trip(ndigits: int) -> None:
     """The value passed to set_number_of_digits() must be reported back by get_status()."""
     conn = FakeConnection()
-    dmm = HP_3478A(conn)
+    dmm = make_dmm(conn)
     asyncio.run(dmm.set_number_of_digits(ndigits))
     n_command = int(conn.written[-1][1:])  # N3, N4 or N5
     digits_code = 6 - n_command  # N5 = 5½ -> 1, N4 = 4½ -> 2, N3 = 3½ -> 3
@@ -111,10 +117,10 @@ def test_number_of_digits_round_trip(ndigits):
 
 
 @pytest.mark.parametrize("special, device_function", [(FunctionType.NTC, 3), (FunctionType.NTCF, 4)])
-def test_status_in_thermistor_mode(special, device_function):
+def test_status_in_thermistor_mode(special: FunctionType, device_function: int) -> None:
     """get_status() must not fail and must report the special function in thermistor mode."""
     conn = FakeConnection()
-    dmm = HP_3478A(conn)
+    dmm = make_dmm(conn)
     asyncio.run(dmm.set_function(special))
     assert conn.written[-1] == f"F{device_function}".encode()
     conn.read_response = status_bytes(device_function, 4, 1)
@@ -123,10 +129,10 @@ def test_status_in_thermistor_mode(special, device_function):
     assert status.range is Range.RANGE_30k
 
 
-def test_status_clears_special_function_on_mode_change():
+def test_status_clears_special_function_on_mode_change() -> None:
     """Switching the device to another function must disable the thermistor conversion."""
     conn = FakeConnection()
-    dmm = HP_3478A(conn)
+    dmm = make_dmm(conn)
     asyncio.run(dmm.set_function(FunctionType.NTC))
     conn.read_response = status_bytes(FunctionType.DCV.value, 3, 1)
     assert get_status(conn, dmm).function is FunctionType.DCV
@@ -134,7 +140,7 @@ def test_status_clears_special_function_on_mode_change():
     assert asyncio.run(dmm.read()) == Decimal("1.00000E+3")  # no thermistor conversion anymore
 
 
-async def _first_reading(dmm: HP_3478A):
+async def _first_reading(dmm: HP_3478A) -> Decimal | bytes:
     generator = dmm.read_all()
     try:
         return await anext(generator)
@@ -143,27 +149,27 @@ async def _first_reading(dmm: HP_3478A):
 
 
 @pytest.mark.parametrize("wait_returns_status", [True, False], ids=["prologix", "linux-gpib"])
-def test_read_all(wait_returns_status):
+def test_read_all(wait_returns_status: bool) -> None:
     """read_all() must work with both GPIB backends."""
     conn = FakeConnection(wait_returns_status=wait_returns_status)
     conn.status_byte = (SerialPollFlags.SRQ_ON_DATA_READY | SerialPollFlags.SRQ_ON_HAS_SRQ).value
     conn.read_response = b"+1.23456E+0\r\n"
-    assert asyncio.run(_first_reading(HP_3478A(conn))) == Decimal("1.23456")
+    assert asyncio.run(_first_reading(make_dmm(conn))) == Decimal("1.23456")
     # linux-gpib does not return the status byte from wait(), so it must be serial polled
     assert conn.serial_polls == (0 if wait_returns_status else 1)
 
 
-def test_read_overload():
+def test_read_overload() -> None:
     """An overloaded input must raise an OverflowError."""
     conn = FakeConnection()
     conn.read_response = b"+9.99999E+9\r\n"
     with pytest.raises(OverflowError):
-        asyncio.run(HP_3478A(conn).read())
+        asyncio.run(make_dmm(conn).read())
 
 
-def test_ntc_parameters_allow_zero_and_negative_higher_order_terms():
+def test_ntc_parameters_allow_zero_and_negative_higher_order_terms() -> None:
     """Only R25 is validated, the higher order coefficients may be zero or negative."""
-    dmm = HP_3478A(FakeConnection())
+    dmm = make_dmm(FakeConnection())
     dmm.set_ntc_parameters(a=1.129e-3, b=2.341e-4, c=0, d=-1e-8, rt25=10e3)  # used to fail the assert
     with pytest.raises(ValueError):
         dmm.set_ntc_parameters(a=1e-3, b=2e-4, c=0, d=0, rt25=0)
@@ -177,7 +183,7 @@ def _calram() -> bytes:
     return bytes(value + 0x40 for value in [0] + block * 19 + [0] * 8)
 
 
-def test_encode_cal_data_accepts_iterators():
+def test_encode_cal_data_accepts_iterators() -> None:
     """encode_cal_data() must accept iterators and still check the number of entries."""
     is_cal_enabled, entries = decode_cal_data(_calram())
     assert encode_cal_data(is_cal_enabled, iter(entries)) == _calram()
@@ -192,29 +198,29 @@ def _data_ready_connection() -> FakeConnection:
     return conn
 
 
-def test_read_all_timeout():
+def test_read_all_timeout() -> None:
     """A GPIB timeout must be raised as a TimeoutError with a clear message."""
     conn = _data_ready_connection()
     conn.wait_timeout = True
     with pytest.raises(TimeoutError, match="did not respond in time"):
-        asyncio.run(_first_reading(HP_3478A(conn)))
+        asyncio.run(_first_reading(make_dmm(conn)))
     # asyncio.TimeoutError is the same class since Python 3.11, so existing handlers keep working
     assert asyncio.TimeoutError is TimeoutError
 
 
-def test_read_all_device_not_ready():
+def test_read_all_device_not_ready() -> None:
     """read_all() must raise a DeviceError, if the device requested service for a reason other than data ready."""
     conn = _data_ready_connection()
     conn.status_byte = (SerialPollFlags.SRQ_ON_SYNTAX_ERROR | SerialPollFlags.SRQ_ON_HAS_SRQ).value
     with pytest.raises(DeviceError):
-        asyncio.run(_first_reading(HP_3478A(conn)))
+        asyncio.run(_first_reading(make_dmm(conn)))
 
 
-def test_read_all_does_not_reword_exceptions_thrown_in():
+def test_read_all_does_not_reword_exceptions_thrown_in() -> None:
     """A TimeoutError thrown into the generator by the caller is not a GPIB timeout and must not be reworded."""
 
-    async def throw_into_generator():
-        generator = HP_3478A(_data_ready_connection()).read_all()
+    async def throw_into_generator() -> None:
+        generator = make_dmm(_data_ready_connection()).read_all()
         await anext(generator)
         try:
             await generator.athrow(TimeoutError("caller timeout"))
@@ -225,7 +231,7 @@ def test_read_all_does_not_reword_exceptions_thrown_in():
         asyncio.run(throw_into_generator())
 
 
-def test_dataclasses_are_slotted():
+def test_dataclasses_are_slotted() -> None:
     """The status and NTC parameter dataclasses use __slots__."""
     conn = FakeConnection()
     conn.read_response = status_bytes(FunctionType.DCV.value, 3, 1)
@@ -234,31 +240,31 @@ def test_dataclasses_are_slotted():
         status.unknown_attribute = 1  # type: ignore[attr-defined]  # pylint: disable=assigning-non-slot
 
 
-def test_connect_sends_default_settings():
+def test_connect_sends_default_settings() -> None:
     """connect() must send the default display mode and SRQ mask, in that order."""
     conn = FakeConnection()
-    asyncio.run(HP_3478A(conn).connect())
+    asyncio.run(make_dmm(conn).connect())
     assert conn.written == [b"D1", b"M00"]
 
 
-def test_connect_raises_plain_connection_error():
+def test_connect_raises_plain_connection_error() -> None:
     """The settings are sent in a TaskGroup, but errors must not be wrapped in an ExceptionGroup."""
     conn = FakeConnection()
     conn.fail_writes = True
     with pytest.raises(ConnectionError):
-        asyncio.run(HP_3478A(conn).connect())
+        asyncio.run(make_dmm(conn).connect())
 
 
-def test_dataclasses_are_keyword_only():
+def test_dataclasses_are_keyword_only() -> None:
     """The fields of NtcParameters (and DmmStatus) can only be passed by keyword."""
     with pytest.raises(TypeError):
         # This call is meant to fail
-        NtcParameters(3.354e-3, 2.787e-4, 4.0e-6, 1.6e-7, 10e3)  # type: ignore[misc]  # pylint: disable=E1121,E1125
+        NtcParameters(3.354e-3, 2.787e-4, 4.0e-6, 1.6e-7, 10e3)  # type: ignore[call-arg]  # pylint: disable=E1121,E1125
     parameters = NtcParameters(a=3.354e-3, b=2.787e-4, c=4.0e-6, d=1.6e-7, rt25=10e3)
     assert parameters.rt25 == 10e3
 
 
-def test_format_cal_string():
+def test_format_cal_string() -> None:
     """The calibration memory is formatted as 16 lines of 16 characters each."""
     data = _calram()
     lines = format_cal_string(data).split("\n")

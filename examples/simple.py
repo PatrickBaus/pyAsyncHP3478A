@@ -9,12 +9,15 @@ from prologix_gpib_async import AsyncPrologixGpibEthernetController, EosMode
 
 # Devices
 from hp3478a_async import HP_3478A, FunctionType, Range, TriggerType
+from hp3478a_async.hp_3478a import GpibConnection
 
 IP_ADDRESS = "127.0.0.1"
-gpib_device = AsyncPrologixGpibEthernetController(IP_ADDRESS, pad=27, timeout=10, eos_mode=EosMode.APPEND_NONE)
+gpib_device: GpibConnection = AsyncPrologixGpibEthernetController(
+    IP_ADDRESS, pad=27, timeout=10, eos_mode=EosMode.APPEND_NONE
+)
 
 
-async def main():
+async def main() -> None:
     """This example will print voltages to the console"""
     async with HP_3478A(connection=gpib_device) as hp3478a:
         await hp3478a.clear()  # flush all buffers
