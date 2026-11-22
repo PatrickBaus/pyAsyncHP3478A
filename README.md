@@ -9,8 +9,8 @@
 | hp3478a\_async/errors.py            |        1 |        0 |        0 |        0 |     100% |           |
 | hp3478a\_async/flags.py             |       35 |        0 |        0 |        0 |     100% |           |
 | hp3478a\_async/hp\_3478a.py         |      172 |        0 |       26 |        0 |     100% |           |
-| hp3478a\_async/hp\_3478a\_helper.py |       85 |        0 |       14 |        0 |     100% |           |
-| **TOTAL**                           |  **334** |    **0** |   **40** |    **0** | **100%** |           |
+| hp3478a\_async/hp\_3478a\_helper.py |       86 |        0 |       14 |        0 |     100% |           |
+| **TOTAL**                           |  **335** |    **0** |   **40** |    **0** | **100%** |           |
 
 
 ## Setup coverage badge
