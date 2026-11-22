@@ -73,7 +73,7 @@ class NtcParameters:
     d: float  # pylint: disable=invalid-name  # this is standard naming convention
     rt25: float
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         # Only R25 is constrained. The higher order coefficients may be zero (e.g. the classic 3-term Steinhart-Hart
         # equation) or negative, depending on the fit.
         if self.rt25 <= 0:
@@ -182,7 +182,7 @@ class HP_3478A:  # noqa pylint: disable=too-many-public-methods,invalid-name
 
     def set_ntc_parameters(
         self, a: float, b: float, c: float, d: float, rt25: float
-    ):  # pylint: disable=too-many-arguments,too-many-positional-arguments
+    ) -> None:  # pylint: disable=too-many-arguments,too-many-positional-arguments
         """
         Set the parameters used when in mode :attr:`FunctionType.NTC <hp3478a_async.enums.FunctionType.NTC>` or
         :attr:`FunctionType.NTCF <hp3478a_async.enums.FunctionType.NTCF>`. The parameters can be found in the datasheet

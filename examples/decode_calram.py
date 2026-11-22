@@ -22,7 +22,7 @@
 from hp3478a_async.hp_3478a_helper import decode_cal_data, encode_cal_data, format_cal_string
 
 
-def main():
+def main() -> None:
     """Decode the calibration memory file"""
 
     # Read the calibration memory file and strip the "\n" character at the end of each line.

@@ -3,14 +3,16 @@
 from __future__ import annotations
 
 import asyncio
+from collections.abc import Callable, Coroutine
 from decimal import Decimal
+from typing import Any
 
 import pytest
 
 from hp3478a_async import HP_3478A, FunctionType, Range
 from hp3478a_async.enums import DisplayType, FrontRearSwitchPosition, TriggerType
 from hp3478a_async.flags import ErrorFlags, SerialPollFlags, SrqMask
-from tests.test_hp3478a import FakeConnection
+from tests.test_hp3478a import FakeConnection, make_dmm
 
 
 class FakePrologixConnection(FakeConnection):
@@ -26,51 +28,51 @@ class FakePrologixConnection(FakeConnection):
 
 
 @pytest.fixture(name="no_sleep")
-def fixture_no_sleep(monkeypatch):
+def fixture_no_sleep(monkeypatch: pytest.MonkeyPatch) -> None:
     """disconnect() waits 0.5 s for the device. Skip the wait to keep the tests fast."""
     original_sleep = asyncio.sleep
 
-    async def sleep(_delay, *args, **kwargs):
+    async def sleep(_delay: float, *args: Any, **kwargs: Any) -> Any:
         return await original_sleep(0, *args, **kwargs)
 
     monkeypatch.setattr(asyncio, "sleep", sleep)
 
 
-def run(coroutine):
+def run[T](coroutine: Coroutine[Any, Any, T]) -> T:
     """Run a coroutine in a new event loop."""
     return asyncio.run(coroutine)
 
 
-def test_str():
+def test_str() -> None:
     """The string representation contains the connection."""
-    assert str(HP_3478A(FakeConnection())) == "HEWLETT-PACKARD 3478A at FakeConnection"
+    assert str(make_dmm(FakeConnection())) == "HEWLETT-PACKARD 3478A at FakeConnection"
 
 
-def test_connection_property():
+def test_connection_property() -> None:
     """The connection passed to the constructor is available as a property."""
     conn = FakeConnection()
-    assert HP_3478A(conn).connection is conn
+    assert make_dmm(conn).connection is conn  # type: ignore[comparison-overlap,unused-ignore]
 
 
-def test_get_id():
+def test_get_id() -> None:
     """The device has no ID command, so the ID is a constant."""
     assert run(HP_3478A.get_id()) == ("HEWLETT-PACKARD", "3478A", "0", "0")
 
 
-def test_connect_disables_eot_on_prologix():
+def test_connect_disables_eot_on_prologix() -> None:
     """The Prologix adapters must not append an EOT character."""
     conn = FakePrologixConnection()
-    run(HP_3478A(conn).connect())
+    run(make_dmm(conn).connect())
     assert conn.eot is False
 
 
 @pytest.mark.usefixtures("no_sleep")
-def test_context_manager():
+def test_context_manager() -> None:
     """The context manager connects, returns the device to local mode and disconnects."""
     conn = FakeConnection()
 
-    async def use_context_manager():
-        async with HP_3478A(conn) as dmm:
+    async def use_context_manager() -> None:
+        async with make_dmm(conn) as dmm:
             assert isinstance(dmm, HP_3478A)
             assert conn.calls == ["connect"]
 
@@ -79,11 +81,11 @@ def test_context_manager():
 
 
 @pytest.mark.usefixtures("no_sleep")
-def test_disconnect_ignores_connection_error():
+def test_disconnect_ignores_connection_error() -> None:
     """If the device cannot be returned to local mode, the connection must still be closed."""
     conn = FakeConnection()
     conn.fail_local = True
-    run(HP_3478A(conn).disconnect())
+    run(make_dmm(conn).disconnect())
     assert conn.calls == ["disconnect"]
 
 
@@ -95,10 +97,10 @@ def test_disconnect_ignores_connection_error():
         (DisplayType.SHOW_TEXT_AND_FREEZE, "FROZEN", b"D3FROZEN\n"),
     ],
 )
-def test_set_display(display, text, expected):
+def test_set_display(display: DisplayType, text: str, expected: bytes) -> None:
     """The text is only sent, if the display does not show the measurements."""
     conn = FakeConnection()
-    run(HP_3478A(conn).set_display(display, text))
+    run(make_dmm(conn).set_display(display, text))
     assert conn.written == [expected]
 
 
@@ -118,66 +120,70 @@ def test_set_display(display, text, expected):
         (HP_3478A.write, b"F1R0", b"F1R0"),
     ],
 )
-def test_commands_with_argument(coroutine_function, argument, expected):
+def test_commands_with_argument(
+    coroutine_function: Callable[[HP_3478A, Any], Coroutine[Any, Any, None]], argument: Any, expected: bytes
+) -> None:
     """The settings are sent as the commands described in the manual."""
     conn = FakeConnection()
-    run(coroutine_function(HP_3478A(conn), argument))
+    run(coroutine_function(make_dmm(conn), argument))
     assert conn.written == [expected]
 
 
 @pytest.mark.parametrize(
     "coroutine_function, expected", [(HP_3478A.clear, b"K"), (HP_3478A.reset, b"H0")], ids=["clear", "reset"]
 )
-def test_commands_without_argument(coroutine_function, expected):
+def test_commands_without_argument(
+    coroutine_function: Callable[[HP_3478A], Coroutine[Any, Any, None]], expected: bytes
+) -> None:
     """Commands without parameters."""
     conn = FakeConnection()
-    run(coroutine_function(HP_3478A(conn)))
+    run(coroutine_function(make_dmm(conn)))
     assert conn.written == [expected]
 
 
 @pytest.mark.parametrize("value", [3, 7])
-def test_set_number_of_digits_out_of_range(value):
+def test_set_number_of_digits_out_of_range(value: int) -> None:
     """Only 4, 5 or 6 digits are supported."""
     conn = FakeConnection()
     with pytest.raises(AssertionError):
-        run(HP_3478A(conn).set_number_of_digits(value))
+        run(make_dmm(conn).set_number_of_digits(value))
     assert not conn.written
 
 
 @pytest.mark.parametrize("invalid_value", [0, "foo"])
-def test_invalid_enum_values_are_rejected(invalid_value):
+def test_invalid_enum_values_are_rejected(invalid_value: Any) -> None:
     """Values, that are not part of the enum, are rejected before anything is sent."""
     conn = FakeConnection()
-    dmm = HP_3478A(conn)
+    dmm = make_dmm(conn)
     for coroutine_function in (dmm.set_display, dmm.set_trigger, dmm.set_function):
         with pytest.raises(ValueError):
             run(coroutine_function(invalid_value))
     assert not conn.written
 
 
-def test_device_clear():
+def test_device_clear() -> None:
     """The Selected Device Clear is a GPIB command, not a device message."""
     conn = FakeConnection()
-    run(HP_3478A(conn).device_clear())
+    run(make_dmm(conn).device_clear())
     assert conn.calls == ["clear"]
     assert not conn.written
 
 
-def test_local():
+def test_local() -> None:
     """local() returns the device to local mode using the GPIB connection."""
     conn = FakeConnection()
-    run(HP_3478A(conn).local())
+    run(make_dmm(conn).local())
     assert conn.calls == ["ibloc"]
 
 
 @pytest.mark.parametrize(
     "response, expected", [(b"0\r\n", FrontRearSwitchPosition.REAR), (b"1\r\n", FrontRearSwitchPosition.FRONT)]
 )
-def test_get_front_rear_switch_position(response, expected):
+def test_get_front_rear_switch_position(response: bytes, expected: FrontRearSwitchPosition) -> None:
     """The switch position is queried with the "S" command."""
     conn = FakeConnection()
     conn.read_response = response
-    assert run(HP_3478A(conn).get_front_rear_switch_position()) is expected
+    assert run(make_dmm(conn).get_front_rear_switch_position()) is expected
     assert conn.written == [b"S"]
 
 
@@ -190,26 +196,26 @@ def test_get_front_rear_switch_position(response, expected):
         (b"40\r\n", ErrorFlags.AD_LINK_FAILURE),
     ],
 )
-def test_get_error_register(response, expected):
+def test_get_error_register(response: bytes, expected: ErrorFlags) -> None:
     """The error register is queried with the "E" command and returned as an octal number."""
     conn = FakeConnection()
     conn.read_response = response
-    assert run(HP_3478A(conn).get_error_register()) == expected
+    assert run(make_dmm(conn).get_error_register()) == expected
     assert conn.written == [b"E"]
 
 
-def test_serial_poll():
+def test_serial_poll() -> None:
     """The serial poll is forwarded to the connection."""
     conn = FakeConnection()
     conn.status_byte = (SerialPollFlags.SRQ_ON_POWER_ON | SerialPollFlags.SRQ_ON_HAS_SRQ).value
-    assert run(HP_3478A(conn).serial_poll()) == SerialPollFlags.SRQ_ON_POWER_ON | SerialPollFlags.SRQ_ON_HAS_SRQ
+    assert run(make_dmm(conn).serial_poll()) == SerialPollFlags.SRQ_ON_POWER_ON | SerialPollFlags.SRQ_ON_HAS_SRQ
 
 
-def test_get_status_flags():
+def test_get_status_flags() -> None:
     """The status, SRQ and error registers and the DAC value are decoded from the "B" response."""
     conn = FakeConnection()
     conn.read_response = bytes([(FunctionType.ACI.value << 5) | (3 << 2) | 2, 0b10, 0b1000001, 0b100, 0xAB])
-    status = run(HP_3478A(conn).get_status())
+    status = run(make_dmm(conn).get_status())
     assert conn.written == [b"B"]
     assert status.function is FunctionType.ACI
     assert status.range is Range.RANGE_30
@@ -220,19 +226,19 @@ def test_get_status_flags():
     assert status.dac_value == 0xAB
 
 
-def test_get_cal_ram():
+def test_get_cal_ram() -> None:
     """The calibration memory is read one byte at a time using the "W" command."""
     conn = FakeConnection()
     conn.read_response = b"@"
-    assert run(HP_3478A(conn).get_cal_ram()) == b"@" * 256
+    assert run(make_dmm(conn).get_cal_ram()) == b"@" * 256
     assert conn.written == [bytes([ord("W"), addr]) for addr in range(256)]
 
 
-def test_set_cal_ram():
+def test_set_cal_ram() -> None:
     """The calibration memory is written one byte at a time using the "X" command."""
     conn = FakeConnection()
     data = bytes([0x40, 0x4F, 0x41])
-    run(HP_3478A(conn).set_cal_ram(data))
+    run(make_dmm(conn).set_cal_ram(data))
     assert conn.written == [b"X\x00\x40", b"X\x01\x4f", b"X\x02\x41"]
 
 
@@ -246,61 +252,61 @@ def test_set_cal_ram():
         (11, b"+1.00000E+1", Decimal("10")),
     ],
 )
-def test_read(length, response, expected):
+def test_read(length: int | None, response: bytes, expected: Decimal | bytes) -> None:
     """read() returns numerical values as Decimal and everything else as bytes."""
     conn = FakeConnection()
     conn.read_response = response
-    assert run(HP_3478A(conn).read(length)) == expected
+    assert run(make_dmm(conn).read(length)) == expected
 
 
 @pytest.mark.parametrize("function", [FunctionType.NTC, FunctionType.NTCF])
-def test_read_thermistor(function):
+def test_read_thermistor(function: FunctionType) -> None:
     """In thermistor mode, the resistance is converted to a temperature in K."""
     conn = FakeConnection()
-    dmm = HP_3478A(conn)
+    dmm = make_dmm(conn)
     run(dmm.set_function(function))
     conn.read_response = b"+1.00000E+4\r\n"  # R25 of the default thermistor
     assert run(dmm.read()) == pytest.approx(Decimal("298.15"), abs=Decimal("0.01"))
 
 
-def test_read_thermistor_custom_parameters():
+def test_read_thermistor_custom_parameters() -> None:
     """The NTC parameters can be changed."""
     conn = FakeConnection()
-    dmm = HP_3478A(conn)
+    dmm = make_dmm(conn)
     dmm.set_ntc_parameters(a=1 / 300, b=1e-4, c=0, d=0, rt25=5e3)
     run(dmm.set_function(FunctionType.NTC))
     conn.read_response = b"+5.00000E+3\r\n"
     assert float(run(dmm.read())) == pytest.approx(300)
 
 
-def test_read_thermistor_invalid_resistance():
+def test_read_thermistor_invalid_resistance() -> None:
     """A resistance, that cannot be converted to a temperature, must raise a ValueError with the measurement."""
     conn = FakeConnection()
-    dmm = HP_3478A(conn)
+    dmm = make_dmm(conn)
     run(dmm.set_function(FunctionType.NTC))
     conn.read_response = b"-1.00000E+4\r\n"
     with pytest.raises(ValueError, match="Measurement was: -10000"):
         run(dmm.read())
 
 
-def test_set_function_clears_special_function():
+def test_set_function_clears_special_function() -> None:
     """Selecting a normal function after a thermistor function disables the conversion."""
     conn = FakeConnection()
-    dmm = HP_3478A(conn)
+    dmm = make_dmm(conn)
     run(dmm.set_function(FunctionType.NTC))
     run(dmm.set_function(FunctionType.OHM))
     conn.read_response = b"+1.00000E+4\r\n"
     assert run(dmm.read()) == Decimal("1.00000E+4")
 
 
-def test_read_all_yields_multiple_values():
+def test_read_all_yields_multiple_values() -> None:
     """read_all() keeps reading, until the generator is closed."""
     conn = FakeConnection()
     conn.status_byte = (SerialPollFlags.SRQ_ON_DATA_READY | SerialPollFlags.SRQ_ON_HAS_SRQ).value
     conn.read_response = b"+1.23456E+0\r\n"
 
-    async def read_three():
-        generator = HP_3478A(conn).read_all()
+    async def read_three() -> list[Decimal | bytes]:
+        generator = make_dmm(conn).read_all()
         try:
             return [await anext(generator) for _ in range(3)]
         finally:

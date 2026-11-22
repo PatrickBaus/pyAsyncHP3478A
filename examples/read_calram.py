@@ -29,6 +29,7 @@ import aiofiles
 
 # Devices
 from hp3478a_async import HP_3478A
+from hp3478a_async.hp_3478a import GpibConnection
 from hp3478a_async.hp_3478a_helper import decode_cal_data, format_cal_string
 
 if typing.TYPE_CHECKING:
@@ -47,7 +48,9 @@ else:
 if "prologix_gpib_async" in sys.modules:
     IP_ADDRESS = "127.0.0.1"
     # pylint: disable=used-before-assignment  # false positive
-    gpib_device = AsyncPrologixGpibEthernetController(IP_ADDRESS, pad=27, timeout=1, eos_mode=EosMode.APPEND_NONE)
+    gpib_device: GpibConnection = AsyncPrologixGpibEthernetController(
+        IP_ADDRESS, pad=27, timeout=1, eos_mode=EosMode.APPEND_NONE
+    )
 elif "async_gpib" in sys.modules:
     # Set the timeout to 1 second (T1s=11)
     # NI GPIB adapter
@@ -57,7 +60,7 @@ else:
 
 
 # This example will read the calibration memory and write it to a file named 'calram.bin'
-async def main():
+async def main() -> None:
     """Read the calibration memory from the DMM"""
     # Open the file first, so that we fail early and do not overwrite an existing file
     async with (
